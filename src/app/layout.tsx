@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
+import { TransitionLayer } from "@/components/motion/Transition";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
@@ -30,7 +31,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body className="min-h-svh">
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          {children}
+          <TransitionLayer />
+        </SmoothScroll>
+        {/* film grain over everything: breaks up near-black banding and ties DOM and WebGL together */}
+        <div aria-hidden className="grain pointer-events-none fixed inset-0 z-[70]" />
       </body>
     </html>
   );

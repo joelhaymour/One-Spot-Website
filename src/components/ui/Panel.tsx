@@ -28,6 +28,8 @@ export function Panel({ children, className, style, active, muted, raised }: Pan
     <div
       className={cn(
         raised ? "panel-raised" : "panel",
+        // A positioning context for ScanLine and other overlays, unless the caller already positions it.
+        !/\b(absolute|fixed|sticky)\b/.test(className ?? "") && "relative",
         "transition-[border-color,opacity,box-shadow,filter] duration-500 ease-[var(--ease-out)]",
         muted && "opacity-35 saturate-50",
         className,

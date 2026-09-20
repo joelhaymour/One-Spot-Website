@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 
 interface TypedTextProps {
   text: string;
@@ -27,16 +28,10 @@ export function TypedText({ text, active = true, speed = 46, delay = 0, caret = 
     onDoneRef.current = onDone;
   });
 
+  const reduce = useReducedMotion();
+
   useEffect(() => {
-    if (!active) {
-      setCount(0);
-      return;
-    }
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setCount(text.length);
-      onDoneRef.current?.();
-      return;
-    }
+    if (!active || reduce) return;
     let raf = 0;
     let start: number | null = null;
     const tick = (now: number) => {
@@ -48,15 +43,19 @@ export function TypedText({ text, active = true, speed = 46, delay = 0, caret = 
       else onDoneRef.current?.();
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [text, active, speed, delay]);
+    return () => {
+      cancelAnimationFrame(raf);
+      setCount(0);
+    };
+  }, [text, active, speed, delay, reduce]);
 
-  const done = count >= text.length;
+  const shown = !active ? 0 : reduce ? text.length : count;
+  const done = shown >= text.length;
   return (
     <span className={cn("relative", className)}>
       <span className="sr-only">{text}</span>
       <span aria-hidden>
-        {text.slice(0, count)}
+        {text.slice(0, shown)}
         {caret && active && (
           <span
             className="ml-[1px] inline-block h-[1em] w-[0.5em] translate-y-[0.14em] rounded-[1px]"
@@ -68,7 +67,7 @@ export function TypedText({ text, active = true, speed = 46, delay = 0, caret = 
           />
         )}
         {/* reserve final layout so nothing reflows while typing */}
-        <span className="invisible">{text.slice(count)}</span>
+        <span className="invisible">{text.slice(shown)}</span>
       </span>
     </span>
   );

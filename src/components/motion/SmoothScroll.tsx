@@ -1,16 +1,33 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { detectTier } from "@/lib/capabilities";
 import { useExperience } from "@/state/experience";
 
-const LenisContext = createContext<Lenis | null>(null);
+// Lenis is an external system, so it lives in a tiny external store rather than React state.
+let current: Lenis | null = null;
+const listeners = new Set<() => void>();
+const publish = (next: Lenis | null) => {
+  current = next;
+  listeners.forEach((fn) => fn());
+};
+const subscribe = (fn: () => void) => {
+  listeners.add(fn);
+  return () => {
+    listeners.delete(fn);
+  };
+};
 
 /** The active Lenis instance, or null when smooth scrolling is off (touch, reduced motion). */
-export const useLenis = () => useContext(LenisContext);
+export const useLenis = () =>
+  useSyncExternalStore(
+    subscribe,
+    () => current,
+    () => null,
+  );
 
 /**
  * Owns scrolling for the whole experience.
@@ -19,7 +36,7 @@ export const useLenis = () => useContext(LenisContext);
  * - On route change we reset (or restore, when returning to the HUD) and re-measure triggers.
  */
 export function SmoothScroll({ children }: { children: ReactNode }) {
-  const [lenis, setLenis] = useState<Lenis | null>(null);
+  const lenis = useLenis();
   const pathname = usePathname();
   const firstPath = useRef(true);
   const setTier = useExperience((s) => s.setTier);
@@ -39,18 +56,20 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       wheelMultiplier: 0.9,
       smoothWheel: true,
       syncTouch: false,
+      stopInertiaOnNavigate: true,
     });
     instance.on("scroll", ScrollTrigger.update);
 
     const tick = (time: number) => instance.raf(time * 1000);
-    gsap.ticker.add(tick);
+    // prioritized: Lenis moves the page before any tween or WebGL frame reads it
+    gsap.ticker.add(tick, false, true);
     gsap.ticker.lagSmoothing(0);
-    setLenis(instance);
+    publish(instance);
 
     return () => {
       gsap.ticker.remove(tick);
       instance.destroy();
-      setLenis(null);
+      publish(null);
     };
   }, [setTier]);
 
@@ -72,5 +91,5 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     return () => cancelAnimationFrame(id);
   }, [pathname, lenis]);
 
-  return <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>;
+  return <>{children}</>;
 }
