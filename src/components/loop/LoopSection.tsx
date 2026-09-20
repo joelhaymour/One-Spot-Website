@@ -21,14 +21,36 @@ import { cn } from "@/lib/cn";
 
 const marketing = DEPARTMENT_BY_ID.marketing;
 
+// Same campaigns and figures as the Marketing console this miniature leads into.
 const CAMPAIGNS = [
-  { name: "Always-on search", cpl: "$31.40", trend: "−4%", warn: false },
-  { name: "Spring Promotion", cpl: "$52.80", trend: "+38%", warn: true },
-  { name: "Referral programme", cpl: "$18.90", trend: "−9%", warn: false },
-  { name: "Local awareness", cpl: "$44.10", trend: "+2%", warn: false },
+  { name: "New Customer Offer", cpl: "$35.00", trend: "−6%", warn: false },
+  { name: "Spring Promotion", cpl: "$58.10", trend: "+38%", warn: true },
+  { name: "Refer a Friend", cpl: "$24.26", trend: "−9%", warn: false },
+  { name: "Local Search", cpl: "$36.00", trend: "−3%", warn: false },
 ];
 
 const ACTIONS = ["New concept drafted", "4 creative briefs ready for approval", "Launch scheduled across 3 channels"];
+
+/** Phones: five small steps and only the active beat's words, so agent + console + beat fit one screen. */
+function BeatsCompact() {
+  const { step, goTo } = useStory();
+  const b = LOOP.beats[step];
+  return (
+    <div>
+      <ol className="flex gap-1.5" aria-label="The loop">
+        {LOOP.beats.map((beat, i) => (
+          <li key={beat.label} className="flex-1">
+            <button type="button" onClick={() => goTo(i)} aria-current={i === step ? "step" : undefined} aria-label={beat.label} className="block h-10 w-full">
+              <span className={cn("block h-[2px] w-full rounded-full transition-colors duration-500", i <= step ? "bg-[rgb(var(--accent-rgb))]" : "bg-[var(--line-strong)]")} />
+            </button>
+          </li>
+        ))}
+      </ol>
+      <p className="text-[1.35rem] font-medium tracking-[-0.03em] text-[var(--text-0)]">{b.label}</p>
+      <p className="t-body mt-1">{b.line}</p>
+    </div>
+  );
+}
 
 function Beats() {
   const { step, goTo } = useStory();
@@ -44,9 +66,9 @@ function Beats() {
               aria-current={active ? "step" : undefined}
               className="group flex w-full items-baseline gap-5 py-4 text-left md:py-5"
             >
-              <span className={cn("t-label t-num w-6 transition-colors duration-500", active ? "text-[rgb(var(--accent-rgb))]" : "text-[var(--text-3)]")}>0{i + 1}</span>
+              <span className={cn("t-label t-num w-6 transition-colors duration-500", active ? "text-[rgb(var(--accent-rgb))]" : "text-[var(--text-2)]")}>0{i + 1}</span>
               <span className="min-w-0">
-                <span className={cn("block text-[clamp(1.25rem,2vw,1.75rem)] font-medium tracking-[-0.03em] transition-colors duration-500", active ? "text-[var(--text-0)]" : "text-[var(--text-3)] group-hover:text-[var(--text-2)]")}>
+                <span className={cn("block text-[clamp(1.25rem,2vw,1.75rem)] font-medium tracking-[-0.03em] transition-colors duration-500", active ? "text-[var(--text-0)]" : "text-[var(--text-2)] group-hover:text-[var(--text-1)]")}>
                   {b.label}
                 </span>
                 <span
@@ -89,7 +111,7 @@ function MiniConsole({ step }: { step: number }) {
                   <span className={cn("transition-colors duration-500", flagged ? "text-[var(--text-0)]" : "text-[var(--text-1)]")}>{c.name}</span>
                 </span>
                 <span className="t-num flex items-center gap-3 font-mono text-[11px]">
-                  <span className="text-[var(--text-1)]">{flagged && learned ? "$31.10" : c.cpl}</span>
+                  <span className="text-[var(--text-1)]">{flagged && learned ? "$34.36" : c.cpl}</span>
                   <span className="w-10 text-right" style={{ color: flagged ? (learned ? "var(--ok)" : "var(--warn)") : "var(--text-2)" }}>
                     {flagged && learned ? "−41%" : c.trend}
                   </span>
@@ -154,16 +176,21 @@ function Stage({ step }: { step: number }) {
   const beat = BEATS[step].id;
   return (
     <div
-      className="mx-auto grid h-full w-full max-w-[1320px] items-center gap-8 px-[var(--gutter)] py-[calc(var(--nav-h)+12px)] md:grid-cols-[minmax(0,1fr)_minmax(200px,0.8fr)_minmax(0,1.15fr)] max-md:grid-rows-[auto_auto_1fr] max-md:gap-4"
+      className="mx-auto grid h-full w-full max-w-[1320px] items-center gap-8 px-[var(--gutter)] py-[calc(var(--nav-h)+12px)] md:grid-cols-[minmax(0,1fr)_minmax(200px,0.8fr)_minmax(0,1.15fr)] max-md:grid-cols-[minmax(0,1fr)] max-md:grid-rows-[auto_auto_auto] max-md:content-center max-md:gap-3"
       style={{ ["--accent" as string]: marketing.accent, ["--accent-rgb" as string]: marketing.accentRgb }}
     >
       <div className="max-md:order-3">
-        <Beats />
+        <div className="max-md:hidden">
+          <Beats />
+        </div>
+        <div className="md:hidden">
+          <BeatsCompact />
+        </div>
       </div>
-      <div className="h-[min(58svh,520px)] max-md:order-1 max-md:h-[24svh]">
+      <div className="h-[min(58svh,520px)] max-md:order-1 max-md:h-[17svh]">
         <AgentSlot agent="marketing" mood={BEAT_MOOD[beat]} load={step === 2 ? 0.7 : 0} learnCount={step >= 3 ? 1 : 0} className="h-full w-full" />
       </div>
-      <div className="flex justify-center max-md:order-2 md:justify-end">
+      <div className="flex min-w-0 justify-center max-md:order-2 md:justify-end">
         <MiniConsole step={step} />
       </div>
     </div>

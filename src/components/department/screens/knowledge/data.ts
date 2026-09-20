@@ -108,13 +108,13 @@ export interface AgentRequest {
 }
 
 export const SERVED_EARLIER: AgentRequest[] = [
-  { time: "09:12", agent: "Finance Agent", asked: "payment terms, Alder & Finch", source: "Contracts / 2024", latency: "41 ms" },
-  { time: "09:31", agent: "Operations Agent", asked: "supplier lead times", source: "Procedures / Purchasing", latency: "38 ms" },
+  { time: "08:52", agent: "Finance Agent", asked: "payment terms, Alder & Finch", source: "Contracts / 2024", latency: "41 ms" },
+  { time: "09:08", agent: "Operations Agent", asked: "supplier lead times", source: "Procedures / Purchasing", latency: "38 ms" },
 ];
 
 export const SERVED_NOW: AgentRequest[] = [
-  { time: "10:44", agent: "Sales Agent", asked: "current pricing rule", source: "Pricing rules 2026, s. 2", latency: "36 ms" },
-  { time: "10:44", agent: "Customer Service Agent", asked: "returns policy", source: "Returns policy 2026, s. 1", latency: "29 ms" },
+  { time: "09:26", agent: "Sales Agent", asked: "current pricing rule", source: "Pricing rules 2026, s. 2", latency: "36 ms" },
+  { time: "09:26", agent: "Customer Service Agent", asked: "returns policy", source: "Returns policy 2026, s. 1", latency: "29 ms" },
 ];
 
 export interface Gap {

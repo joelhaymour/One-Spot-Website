@@ -10,23 +10,39 @@ const hits = new Map<string, number[]>();
 
 const json = (body: ContactResponse, status: number, headers?: HeadersInit) => Response.json(body, { status, headers });
 
+const UNKNOWN = "unknown";
+const MAX_UNKNOWN_PER_WINDOW = 40;
+const MAX_KEYS = 2000;
+
+/**
+ * Prefer headers a platform sets itself. The left-most X-Forwarded-For hop is whatever the caller
+ * typed, so when that header is all we have, trust the right-most hop (the one our own proxy added).
+ */
 function clientKey(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  return forwarded || request.headers.get("x-real-ip")?.trim() || "unknown";
+  const h = request.headers;
+  const direct = h.get("x-vercel-forwarded-for") ?? h.get("cf-connecting-ip") ?? h.get("fly-client-ip") ?? h.get("x-real-ip");
+  if (direct?.trim()) return direct.split(",")[0].trim();
+  const hops = h.get("x-forwarded-for")?.split(",").map((v) => v.trim()).filter(Boolean);
+  return hops?.length ? hops[hops.length - 1] : UNKNOWN;
 }
 
 /** Seconds until the caller may try again, or 0 when the request is allowed (and counted). */
 function rateLimit(key: string, now: number): number {
-  if (hits.size > 2000) {
-    for (const [k, times] of hits) if (times.every((t) => now - t >= WINDOW_MS)) hits.delete(k);
-  }
+  // Callers we cannot tell apart share one bucket, so it gets a site-wide ceiling, not a personal one.
+  const limit = key === UNKNOWN ? MAX_UNKNOWN_PER_WINDOW : MAX_PER_WINDOW;
   const recent = (hits.get(key) ?? []).filter((t) => now - t < WINDOW_MS);
-  if (recent.length >= MAX_PER_WINDOW) {
+  if (recent.length >= limit) {
     hits.set(key, recent);
     return Math.max(1, Math.ceil((recent[0] + WINDOW_MS - now) / 1000));
   }
   recent.push(now);
+  // Re-insert so the map stays ordered by last use, then evict the oldest: O(1), bounded memory.
+  hits.delete(key);
   hits.set(key, recent);
+  if (hits.size > MAX_KEYS) {
+    const oldest = hits.keys().next().value;
+    if (oldest !== undefined) hits.delete(oldest);
+  }
   return 0;
 }
 
@@ -107,8 +123,23 @@ async function deliver(values: ContactValues): Promise<"sent" | "failed" | "unco
 }
 
 export async function POST(request: Request): Promise<Response> {
-  if (!request.headers.get("content-type")?.toLowerCase().includes("application/json")) {
-    return json({ ok: false, error: "Send JSON." }, 415);
+  // Compare the MIME essence exactly. A substring test would accept "text/plain; application/json",
+  // which is CORS-safelisted and lets any third-party page post here without a preflight.
+  const type = (request.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+  if (type !== "application/json") return json({ ok: false, error: "Send JSON." }, 415);
+
+  // This form is only ever submitted by this site.
+  if (request.headers.get("sec-fetch-site") === "cross-site") return json({ ok: false, error: "Not allowed." }, 403);
+  const origin = request.headers.get("origin");
+  if (origin) {
+    const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+    let sameHost = false;
+    try {
+      sameHost = new URL(origin).host === host;
+    } catch {
+      sameHost = false;
+    }
+    if (!sameHost) return json({ ok: false, error: "Not allowed." }, 403);
   }
   if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
     return json({ ok: false, error: "That message is too long." }, 413);

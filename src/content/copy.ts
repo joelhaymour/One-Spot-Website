@@ -120,5 +120,7 @@ export const CTA = {
   },
   reassurance: "I answer every message myself. If agents won't pay for themselves in your business, I'll say so.",
   success: { title: "Received.", body: "I'll reply within one working day with a time to talk." },
-  error: "That didn't send. Please try again, or email me directly.",
+  error: "That didn't send. Please try again.",
+  errorDirect: "Or email me directly:",
+  errorBusy: "Too many messages from this connection. Try again in a few minutes.",
 };

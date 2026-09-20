@@ -26,7 +26,17 @@ export async function generateMetadata({ params }: DepartmentPageProps): Promise
     title: department.agentName,
     description: department.oneLiner,
     // A page's openGraph replaces the layout's whole object, so the shared fields are repeated here.
-    openGraph: { title: `${department.agentName} — ${SITE.name}`, description: department.oneLiner, type: "website", siteName: SITE.name },
+    alternates: { canonical: "./" },
+    openGraph: {
+      title: `${department.agentName} — ${SITE.name}`,
+      description: department.oneLiner,
+      type: "website",
+      siteName: SITE.name,
+      url: "./",
+      // The file-based image only merges into the segment that owns it, so name it explicitly here.
+      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: `${department.agentName} — ${SITE.name}` }],
+    },
+    twitter: { card: "summary_large_image", images: ["/opengraph-image"] },
   };
 }
 

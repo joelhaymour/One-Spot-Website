@@ -7,7 +7,7 @@ import { LinkButton } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { Reveal } from "@/components/ui/Reveal";
 import { Eyebrow } from "@/components/ui/Section";
-import { logTime, pad2 } from "./story";
+import { pad2, stepTime } from "./story";
 import { useLeave } from "./useLeave";
 
 /**
@@ -47,7 +47,7 @@ export function DepartmentOutro({ department }: { department: Department }) {
                 <span className="t-label truncate text-[var(--text-0)]!">Report received · {CEO.name}</span>
               </p>
               <p className="t-label t-num shrink-0">
-                {COMPANY.dayLabel} · {logTime(department.story.length)}
+                {COMPANY.dayLabel} · {stepTime(department.story, department.story.length)}
               </p>
             </div>
             <div className="px-4 pb-5 pt-4 sm:px-5 sm:pb-6 sm:pt-5">

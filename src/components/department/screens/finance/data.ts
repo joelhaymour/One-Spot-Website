@@ -49,7 +49,7 @@ export const INVOICE = {
   address: "14 Foundry Lane",
   number: "4471",
   billTo: "Meridian & Co.",
-  date: "20 Oct 2026",
+  date: "20 Oct",
   terms: "Net 30",
   po: "PO-1164",
   lines: [

@@ -16,7 +16,7 @@ export function MobileBusiness() {
   const rec = RECOMMENDATIONS[0];
   return (
     <section className="px-[var(--gutter)] pb-24 pt-6 md:hidden" aria-labelledby="business-mobile">
-      <Eyebrow>{BUSINESS.eyebrow}</Eyebrow>
+      <Eyebrow index="01">{BUSINESS.eyebrow}</Eyebrow>
       <h2 id="business-mobile" className="t-title mt-5">
         {BUSINESS.heading}
       </h2>
@@ -48,7 +48,7 @@ export function MobileBusiness() {
                 </span>
                 <span className="text-right">
                   <span className="t-num block text-[0.95rem] text-[var(--text-0)]">{d.tile.metricValue}</span>
-                  <span className="t-label mt-1 block !text-[9px]">{d.tile.metricLabel}</span>
+                  <span className="t-label mt-1 block !text-[10px]">{d.tile.metricLabel}</span>
                 </span>
                 <Arrow className="shrink-0 text-[var(--text-2)]" />
               </Link>

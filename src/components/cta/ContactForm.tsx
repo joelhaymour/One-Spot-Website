@@ -103,6 +103,7 @@ export function ContactForm() {
   const [values, setValues] = useState<ContactValues>(EMPTY_CONTACT);
   const [errors, setErrors] = useState<ContactErrors>({});
   const [status, setStatus] = useState<Status>("idle");
+  const [busy, setBusy] = useState(false);
   const pending = status === "pending";
 
   useEffect(() => () => requestRef.current?.abort(), []);
@@ -160,6 +161,8 @@ export function ContactForm() {
         const flagged = CONTACT_FIELDS.find((field) => fields[field]);
         if (flagged) focusField(flagged);
       } else {
+        // 429: retrying now fails again, so say so plainly.
+        setBusy(response.status === 429);
         setStatus("error");
       }
     } catch {
@@ -217,10 +220,11 @@ export function ContactForm() {
             <div aria-live="polite" className="min-w-0 text-[0.8125rem] leading-[1.45] text-[var(--warn)]">
               {status === "error" && (
                 <p>
-                  {CTA.error}
+                  {busy ? CTA.errorBusy : CTA.error}
                   {DIRECT_EMAIL && (
                     <>
                       {" "}
+                      {CTA.errorDirect}{" "}
                       <a href={`mailto:${DIRECT_EMAIL}`} className="text-[var(--text-0)] underline decoration-[var(--line-strong)] underline-offset-4 hover:decoration-current">
                         {DIRECT_EMAIL}
                       </a>

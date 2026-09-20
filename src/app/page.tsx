@@ -15,9 +15,10 @@ export default function Home() {
   return (
     <main id="content">
       <HeroBusiness />
-      <Statement>{PAUSES.afterHero}</Statement>
       <Statement>{PAUSES.beforeAgents}</Statement>
       <LoopSection />
+      {/* The owner as the company's wiring: the thought the network scene answers. */}
+      <Statement>{PAUSES.afterHero}</Statement>
       <NetworkSection />
       <Statement>{PAUSES.beforeScaling}</Statement>
       <ScalingSection />

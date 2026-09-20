@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { CEO, DEPARTMENTS, departmentHref, type Department } from "@/content/departments";
 import { ALERTS, COMPANY, DEADLINES, KEY_METRICS, RECOMMENDATIONS, REVENUE, TODAY, TODOS } from "@/content/hud";
 import { AgentSvg, Mark } from "@/components/agent/AgentSvg";
-import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
+import { AnimatedNumber, formatNumber } from "@/components/ui/AnimatedNumber";
 import { ArcProgress, Sparkline } from "@/components/ui/Charts";
 import { Dot, Panel, PanelHeader, StatusChip } from "@/components/ui/Panel";
 import { TypedText } from "@/components/ui/TypedText";
@@ -146,12 +146,13 @@ export function BusinessHud({ state, onPickRecommendation, interactive = true }:
           <div>
             <div className="flex items-baseline gap-2.5">
               <AnimatedNumber value={state.revenue} format="currency" className="text-[40px] font-medium leading-none tracking-[-0.035em] text-[var(--text-0)]" />
-              <span className="text-[12px] text-[var(--text-2)]">of $1,200,000 target</span>
+              <span className="text-[12px] text-[var(--text-2)]">of {formatNumber(REVENUE.target, "currency")} target</span>
             </div>
             <div className="mt-3 flex items-center gap-2 text-[11.5px]">
               <Dot tone="accent" />
               <span>
-                3 deals worth <span className="text-[var(--text-0)]">$410,000</span> are waiting on one signature each. That is 92%.
+                3 deals worth <span className="text-[var(--text-0)]">{formatNumber(REVENUE.pending, "currency")}</span> are waiting on one signature each. That is{" "}
+                {Math.round(((state.revenue + REVENUE.pending) / REVENUE.target) * 100)}%.
               </span>
             </div>
             <Sparkline data={REVENUE.spark} width={410} height={56} className="mt-3" strokeWidth={1.6} />
@@ -338,7 +339,13 @@ const DepartmentDoor = memo(function DepartmentDoor({ department: d, flash, inte
       tabIndex={interactive ? 0 : -1}
       onPointerEnter={attend}
       onPointerLeave={release}
-      onFocus={attend}
+      onFocus={() => {
+        attend();
+        // Keyboard users reach the doors while the display is still below the fold: bring it up.
+        const anchor = document.getElementById("business");
+        const el = ref.current;
+        if (anchor && el && el.getBoundingClientRect().bottom > window.innerHeight * 0.92) anchor.scrollIntoView({ block: "start" });
+      }}
       onBlur={release}
       onClick={(e) => {
         // Let the browser handle new-tab / new-window clicks.

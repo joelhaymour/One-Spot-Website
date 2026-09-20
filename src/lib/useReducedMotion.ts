@@ -31,3 +31,14 @@ export function useMediaQuery(query: string): boolean {
     () => false,
   );
 }
+
+const noop = () => () => undefined;
+
+/** False on the server and during hydration, true afterwards. For attributes that must not be in server HTML. */
+export function useMounted(): boolean {
+  return useSyncExternalStore(
+    noop,
+    () => true,
+    () => false,
+  );
+}

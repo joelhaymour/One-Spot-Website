@@ -72,8 +72,13 @@ export function useDepartmentTransition() {
     const state = useExperience.getState();
     if (state.phase !== "idle") return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // "Back to The Business" means the doors. Use the saved position only if it is the display itself;
+    // otherwise (deep links, entries from the footer or the loop grid) land on the #business anchor.
+    const onDisplay = state.homeScrollY !== null && state.homeScrollY < window.innerHeight * 2.4;
+    if (!onDisplay) state.setHomeScrollY(null);
+    const home = onDisplay ? "/" : "/#business";
     if (!coverEl || reduce || state.tier === "static") {
-      router.push("/");
+      router.push(home);
       return;
     }
     state.setPhase("leaving");
@@ -84,7 +89,7 @@ export function useDepartmentTransition() {
     gsap.set(coverEl, { visibility: "visible", opacity: 0, x: 0, y: 0, scaleX: 1, scaleY: 1 });
     gsap.set(labelEl, { opacity: 0 });
     gsap
-      .timeline({ onComplete: () => startTransition(() => router.push("/")) })
+      .timeline({ onComplete: () => startTransition(() => router.push(home)) })
       .to(coverEl, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 0)
       .to(labelEl, { opacity: 1, duration: 0.4 }, 0.25);
   }, [router, lenis]);

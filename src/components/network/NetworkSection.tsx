@@ -10,7 +10,7 @@ export function NetworkSection() {
   return (
     <section id="network" aria-label={NETWORK.eyebrow} className="relative">
       <div className="mx-auto w-full max-w-[1440px] px-[var(--gutter)] pb-10 pt-28 md:pb-16 md:pt-40">
-        <SectionHeading eyebrow={NETWORK.eyebrow} title={NETWORK.heading} lead={NETWORK.lead} />
+        <SectionHeading index="03" eyebrow={NETWORK.eyebrow} title={NETWORK.heading} lead={NETWORK.lead} />
       </div>
       <NetworkStory />
     </section>

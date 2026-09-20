@@ -31,6 +31,13 @@ interface GLStageProps {
   /** Fired once shaders are compiled and the first frame is on screen. */
   onReady?: () => void;
   fog?: boolean;
+  /**
+   * Honour the visitor's "Pause motion": after a short settle the stage stops rendering entirely.
+   * Stages that manage pausing themselves (they need frames to show a new step) leave this off.
+   */
+  holdWhenPaused?: boolean;
+  /** Any change to this value while paused buys another settle window, so new states still land. */
+  wakeKey?: string;
 }
 
 /** Pixel budget keeps very large displays from allocating 20 MP buffers. */
@@ -42,14 +49,19 @@ function dprFor(tier: QualityTier, el: HTMLElement | null) {
   return Math.max(1, Math.min(device, max, Math.sqrt(6e6 / area)));
 }
 
-function Driver({ active, onReady }: { active: boolean; onReady?: () => void }) {
+const SETTLE_SECONDS = 1.6;
+
+function Driver({ active, onReady, holdWhenPaused, wakeKey }: { active: boolean; onReady?: () => void; holdWhenPaused?: boolean; wakeKey?: string }) {
   const advance = useThree((s) => s.advance);
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
   const camera = useThree((s) => s.camera);
-  const ready = useRef(false);
+  const [compiled, setCompiled] = useState(false);
+  const paused = useExperience((s) => s.paused);
+  const hold = !!holdWhenPaused && paused;
 
-  // Compile every program off the critical path before the first visible frame.
+  // Link every program off the critical path. Nothing renders until this resolves, so the first
+  // visible frame never blocks the main thread on shader compilation.
   useEffect(() => {
     let cancelled = false;
     gl.compileAsync(scene, camera)
@@ -57,10 +69,8 @@ function Driver({ active, onReady }: { active: boolean; onReady?: () => void }) 
       .then(() => {
         if (cancelled) return;
         advance(gsap.ticker.time);
-        if (!ready.current) {
-          ready.current = true;
-          onReady?.();
-        }
+        setCompiled(true);
+        onReady?.();
       });
     return () => {
       cancelled = true;
@@ -69,15 +79,20 @@ function Driver({ active, onReady }: { active: boolean; onReady?: () => void }) 
   }, [gl, scene, camera]);
 
   useEffect(() => {
-    if (!active) return;
+    if (!active || !compiled) return;
+    const until = hold ? gsap.ticker.time + SETTLE_SECONDS : Infinity;
     const tick = (time: number) => {
       if (document.hidden) return;
+      if (time > until) {
+        gsap.ticker.remove(tick);
+        return;
+      }
       // With frameloop="never" R3F treats this value as elapsed time, so useFrame deltas are in seconds.
       advance(time);
     };
     gsap.ticker.add(tick);
     return () => gsap.ticker.remove(tick);
-  }, [active, advance]);
+  }, [active, compiled, advance, hold, wakeKey]);
 
   return null;
 }
@@ -95,7 +110,7 @@ class Boundary extends Component<{ children: ReactNode; onError: () => void }, {
   }
 }
 
-export function GLStage({ children, camera, tier, className, onReady, fog = false }: GLStageProps) {
+export function GLStage({ children, camera, tier, className, onReady, fog = false, holdWhenPaused, wakeKey }: GLStageProps) {
   const host = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
   const [dpr, setDpr] = useState(1);
@@ -104,10 +119,20 @@ export function GLStage({ children, camera, tier, className, onReady, fog = fals
   useEffect(() => {
     const el = host.current;
     if (!el) return;
-    setDpr(dprFor(tier, el));
     const io = new IntersectionObserver(([entry]) => setActive(entry.isIntersecting), { rootMargin: "15% 0px" });
     io.observe(el);
-    return () => io.disconnect();
+    // The pixel budget depends on the stage's size, so re-evaluate it when that changes.
+    let timer = 0;
+    const ro = new ResizeObserver(() => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setDpr(dprFor(tier, el)), 200);
+    });
+    ro.observe(el);
+    return () => {
+      io.disconnect();
+      ro.disconnect();
+      window.clearTimeout(timer);
+    };
   }, [tier]);
 
   return (
@@ -118,7 +143,7 @@ export function GLStage({ children, camera, tier, className, onReady, fog = fals
           dpr={dpr}
           gl={{ antialias: true, alpha: true, stencil: false, powerPreference: "high-performance" }}
           camera={{ fov: camera.fov ?? 26, position: camera.position, near: 0.1, far: 80 }}
-          resize={{ scroll: false, debounce: { scroll: 0, resize: 200 } }}
+          resize={{ scroll: false, offsetSize: true, debounce: { scroll: 0, resize: 200 } }}
           style={{ pointerEvents: "none" }}
           onCreated={({ gl, scene, camera: cam }) => {
             gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -139,7 +164,7 @@ export function GLStage({ children, camera, tier, className, onReady, fog = fals
         >
           <directionalLight color="#e6eeff" intensity={1.1} position={[3, 6, 4]} />
           <hemisphereLight args={["#1a1f2a", "#000000", 0.25]} />
-          <Driver active={active} onReady={onReady} />
+          <Driver active={active} onReady={onReady} holdWhenPaused={holdWhenPaused} wakeKey={wakeKey} />
           {children}
         </Canvas>
       </Boundary>

@@ -153,20 +153,20 @@ export type HudEvent =
 
 export const HUD_SCRIPT: HudEvent[] = [
   { type: "activity", dept: "finance", line: "Reconciled 142 invoices. 2 on hold for you." },
-  { type: "revenue", add: 8_400, note: "Payment received" },
+  { type: "revenue", add: 1_240, note: "Payment received" },
   { type: "activity", dept: "sales", line: "Replied to 9 new enquiries. Median 3 min." },
   { type: "metric", id: "leads", add: 3 },
   { type: "todo", id: "contract" },
   { type: "activity", dept: "service", line: "Resolved 61 of 66 requests. 5 with a person." },
   { type: "recommend" },
-  { type: "revenue", add: 12_650, note: "Invoice 4502 paid" },
+  { type: "revenue", add: 1_460, note: "Invoice 4502 paid" },
   { type: "activity", dept: "operations", line: "Moved 2 jobs to Wednesday. Conflict cleared." },
   { type: "metric", id: "pipeline", add: 36_000 },
   { type: "activity", dept: "marketing", line: "Paused a tired ad. Moved $1,200 to the winner." },
   { type: "todo", id: "brief" },
   { type: "activity", dept: "knowledge", line: "Answered 38 internal questions." },
   { type: "recommend" },
-  { type: "revenue", add: 5_200, note: "Payment received" },
+  { type: "revenue", add: 980, note: "Payment received" },
   { type: "activity", dept: "administration", line: "Prepared 3 contracts for signature." },
   { type: "metric", id: "leads", add: 2 },
 ];

@@ -7,6 +7,7 @@ import { DEPARTMENT_BY_ID, type AgentMood } from "@/content/departments";
 import { AgentSvg, Mark } from "@/components/agent/AgentSvg";
 import { Dot } from "@/components/ui/Panel";
 import { TypedText } from "@/components/ui/TypedText";
+import { GlBoundary } from "@/components/agent/GlBoundary";
 import { cn } from "@/lib/cn";
 import { useExperience } from "@/state/experience";
 import { LANES, ORIGINAL_LANE, UI } from "./script";
@@ -70,12 +71,14 @@ export function ScalingAgents({ step, near, className }: ScalingAgentsProps) {
       </div>
 
       {mount && tier && (
+        <GlBoundary>
         <ScalingStage
           step={step}
           tier={tier}
           onReady={() => setReady(true)}
           className={cn("gl-feather absolute inset-0 transition-opacity duration-700 ease-[var(--ease-out)]", showGl ? "opacity-100" : "opacity-0")}
         />
+        </GlBoundary>
       )}
 
       {/* beat 4: the reply from above, where the beads went */}

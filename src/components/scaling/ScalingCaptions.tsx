@@ -29,6 +29,16 @@ export function ScalingCaptions({ className }: { className?: string }) {
         </span>
       </div>
 
+      {/* Small screens show one beat at a time (the others are visibility:hidden, so out of the
+          accessibility tree). This list is their complete text equivalent; wide screens do not need it. */}
+      <ol className="sr-only md:hidden">
+        {SCALING.beats.map((b) => (
+          <li key={b.title}>
+            {b.title} {b.body}
+          </li>
+        ))}
+      </ol>
+
       <ol className="grid md:block">
         {SCALING.beats.map((b, i) => {
           const active = i === step;

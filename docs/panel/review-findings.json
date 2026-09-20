@@ -1,0 +1,440 @@
+[
+ {
+  "lens": "lifecycle",
+  "findings": [
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/motion/SmoothScroll.tsx",
+    "line": 76,
+    "title": "Every first load on a Lenis tier is force-scrolled to 0: the `firstPath` guard is defeated by the `lenis` dependency",
+    "scenario": "On mount, effect 1 creates Lenis and calls publish(instance); effect 2 runs in the same pass, flips firstPath.current to false and returns. publish() re-renders SmoothScroll with lenis = instance, so effect 2 runs again because its deps are [pathname, lenis]. This time firstPath is false, homeScrollY is null, target = 0, and one rAF later it calls lenis.scrollTo(0, { immediate: true, force: true }). Real visitors on desktop (fine pointer, full/lite tier): (a) any deep link with a hash (/#contact, /#business from a shared link, or the cmd-click/new-tab case that useLeave explicitly hands to the browser) is scrolled to the anchor by the browser and then yanked back to the hero; (b) a mid-page reload is restored by the browser and then jumps to top (scrollRestoration is effectively 'auto', see the Back-restoration finding); (c) anyone who starts scrolling before hydration is snapped back. Touch/static tiers are unaffected because lenis stays null and the effect never re-runs.",
+    "fix": "Key the guard on the path, not on a one-shot boolean: `const prev = useRef(pathname); useEffect(() => { if (prev.current === pathname) return; prev.current = pathname; ... }, [pathname, lenis]);` so a Lenis identity change never counts as a route change."
+   },
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/motion/Transition.tsx",
+    "line": 87,
+    "title": "\"Back to The Business\" and browser Back land at the top of the homepage unless the visit went through enter()",
+    "scenario": "homeScrollY is only written in enter() (Transition.tsx:41/47), i.e. only by the desktop HUD doors. leave() pushes \"/\" (lines 76 and 87) and drops the link's own #business hash, and SmoothScroll.tsx:82 then forces `target = homeScrollY ?? 0` on every arrival at \"/\". Result: (1) on phones the HUD is inert and every department is entered through plain <Link>s in MobileBusiness, so pressing \"Back to The Business\" plays a cover labelled \"The Business\" and drops the visitor on the hero H1, several screens above the door list they came from, every time; (2) anyone who lands directly on /departments/x (the SEO/shareable case) gets the same; (3) entering from the LoopSection doors, Nav or Footer and pressing browser Back returns to scroll 0, and Back -> Forward -> Back loses the HUD position too because the slot is single-use. The README claim \"Back restores scroll\" does not hold. Related: `history.scrollRestoration = \"manual\"` at SmoothScroll.tsx:48 is silently undone, because ScrollTrigger cached \"auto\" at registerPlugin time and re-applies it at the end of every refresh (gsap/ScrollTrigger.js:555 `_clearScrollMemory(_scrollRestoration, 1)`), so the browser restores on pop and the effect then overrides it one frame later.",
+    "fix": "In leave(), push `/#business` when `homeScrollY === null`, and in SmoothScroll's rAF resolve the target as `homeScrollY ?? (hash element top) ?? 0` for pathname \"/\". For Back/Forward, record scrollY for \"/\" whenever the visitor leaves it (a capture-phase click listener on same-origin links plus a popstate handler is enough) instead of only inside enter(), and do not clear it on consumption for pop navigations. Replace the raw history assignment with `ScrollTrigger.clearScrollMemory(\"manual\")`."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/agent/AgentSlot.tsx",
+    "line": 63,
+    "title": "A failed 3D chunk load takes the whole page down: the only GL error boundary lives inside the lazy chunk it is meant to guard",
+    "scenario": "AgentSlot.tsx:12, NetworkStory.tsx:18 and ScalingAgents.tsx:15 load their stages with next/dynamic, which is React.lazy under a Suspense (next/dist/shared/lib/lazy-dynamic/loadable.js). If the import rejects (flaky mobile network on the large three.js chunk, or a redeploy that removes the old hashed chunk while a tab is open and the visitor scrolls toward Network/Scaling), the lazy component throws during render. The `Boundary` that calls setTier(\"static\") is defined in src/gl/stage/GLStage.tsx, which is part of the chunk that failed, so it never exists. There is no error.tsx or global-error.tsx under src/app, so the error reaches Next's root boundary and the entire site is replaced by \"Application error: a client-side exception has occurred\", even though the SVG agent was already painted and is a complete fallback. This contradicts the README promise that an error boundary drops the site to SVG agents if the 3D layer ever throws.",
+    "fix": "Move the small Boundary class (it imports nothing from three) to a DOM-side file such as src/components/agent/GlBoundary.tsx and wrap the three dynamic() call sites with it, `onError={() => useExperience.getState().setTier(\"static\")}`. Optionally add src/app/error.tsx as a last resort."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hud/BusinessHud.tsx",
+    "line": 325,
+    "title": "hoveredDept / gazeTarget are never cleared when a door unmounts, so the HUD comes back with a stuck hover and a CEO Agent staring at stale coordinates",
+    "scenario": "attend() sets hoveredDept and gazeTarget in the root zustand store on pointerenter/focus; release() is the only thing that clears them and it only runs on pointerleave/blur. Clicking a door navigates away and unmounts the Link with the pointer still over it and focus still on it; React fires neither event on unmount and nothing else in the codebase resets these fields (grep: only BusinessHud writes them). The store outlives the route. When the visitor steps back out to the HUD, the door they entered renders as hovered (full-saturation border and gradient, \"Enter\" label, observe mood) with no pointer on it, SingleAgentStage.tsx:72-83 keeps calling rig.setGaze() toward client coordinates from the previous visit, holds mood \"observe\", keeps that register tick lit and never returns to free attention, and AgentSlot.tsx:57 pins the SVG agent to observe. It stays that way until the visitor happens to hover a door and leave it. This is on the primary journey (enter a department, come back).",
+    "fix": "Clear on unmount in DepartmentDoor: `useEffect(() => () => { const s = useExperience.getState(); if (s.hoveredDept === d.id) { s.setHoveredDept(null); s.setGazeTarget(null); } }, [d.id]);` (or reset both fields in the HeroBusiness cleanup next to registerStage(null))."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/gl/SingleAgentStage.tsx",
+    "line": 69,
+    "title": "\"Pause motion\" is ignored by the single-agent WebGL stage (hero CEO Agent, every department agent, the loop agent)",
+    "scenario": "NetworkStage and ScalingStage read `paused` and settle, but neither SingleAgentStage.tsx, GLStage.tsx nor AgentSlot.tsx reference it (verified by grep). With the WebGL agent showing, pressing Pause stops the HUD script and CSS loops while rig.update() keeps running every tick: the CEO's Spot re-targets every 2.2 to 3.1 s and its ring keeps precessing; on department pages an agent in \"act\" snaps its Spot every 0.25 to 0.4 s with a halo pulse, \"think\" spins the ring at 40 deg/s indefinitely, and \"alert\" pings every 1.6 s. These are auto-playing loops well past 5 s sitting next to text, which is exactly what the control exists to stop (WCAG 2.2.2), and the README states the Pause control stops all ambient animation. Static-tier visitors are fine (SVG plus the CSS rule); full/lite visitors are not.",
+    "fix": "In AgentObject subscribe to `paused` and mirror NetworkCast's settle-then-hold: `const paused = useExperience(s => s.paused); const settle = useRef(0); useEffect(() => { settle.current = 1.6; }, [paused, mood, load, learnCount, pulseCount]);` and at the top of useFrame `if (paused) { if (settle.current <= 0) return; settle.current -= Math.min(delta, 0.05); }`, passing `paused && (mood === \"act\" || mood === \"think\") ? \"idle\" : mood` to the rig so the springs come to rest."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/ui/AnimatedNumber.tsx",
+    "line": 35,
+    "title": "AnimatedNumber flashes the final value for a frame before counting up to it",
+    "scenario": "The span's child is the formatted `value` string, so when the HUD reducer changes revenue or a metric React commits the new text first (setTextContent with the final number). The tween that is supposed to animate from the old value is only created afterwards in a passive useEffect, and gsap.to() does not render until the next ticker tick. Painted sequence on every revenue/metric event (roughly every few seconds while the hero is on screen): old value -> final value for one or two frames -> snaps back to about the old value -> counts up to the final value. At 40 px in the hero revenue panel this reads as a flicker, and it defeats the point of writing textContent directly.",
+    "fix": "Keep React from rewriting the text and restore the in-flight value before paint: switch the effect to useLayoutEffect and call write() immediately before creating the tween (it rewrites `current.current.v`, the old value, in the same commit), or render a stable initial string from a ref so React never touches the text node after mount."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/gl/SingleAgentStage.tsx",
+    "line": 53,
+    "title": "\"Learns\" record marks cannot reverse when scrolling back through a ScrollStory (WebGL agent only)",
+    "scenario": "`learned` only counts up and AgentRig.learn() only increments `marks`/uMarks. LoopSection passes `learnCount={step >= 3 ? 1 : 0}` and DepartmentExperience passes reachedCount(story, index, \"learn\"). Scroll to the Learns beat, then back to step 0: the agent still shows the record mark while the caption says it is only observing. Scroll forward again: learnCount returns to 1, `learned.current` is already 1, so neither the mark nor the confirming pulse fires and the Learns beat is visually empty on every pass after the first. Every other part of the stories (network fold(), scaling base states, the screen kits) is built to rewind; this one is not.",
+    "fix": "Add `setMarks(n)` to AgentRig (`this.marks = clamp(n, 0, 12); this.glass.uMarks.value = this.marks;`) and in the effect do `if (learnCount > learned.current) rig.pulse(); rig.setMarks(learnCount); learned.current = learnCount;`."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/agent/AgentSlot.tsx",
+    "line": 38,
+    "title": "AgentSlot mounts its WebGL canvas on a timer with no visibility gate, so the below-the-fold loop agent pulls three.js in before the hero's own defer",
+    "scenario": "AgentSlot sets mount=true after deferMs regardless of where it is on the page. The hero passes deferMs=500 so the 3D chunk does not compete with first paint, but LoopSection's AgentSlot, about six screens further down, uses the default 300 ms and imports the same SingleAgentStage chunk. On every homepage load on a full/lite tier the three.js download therefore starts at 300 ms, and a second WebGL context is created off screen with its own PMREM bake (getEnvironment is per renderer) and its own compileAsync, competing with the hero agent's start-up on the main thread and GPU. On lite-tier phones that is exactly the first second the visitor is trying to scroll. Network, Scaling and AgentMark already gate on a `near` IntersectionObserver; AgentSlot is the one doorway that does not.",
+    "fix": "Gate `mount` on proximity inside AgentSlot: observe the wrapper with an IntersectionObserver (rootMargin about \"100% 0px\"), and only start the deferMs timer once it has intersected."
+   },
+   {
+    "severity": "low",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/gl/agent/parts.ts",
+    "line": 164,
+    "title": "Module-level shared geometries, materials and textures keep every destroyed renderer reachable across route changes",
+    "scenario": "getGeometries/getRingBands/getRegisterRing, the glow/soft/noise textures (parts.ts:164-272) and getSharedMaterials (materials.ts:17) live for the life of the tab. three registers a per-renderer 'dispose' listener on each shared object the first time a renderer draws it (three/src/renderers/webgl/WebGLGeometries.js:55, WebGLTextures.js:719, WebGLRenderer.js:2216) and only removes it when that object is disposed. R3F's unmount only calls forceContextLoss() and dispose(scene) (fiber events-*.js:7807-7814); primitives are never disposed and the shared objects never are. GPU memory is released by the forced context loss, but each listener closure retains that renderer's gl context object, its detached canvas, attribute/property maps and program cache. The root layout persists, so a visitor walking home -> department -> home through all seven departments accumulates dozens of dead renderers and canvases on the JS heap, which matters most on the lite-tier phones this tier exists for.",
+    "fix": "On GLStage unmount, call dispose() on the shared CPU-side objects while keeping the cache entries, for example a `releaseShared()` in parts.ts/materials.ts that calls .dispose() on every cached geometry, material and texture. The dispose event makes every renderer drop its listener and buffers; canvases that are still alive simply re-upload on their next frame."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/HeroBusiness.tsx",
+    "line": 197,
+    "title": "The display is `inert` in the server HTML, so the seven doors are dead without JS and until hydration on desktop",
+    "scenario": "`desktop` comes from useMediaQuery, whose server/hydration snapshot is false, so the server renders `inert` on the display wrapper and `tabIndex={-1}` on every door (`interactive={desktop}`) for all visitors. With JS disabled or failed on a desktop browser, the doors cannot be clicked or focused, and the native door list in MobileBusiness is `md:hidden`, so the HUD offers no way into a department. The creative plan states the opposite: tiles are real links and cmd-click, keyboard and no-JS all work.",
+    "fix": "Apply the phone-only lockout after mount instead of in server HTML: track a `mounted` flag (or use a client-only effect) and pass `inert={mounted && !desktop}` and `interactive={!mounted || desktop}`, so the default HTML is interactive and only hydrated phones opt out."
+   }
+  ],
+  "summary": "Read-only review through the runtime-correctness and lifecycle lens. I read the code directly and ran nothing, per the brief. Ten findings: two high, three medium, five low.\n\n**High**\n1. `SmoothScroll.tsx:76`: the `firstPath` guard is defeated because the effect also depends on `lenis`. When Lenis is created the effect re-runs, so every first load on a Lenis device (fine pointer, non-static tier) is force-scrolled to 0. Hash deep links and cmd-click new tabs lose their anchor, and a mid-page reload visibly jumps to the top.\n2. `Transition.tsx:87`: return-scroll restoration only works if the visitor entered through the desktop HUD doors, because `homeScrollY` is written only in `enter()`. `leave()` pushes \"/\" without the #business hash, and SmoothScroll forces 0 on every arrival when the slot is empty. Phones, direct landings on a department page, and browser Back from a plain-link entry all land at the top of the hero.\n   - Related: the `history.scrollRestoration = \"manual\"` line is silently reverted by GSAP ScrollTrigger on every refresh (confirmed in `gsap/ScrollTrigger.js:555`).\n\n**Medium**\n3. `AgentSlot.tsx:63`: the only error boundary around the WebGL layer sits inside the lazy chunk, and there is no `error.tsx`. A failed 3D chunk import therefore crashes the whole page instead of falling back to SVG agents. This matches how Next's dynamic-import wrapper (`loadable.js`) and the app tree are written.\n4. `BusinessHud.tsx:325`: `hoveredDept` and `gazeTarget` are never cleared when a door unmounts. After returning from a department, that door stays \"hovered\" and the CEO Agent stays locked on stale coordinates in observe mood.\n5. `SingleAgentStage.tsx:69`: \"Pause motion\" is ignored by the single-agent WebGL stage used for the hero, the loop and every department agent. The network and scaling stages do honour it.\n\n**Low**\n6. `AnimatedNumber.tsx:35`: React commits the final text before the tween starts, so each HUD number flashes its end value for a frame before counting up.\n7. `SingleAgentStage.tsx:53`: WebGL \"learn\" marks cannot be rewound, so the Learns beat is empty on any second pass through a story.\n8. `AgentSlot.tsx:38`: AgentSlot has no visibility gate. The below-the-fold loop agent starts the three.js download at 300 ms, ahead of the hero's own 500 ms defer, and creates a second context off screen.\n9. `parts.ts:164`: module-level shared geometries, materials and textures keep every destroyed renderer reachable through three's per-renderer dispose listeners. R3F only forces context loss on unmount.\n10. `HeroBusiness.tsx:197`: the display is `inert` in the server HTML, so the doors are dead without JS, contrary to the plan.\n\n**Checked and found sound**\n- The transition state machine handles double clicks (phase guard), a slow route (6 s failsafe), Lenis stop/start pairing, and clearing of the stage's transform and opacity. The remaining races (Back during the 0.95 s dive, a plain link clicked under the pointer-events-none cover) are edge cases.\n- ScrollStory's trigger and listeners are torn down on unmount.\n- Observers, timeouts and rAF loops are cleaned up in the hero, HUD script, network, scaling, AgentMark, CompanyMap and the screen kits.\n- The scaling and network GL choreography rewinds correctly when scrolling backwards.\n- The R3F camera is created once despite inline props.\n- The context-loss handler correctly ignores the context loss R3F forces when a canvas unmounts.\n- There are no `Math.random`, `Date` or `window` reads at render time, so no hydration mismatches."
+ },
+ {
+  "lens": "performance",
+  "findings": [
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/gl/stage/GLStage.tsx",
+    "line": 71,
+    "title": "Driver starts rendering before compileAsync resolves, so the first visible frame blocks the main thread on shader linking",
+    "scenario": "The compile effect (lines 53-69) kicks off gl.compileAsync, but the ticker effect (lines 71-80) is gated only on `active`. For any canvas that is on screen when it mounts (hero CEO agent at +500 ms, every department agent at +300 ms) the IntersectionObserver flips `active` within a frame, the next GSAP tick calls advance() -> gl.render(), and three's render path has no isReady() check (only compileAsync does; verified in three 0.186 WebGLRenderer/WebGLProgram: getUniforms() -> onFirstUse() -> getProgramParameter blocks until link completes). Result: the MeshPhysical glass + 3 MeshStandard + seam + sprite programs are all linked synchronously in one long task right after the hero paints. On ANGLE/D3D this is commonly 0.5-2 s. Because Lenis runs on the same ticker and owns the wheel, the page cannot scroll at all during that stall, exactly when a visitor starts scrolling. The precompile only works for Network/Scaling, which mount off-screen.",
+    "fix": "Track compile completion in Driver and gate the ticker on it: `const [compiled, setCompiled] = useState(false)`; in the compileAsync `.then` call `setCompiled(true)` before `advance(...)`; change the ticker effect to `if (!active || !compiled) return;` with deps `[active, compiled, advance]`. The SVG agent keeps showing until onReady, which is already the intended design."
+   },
+   {
+    "severity": "high",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/gl/stage/GLStage.tsx",
+    "line": 121,
+    "title": "Canvas is sized from getBoundingClientRect, so the hero CEO canvas is mis-sized whenever it is measured while its wrapper is CSS-scaled",
+    "scenario": "R3F measures its container with react-use-measure, which uses getBoundingClientRect() (transform-inclusive) unless `offsetSize: true` is passed, then calls gl.setSize(w, h, updateStyle=true), writing that px size onto the canvas (verified in node_modules/react-use-measure/dist/index.js and @react-three/fiber). HeroBusiness scales the `.hero-agent` wrapper down to agentFinalScale (about 0.4) in the docked/explore pose. Any measurement taken in that pose yields 0.4x the layout box: (1) returning from a department (SmoothScroll restores homeScrollY, which is always in the explore pose because that is where doors are clicked; AgentSlot mounts the stage 500 ms later), (2) landing on /#business, (3) any window resize while docked (resize listener + ResizeObserver both re-measure). The canvas becomes 40% of its slot, top-left aligned, then is scaled by 0.4 again, so the 3D CEO Agent shows at roughly 40% of its intended size and off-centre; scrolling back to the landing pose keeps the tiny canvas because transforms never trigger a re-measure.",
+    "fix": "Pass `offsetSize: true` in the Canvas resize options: `resize={{ scroll: false, offsetSize: true, debounce: { scroll: 0, resize: 200 } }}`. offsetWidth/offsetHeight ignore ancestor transforms; NetworkStage.frame() reads its own rects so it is unaffected."
+   },
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/agent/AgentSlot.tsx",
+    "line": 38,
+    "title": "AgentSlot mounts its WebGL stage on a timer with no viewport gating: the Loop section's agent creates a second context at page load, before the hero's",
+    "scenario": "AgentSlot only waits `deferMs` (default 300) after the tier is known. LoopSection.tsx:164 uses the default, and sits more than five viewports below the fold (hero story is 3.9 viewports plus two 92svh statements). On every full/lite visit the Loop timer fires at +300 ms, 200 ms before the hero's deferMs={500}, so it is the Loop agent that triggers the 934 KB three chunk fetch, and when the chunk lands two Canvases mount together: two WebGL contexts, two synchronous PMREM bakes (environment.ts getEnvironment runs in onCreated on the main thread, once per renderer), two rig builds and two compile() passes in the first second after hydration. Half of that work is for a canvas the visitor may never reach (bounces, phones on the lite tier), and it lands on top of the hero's own startup cost.",
+    "fix": "Gate mounting on proximity inside AgentSlot, as AgentMark/NetworkStory/ScalingSection already do: observe the slot with an IntersectionObserver (rootMargin about \"100% 0px\") and use `mount = live && near && timerElapsed`. Make `near` two-way and reset `ready` to false when it goes false so the SVG returns while a remounted canvas compiles."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/network/NetworkStory.tsx",
+    "line": 46,
+    "title": "Stages never unmount once loaded: four to five WebGL contexts and their MSAA buffers stay alive for the rest of the homepage visit",
+    "scenario": "`near` latches true in NetworkStory.tsx:46 and ScalingSection.tsx:37-43, and AgentSlot (hero, Loop) never unmounts; only the CTA AgentMark releases its context. By the Scaling section a visitor holds hero + Loop + Network + Scaling contexts (five for about 3 s at the CTA). GLStage only stops ticking off-screen canvases; their drawing buffers persist. Network is full-bleed from 1024 px, so it sits at the 6 MP budget with antialias: true: a 4x MSAA colour + depth attachment plus resolve/front buffers is on the order of 200 MB for that one canvas on a desktop GPU, retained while the visitor fills in the contact form. Each context also re-bakes the PMREM environment synchronously in onCreated and recompiles every program, since nothing is shareable across contexts; the Network bake (8 rigs) happens while the visitor is mid-scroll through the Loop section, which shows up as a Lenis hitch.",
+    "fix": "Make proximity two-way with hysteresis instead of a latch: `setNear(entry.isIntersecting)` with a generous rootMargin (for example \"200% 0px\") in NetworkStory and ScalingSection (and AgentSlot per the previous finding), and reset `ready` when `near` drops so the SVG/flat stand-ins show during a remount. R3F already force-loses the context on unmount and GLStage's isConnected guard ignores that loss. This caps live contexts at about two."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/gl/SingleAgentStage.tsx",
+    "line": 69,
+    "title": "\"Pause motion\" is ignored by single-agent stages and no stage ever stops rendering while paused",
+    "scenario": "SingleAgentStage and GLStage never read `paused`. With Pause pressed the HUD script stops, but the hero CEO Agent keeps wandering, drifting and precessing, the Loop agent keeps its restless `act` loop (new wander target every 0.25-0.4 s with a pulse), and every department agent keeps moving, which breaks the README/plan rule that Pause stops all ambient animation (WCAG 2.2.2). ScalingScene.setCalm and NetworkCast.still show the intent was there. Separately, even where the scene goes still (NetworkCast.update returns early once settled), GLStage's Driver still calls advance() every tick, so the full-bleed Network canvas re-renders an identical up-to-6 MP frame at 60 fps for as long as it is on screen.",
+    "fix": "In AgentObject subscribe to `useExperience(s => s.paused)`: when paused, clear the gaze, map `act` to `idle` (as ScalingScene.mood does) and stop calling rig.update after a ~1.6 s settle. In GLStage pass `paused` plus a wake key (step/mood) into Driver and have the tick skip advance() once paused and the settle window has elapsed; restart the window whenever `paused` or the wake key changes so step changes while paused still land on their final state."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/globals.css",
+    "line": 261,
+    "title": "Grain overlay's mix-blend-mode is a visual no-op that still forces offscreen passes on a full-viewport fixed layer every frame",
+    "scenario": "`.grain` is `fixed inset-0 z-[70]` (layout.tsx:46), so it is its own stacking context. The blend on `.grain::after` is therefore isolated to that group, whose backdrop is fully transparent; per the compositing spec the result with a transparent backdrop is just the source colour, i.e. identical to normal blending. But a non-normal blend mode still makes the compositor allocate a viewport-sized render surface for the pseudo-element and an isolated group surface for `.grain`, and re-blend them whenever anything beneath changes. On this site something beneath changes every frame (live WebGL canvases, Lenis scroll), so that is two extra full-screen passes plus a backdrop copy per frame (about 5 MP each on a 2880x1800 display) for zero visual effect. The CSS comment also says the grain sits below content, while z-70 puts it above everything.",
+    "fix": "Delete `mix-blend-mode: overlay` from `.grain::after`; output is pixel-identical and the layer becomes a single alpha-blended quad. Do not move the blend onto `.grain` itself: a real overlay against the root would force the whole page, canvases included, through a blended readback."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/ui/Reveal.tsx",
+    "line": 45,
+    "title": "Reveal server-renders opacity:0 + blur(6px): 33 copy blocks on the homepage are invisible until hydration and an IntersectionObserver callback",
+    "scenario": "`shown` starts false, so the server HTML carries `style=\"opacity:0;transform:translate3d(0,18px,0);filter:blur(6px)\"` on every Reveal (verified in .next/server/app/index.html: 33 blocks, no <noscript> fallback). That covers every section eyebrow/h2/lead, all five full-screen Statement pauses, the contact section and the department report. With JS disabled, a failed or blocked chunk, or a hydration error, the visitor scrolls through 92svh black screens with the text present but invisible, which contradicts the \"real copy in server HTML\" rule in spirit. The hero and department H1 are not wrapped, so LCP is fine. Secondary: the transition animates `filter` for 1100 ms on large statement paragraphs, which the motion rules otherwise avoid.",
+    "fix": "Render visible by default and only arm the hidden state once JS is known to be running: have Reveal emit `data-reveal=\"pending|shown\"` instead of inline styles, move the hidden style to CSS scoped under a class set by a one-line inline script in <head> (or, minimally, add `<noscript><style>[data-reveal]{opacity:1!important;transform:none!important;filter:none!important}</style></noscript>` in layout.tsx). Drop `filter` from the transition and keep opacity + transform, which stay on the compositor."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/gl/SingleAgentStage.tsx",
+    "line": 74,
+    "title": "getBoundingClientRect inside useFrame for as long as a department door is hovered or focused",
+    "scenario": "While `gazeTarget` is set (pointer over a door, or a door holding keyboard focus, which persists while scrolling) every frame calls gl.domElement.getBoundingClientRect() inside the GSAP tick, after Lenis, ScrollStory.write() and AnimatedNumber textContent writes have dirtied style/layout in the same tick. That forces a synchronous style + layout flush of the ~600-element HUD mid-tick on every frame. It is also subtly wrong: gazeTarget is a client-space snapshot taken at pointerenter, so comparing it with a fresh canvas rect makes the gaze drift as the page scrolls under a focused door. The per-frame `DEPARTMENTS.forEach` closure and the object allocated by setGaze are negligible by comparison.",
+    "fix": "Snapshot the canvas centre once per target instead of per frame: keep a ref to the last `gazeTarget` object and only call getBoundingClientRect when its identity changes (setGazeTarget creates a new object per hover), reusing the cached cx/cy in later frames. Both snapshots then age together, which also fixes the drift."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/gl/stage/GLStage.tsx",
+    "line": 107,
+    "title": "DPR pixel budget is computed once at mount and never re-evaluated on resize",
+    "scenario": "`setDpr(dprFor(tier, el))` runs in an effect keyed only on `tier`. R3F keeps that DPR when the container resizes, so the 6 MP budget is only honoured for the size the canvas had when it mounted. Mount the Network stage in a 1280x720 window on a 2x display (DPR 2, 3.7 MP), then maximise to 2560x1440: the full-bleed canvas reallocates at 14.7 MP with MSAA and stays there because the stage never unmounts. Moving the window to a monitor with a different devicePixelRatio has the same effect. (The plan says 8 MP, the code says 6e6; harmless, but the comment and doc disagree.)",
+    "fix": "Recompute on size change: observe `host.current` with a ResizeObserver (debounced to match the 200 ms canvas resize debounce) and call `setDpr(dprFor(tier, el))` from it, alongside the existing IntersectionObserver."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hud/useHudScript.ts",
+    "line": 91,
+    "title": "HUD heartbeat keeps dispatching while the tab is hidden",
+    "scenario": "The 2.6 s setInterval is gated on on-screen/paused/reduced/phase but not on document visibility. In a background tab with the hero in view, the reducer keeps firing, re-rendering the whole hero Scene and BusinessHud and queuing AnimatedNumber tweens that cannot advance (the GSAP ticker is rAF-driven); with lagSmoothing(0) they all snap on return and the display has silently advanced a whole scripted day. The GL Driver already checks document.hidden; this timer is the one ambient loop that does not.",
+    "fix": "Skip ticks while hidden: `window.setInterval(() => { if (!document.hidden) dispatch({ type: \"tick\" }); }, 2600)`, or include a visibilitychange-driven flag in `live`."
+   },
+   {
+    "severity": "low",
+    "confidence": "possible",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/globals.css",
+    "line": 330,
+    "title": "`.gl-feather` applies a two-layer CSS mask to a live WebGL canvas",
+    "scenario": "ScalingAgents.tsx:77 puts `gl-feather` (two intersected gradient mask-images) on the ScalingStage host. A mask on an element whose content changes every frame forces the canvas through an offscreen surface plus a mask pass on every frame it renders, the same class of cost the plan bans for backdrop-filter over live canvases. The canvas is modest (roughly 900x400 CSS px at DPR 2), so this is a per-frame tax rather than a stall, but it lands on the lite tier too, and the Network scene already solves the same problem more cheaply.",
+    "fix": "Feather with overlay gradients instead of a mask, as network.module.css does with .fadeTop/.fadeBottom: three absolutely positioned `pointer-events-none` divs (left, right, bottom) fading from var(--void) to transparent above the canvas. The page behind is uniform void, so the result is the same without the offscreen pass."
+   }
+  ],
+  "summary": "Read-only review of rendering performance and loading at /Users/joelhaymour/Projects/one-spot; nothing was edited, built or run. I verified findings against the source and the installed library code (three 0.186, @react-three/fiber 9.7, react-use-measure 2.1.7) and the existing .next output, but not in a browser.\n\n**Rules the code does obey**\n- three.js is only in the lazy 934 KB chunk; none of the 13 first-load scripts referenced by index.html contain it, and nothing outside `src/gl/**` imports three or fiber.\n- The H1 is in the server HTML with no opacity gating, so LCP is fine.\n- Scroll-linked DOM code writes transforms only and makes no layout reads per scroll frame.\n- `AgentRig.update`, the network choreography and both bead systems allocate essentially nothing per frame.\n- The HUD script, queue simulation and the SVG ambient loops are gated on visibility, paused and reduced-motion.\n- The R3F camera is not recreated on re-render.\n\n**The main problems are in the WebGL lifecycle**\n1. `GLStage`'s Driver starts calling `advance()` as soon as the canvas is on screen, while `compileAsync` is still pending. three's render path then blocks synchronously on program linking, so the hero and department agents stall the main thread right after first paint. Lenis is on the same ticker, so the page cannot scroll during the stall.\n2. R3F sizes the canvas from a transform-inclusive bounding rect because `offsetSize` is not set. Any measurement taken while the hero agent is scaled to its docked pose (about 0.4x) leaves a mis-sized, off-centre CEO canvas. This happens on return from a department, on `/#business`, and on a window resize while docked. I traced this through the library source but have not seen it rendered.\n3. `AgentSlot` has no viewport gating. The Loop section's agent, more than five viewports down, creates a second WebGL context and bakes its environment map at page load, 200 ms before the hero's.\n4. Hero, Loop, Network and Scaling never unmount, so four to five contexts and their MSAA buffers stay alive, and each re-bakes its environment map synchronously.\n5. \"Pause motion\" is ignored by single-agent stages, and no stage stops rendering while paused.\n\n**Secondary**\n- The grain overlay's `mix-blend-mode` has no visual effect, because the fixed layer isolates it against a transparent backdrop, but it still forces extra full-screen passes every frame.\n- `Reveal` server-renders 33 copy blocks at `opacity:0` with `blur(6px)` and has no no-JS fallback.\n- `getBoundingClientRect` runs per frame in `useFrame` while a department door is hovered or focused.\n- DPR is computed once at mount and never re-evaluated on resize.\n- The HUD interval keeps firing in hidden tabs.\n- A CSS mask sits over the live Scaling canvas.\n\nKey files: /Users/joelhaymour/Projects/one-spot/src/gl/stage/GLStage.tsx, /Users/joelhaymour/Projects/one-spot/src/gl/SingleAgentStage.tsx, /Users/joelhaymour/Projects/one-spot/src/components/agent/AgentSlot.tsx, /Users/joelhaymour/Projects/one-spot/src/components/network/NetworkStory.tsx, /Users/joelhaymour/Projects/one-spot/src/components/scaling/ScalingSection.tsx, /Users/joelhaymour/Projects/one-spot/src/app/globals.css, /Users/joelhaymour/Projects/one-spot/src/components/ui/Reveal.tsx, /Users/joelhaymour/Projects/one-spot/src/components/hud/useHudScript.ts."
+ },
+ {
+  "lens": "a11y-responsive",
+  "findings": [
+   {
+    "severity": "high",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/loop/LoopSection.tsx",
+    "line": 157,
+    "title": "Loop scene overflows its 100svh sticky stage on phones: the five beats are clipped and never visible",
+    "scenario": "Below md the stage is one column: agent (24svh, line 163) + MiniConsole + Beats, inside ScrollStory's `sticky h-[100svh] overflow-clip` frame with 76px top and bottom padding. Nothing has a height budget (grid rows are auto/auto/1fr, and a 1fr track cannot shrink below its content). Measured from the markup at 390px wide: padding 152 + agent ~159 + console ~415-450 (header 36, 4 rows ~143, reasoning ~74, actions ~103-139, report ~57) + beats ~344 (5 x 62 + open line) + gaps 32 = ~1100px against ~664-740px of svh. On an iPhone the console's 'Report received' row is cut and the whole Observes/Thinks/Acts/Learns/Reports list (the scene's copy and its step buttons) sits below the clip edge. Because the stage is sticky for the entire story it can never be scrolled into view. Same at iPad mini portrait (744px is still max-md). Every other scene (Scaling, Process, Before/After, department stage) has an explicit svh budget; this one does not.",
+    "fix": "Smallest: take the story out of sticky mode below md exactly as the hero does: pass `className=\"max-md:!h-auto\"` and `stageClassName=\"max-md:!static max-md:!h-auto max-md:!overflow-visible\"` to this ScrollStory and change the Stage's `h-full` to `md:h-full` (ScrollTrigger top-top/bottom-bottom still advances `step` while the block scrolls past). Better: budget it like ScalingCaptions (one grid cell showing only the active beat below md, agent ~14svh, console rows compacted) so agent + console + one beat fit in 100svh - 152px."
+   },
+   {
+    "severity": "high",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/HeroBusiness.tsx",
+    "line": 163,
+    "title": "Hero sub copy is drawn over the live display at the most common laptop viewports (1366x650, 1536x730, 1280x640)",
+    "scenario": "The words wrapper is capped at `max-w-[36rem]` (576px). Measured from the built Geist file, 'Your whole business.' is ~9.1em wide with the -0.042em tracking, so from ~1130px viewport width up (font 5.6vw > 63px) the first headline line wraps and the H1 becomes three lines. The block is sized from vw while the display's landing position is sized from svh (`.hero-display { top: 60svh }`, globals.css:318). Computed text-bottom vs display-top: 1366x650 -> paragraph 389-441px, display top 390px (whole 2-line paragraph over the chassis and status bar); 1536x730 -> 423-510 vs 438 (72px, 2.5 of 3 lines); 1280x640 -> 39px; 1600x760 -> 58px; 1440x780 -> 7px. Horizontally the right ~220-240px of every line lies over the display (text x 55-535, display x 287-1079 at 1366). Text is z-10 over the z-0 display, so the H1's supporting sentence prints across the HUD's status bar text: unreadable first impression on 1366x768 and 1536x864 laptops. Between 768 and 1100px wide the headline stays two lines and clears both the display and the agent ring (checked 768x1024, 900x600, 1024x768, 1100x700).",
+    "fix": "Keep the headline at two lines from md up: add `md:whitespace-nowrap` to the headline line spans (line 168) and lift the wrapper cap (`md:max-w-none`; the paragraph already has its own max-w-[30rem]). With two lines the paragraph ends at 366/427/353px for the three viewports above, clear of the display, and the 765px line still stops short of the agent ring (ring left edge 984px at 1536). Optionally make the size height-aware as a guard: `font-size: clamp(2.5rem, min(5.6vw, 11svh), 5.25rem)`."
+   },
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/gl/SingleAgentStage.tsx",
+    "line": 69,
+    "title": "Pause motion does not stop the WebGL agents: hero CEO Agent, Loop agent and every department agent keep moving",
+    "scenario": "`paused` is read in src/gl only by NetworkStage and ScalingStage. SingleAgentStage's useFrame always calls `rig.update`, and GLStage's Driver (stage/GLStage.tsx:71-80) advances every tick unless `document.hidden`. In rig.update the idle mood wanders the Spot to a new random target every 1-3 s (rig.ts:440-443, 585), yaws the block after it, drifts (521), bobs (533), precesses the ring +/-25deg (537-538) and breathes the light (476); 'think' spins the ring 40deg/s indefinitely (540); 'act' snaps the Spot between items. A visitor presses Pause motion on the home page: the HUD script and CSS loops stop, but the 520px CEO Agent beside the headline keeps surveying forever; on a department page parked on a Thinks step the ring keeps dialling. README promises 'A Pause motion control stops all ambient animation' and the control exists for WCAG 2.2.2 (Level A). ScalingStage is only partly covered too: setCalm maps act->idle, and idle still wanders.",
+    "fix": "Mirror NetworkCast.still in the single-agent path: read `paused` in AgentObject, and when it is true give the springs a short settle window (~1.5 s, re-armed whenever mood/load/learnCount/pulseCount change) and then skip `rig.update` so the last frame is held. Cleaner: add `AgentRig.setStill(true)` that zeroes the wander/drift/breathe/precess/spin terms, and call it from SingleAgentStage and from ScalingScene.setCalm."
+   },
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/globals.css",
+    "line": 339,
+    "title": "Pause rule freezes `.rise-in` entrances at opacity 0: contact-form confirmation and the HUD's recommended action become invisible",
+    "scenario": "`html[data-paused=\"true\"] * { animation-play-state: paused !important }` also pauses finite entrance animations. `.rise-in` (globals.css:307) is `rise-in 600ms both` starting from opacity 0, so an element that mounts while paused is held on its first keyframe for good. (1) components/cta/ContactForm.tsx:183: a visitor who pressed Pause motion (the choice persists in sessionStorage for the visit) submits the form; the success block mounts with `rise-in` and stays at opacity 0. They see an empty 24rem panel with only the small 'Received' label; focus is moved to an invisible heading. (2) components/hud/BusinessHud.tsx:269: the recommendation's action line has `rise-in` with a 1.6 s delay. On any reload with pause persisted, MotionToggle sets data-paused right after hydration, i.e. during that delay, so the backwards-filled opacity 0 is frozen and the line 'what the CEO Agent says to do' never appears; clicking another recommendation dot while paused remounts it invisible as well. The codebase already knows this trap (WorkSurface.tsx comment: the pause switch 'freezes CSS animations at their first frame, which for an entrance would mean an invisible card').",
+    "fix": "Exempt one-shot entrances from the pause rule so they resolve to their natural state: add after the pause rule `html[data-paused=\"true\"] .rise-in { animation: none !important; }` (or restrict the pause rule to the infinite loops only: .spot-breathe, the ScanLine child, .sweepOn)."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hud/BusinessHud.tsx",
+    "line": 338,
+    "title": "Keyboard focus lands on department doors that are below the fold and under the hint gradient while the hero is in its landing pose",
+    "scenario": "From md up `interactive={desktop}` (HeroBusiness.tsx:200) puts all 7 doors (tabIndex 0, line 338) and the 3 recommendation dots (line 291) in the tab order regardless of scroll progress. At scroll 0 the display's top edge is at 60svh tilted 15deg; the doors start at virtual y=398 of 760, which computes to ~0.99 x viewport height at every size (1440x780: first row y 768-889; 1920x950: from 945), and the dots (y~733 of 780) sit under the z-30 hint overlay (bottom 22svh, void gradient ~0.9 alpha there). After the nav, the next ten Tab stops are therefore invisible. The browser's focus scroll moves the window ~100-250px, but the stage is sticky and that scroll is only p~0.07 -> eased t~0.008, so the display rises ~2px and the focused door stays off-screen (WCAG 2.4.7 / 2.4.11). Pressing Enter then launches the dive transition from an off-screen rectangle. Nothing in the repo reacts to focus inside the display (no focus handler calls goTo).",
+    "fix": "In Scene, take `goTo` from useStory() and add `onFocusCapture={() => { if (progress.current < 0.56) goTo(1); }}` on the display wrapper so keyboard focus brings the display to the explore pose (goTo(1) lands at p~0.68). Alternatively keep doors and dots at tabIndex -1 until progress >= ~0.5."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/scaling/ScalingCaptions.tsx",
+    "line": 41,
+    "title": "Story copy removed from the accessibility tree on phones/tablets: Scaling beats 2-5 (`max-md:invisible`) and Process steps (`visibility:hidden`)",
+    "scenario": "Below md every inactive Scaling beat `<li>` gets `max-md:invisible`, which removes its title, body and its goTo button from the accessibility tree and tab order; there is no other step control on phones. Inside a sticky stage everything is already 'in view', so a VoiceOver/TalkBack swipe never scrolls the page: the user hears beat 1 ('One agent. A steady day.'), the work-surface numbers, then jumps to the next section. Beats 2-5, including the scene's point ('It says so', 'Specialists arrive', 'The work splits by skill'), are unreachable. Same pattern in components/process/process.module.css:14-23 below 1024px: the five inactive 'How I work' steps are `visibility:hidden`; their titles survive only as aria-labels on the 32px rail buttons, their bodies (the service description) are never read, and pressing a rail button announces nothing. This contradicts the rule the department Caption documents and follows (all steps stay in the tree, inactive ones are only transparent).",
+    "fix": "Use the Caption.tsx pattern in both places: replace `invisible` / `visibility:hidden` with opacity 0 + `pointer-events:none` so the text stays exposed, and because those items contain buttons, give the inactive ones `tabIndex={-1}` in the compact layout (via useMediaQuery) so focus cannot land on a transparent control. Add the same sr-only `aria-live=\"polite\"` 'Step n of m. title' line Caption uses so rail presses are announced."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/loop/LoopSection.tsx",
+    "line": 49,
+    "title": "Loop beat buttons use --text-3 (2.55:1) for real, interactive text",
+    "scenario": "Four of the five beat labels ('Thinks.', 'Acts.', 'Learns.', 'Reports.') are always inactive and render in `text-[var(--text-3)]` = #4a515c on #040506, which computes to 2.55:1. They are enabled buttons, not disabled ones, at 20-28px medium weight, so WCAG 1.4.3 requires at least 3:1 (4.5:1 for the 11px numerals on line 47, same colour). Hover only lifts them to --text-2. Low-vision visitors cannot read the section's five verbs until each becomes active. The sibling scene already fixed this ('Inactive beats stay readable text (4.5:1), not decoration', ScalingCaptions.tsx:62).",
+    "fix": "Use `text-[var(--text-2)]` (5.26:1) for inactive labels and numerals with `group-hover:text-[var(--text-1)]`, matching ScalingCaptions and ProcessSection."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/motion/ScrollStory.tsx",
+    "line": 147,
+    "title": "ScrollStory.goTo always smooth-scrolls, including for reduced-motion visitors",
+    "scenario": "Reduced motion means tier 'static', so Lenis is never created and goTo takes the `window.scrollTo({ top: y, behavior: \"smooth\" })` branch. An explicit `behavior: \"smooth\"` overrides the CSS `scroll-behavior: auto !important` in the reduced-motion block (that property only governs behavior 'auto'). Every step control runs through here: department Previous/Next and the beat rail, Loop beats, relay buttons, Process rail, Scaling beats, Before/After. With Reduce Motion on (notably Safari on macOS/iOS), pressing 'Reports' from step 1 glides the page through 3-4 viewport heights of sticky scenes. chrome/anchor.tsx:33-36 already handles exactly this case (`reduce -> immediate / behavior: \"instant\"`), so the intent is clear; goTo was missed.",
+    "fix": "In goTo: `const reduce = window.matchMedia(\"(prefers-reduced-motion: reduce)\").matches;` then `lenis ? lenis.scrollTo(y, reduce ? { immediate: true, force: true } : { duration: 1.1 }) : window.scrollTo({ top: y, behavior: reduce ? \"instant\" : \"smooth\" })`."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/HeroBusiness.tsx",
+    "line": 86,
+    "title": "Hero camera move is still scrubbed for reduced-motion visitors",
+    "scenario": "`write(p)` runs on every scroll frame whenever `desktop` is true and never consults prefers-reduced-motion. A visitor with Reduce Motion scrolling the first two screens still gets the full journey tied to the wheel: the display un-tilts from rotateX(15deg) while translating ~0.27-0.4 viewport heights and scaling 1.05->1, the agent shrinks from 1 to ~0.35 and slides ~23vw, the words slide up and fade. The plan (section 15) and globals.css ('keep every state, drop every journey') promise static-tier visitors final states; every other scene snaps under `reduced`, the hero does not. Large scroll-linked zoom/tilt is the classic vestibular trigger the setting exists for.",
+    "fix": "Read useReducedMotion() in Scene and quantise instead of scrubbing: `const t = reduce ? (p > 0.28 ? 1 : 0) : easeInOutCubic(clamp(p / 0.56))`, and likewise snap `out` and `inn` to 0/1, so the hero has two still poses that swap."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/department/Caption.tsx",
+    "line": 26,
+    "title": "Touch targets under 40px on phone layouts (story Prev/Next 32px, 'Skip sequence' 11px tall, Pause 36px)",
+    "scenario": "On phones the department film is driven by the Caption's Previous/Next buttons, `h-8 w-8` (32x32) with a 6px gap: easy to hit the wrong one one-handed. DepartmentIntro.tsx:9-10 and :78: 'Skip sequence' and the breadcrumb 'CEO Agent' link use `t-label` (11px, line-height 1) as bare inline links, so the hit area is ~11px tall; this is the only way to bypass ~8 screens of sticky scroll. chrome/MotionToggle.tsx:51 is `h-9 max-lg:w-9` (36x36) and is the WCAG 2.2.2 control; process/ProcessSection.tsx:78 rail buttons are `h-8` with a 1px visible line; Nav.tsx:289 'Map my company' is forced to h-9 (36px).",
+    "fix": "Give them 40-44px boxes without changing the look: StepButton `h-10 w-10` (or keep the 32px circle inside a 44px hit area with a pseudo-element), QUIET_LINK `inline-flex min-h-10 items-center`, MotionToggle `h-10 max-lg:w-10`, Process rail `h-10`, nav CTA `h-10`."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/scaling/WorkSurface.tsx",
+    "line": 81,
+    "title": "Real UI text at 8.5-9.5 CSS px on phones, outside any scaled display",
+    "scenario": "These are native-size DOM, not VirtualDisplay content: queue-card lane labels `!text-[8.5px]` (WorkSurface.tsx:81) and metric labels `!text-[9px]` (:90) in --text-2; hud/MobileBusiness.tsx:51 metric label `!text-[9px]`, the only thing telling a phone visitor what '$38.20' or '94%' means in the door list; scaling/ScalingAgents.tsx:109 agent name 9px, and the agent's own sentence (the scene's key line) at 10.5px (:111); loop/LoopSection.tsx:104/126/143 labels 9.5px and :128 A-D at 9px; ui/Panel.tsx:80 StatusChip 9.5px wherever it is used natively (MobileBusiness, Loop, WorkSurface). Uppercase mono at 9px in #7a828e on a 360px phone is below comfortable legibility, and iOS text-size-adjust is locked to 100% in globals.css.",
+    "fix": "Floor native (non-VirtualDisplay) labels at 10-11px: drop the `!text-[8.5px]` / `!text-[9px]` / `!text-[9.5px]` overrides on max-md (t-label is already 11px), and raise the signal sentence to >= 12px on phones; keep the sub-10px sizes only inside the 1280x760 virtual canvases."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/layout.tsx",
+    "line": 42,
+    "title": "Pause motion is the last element in the tab order of every page",
+    "scenario": "`<MotionToggle />` is rendered after `<Footer />`, so although it is visually fixed bottom-right, a keyboard or switch user can only reach it by tabbing through the whole document: nav, 7 doors, 3 dots, 5 loop beats, 7 department cards, relay/scaling/process/before-after controls, the form and ~12 footer links (60+ stops). Each focus scroll drags them through every animated scene they were trying to stop. The visitors who most need the 2.2.2 mechanism get it last.",
+    "fix": "Move `<MotionToggle />` to directly after `<Nav />` in layout.tsx (position: fixed means the visual placement does not change), so it follows the skip link and the header in focus order."
+   }
+  ],
+  "summary": "This was a read-only review through the accessibility and responsive lens. I did not run a browser, dev server or build, so every layout claim is computed from the code rather than seen. All 12 findings come from reading the code. The hero geometry was computed from `measure()` and the `.hero-display` / `.hero-agent` CSS. The headline width came from advance widths in the built Geist woff2 in `.next/static/media`. Contrast used the WCAG formula.\n\n**High (4)**\n- **Loop scene on phones:** the scene has no height budget. About 1,100px of content sits in a clipped 100svh sticky stage, so the five-beat list and its step buttons are never visible (`src/components/loop/LoopSection.tsx:157`).\n- **Hero copy over the display:** the sub paragraph prints across the live display at 1366x650, 1536x730 and 1280x640. The 576px wrapper cap forces a three-line H1 above about 1,130px wide, while the display sits at 60svh (`src/components/hero/HeroBusiness.tsx:163`, `src/app/globals.css:318`).\n- **Pause motion and WebGL agents:** the control never reaches the single-agent canvases, so the hero, Loop and department agents keep wandering, precessing and spinning (`src/gl/SingleAgentStage.tsx:69`, `src/gl/stage/GLStage.tsx:71`).\n- **Pause rule and `.rise-in`:** the global pause rule freezes `.rise-in` entrances at opacity 0. The contact-form confirmation and the HUD's recommended action are invisible for paused visitors (`src/app/globals.css:339`, `src/components/cta/ContactForm.tsx:183`, `src/components/hud/BusinessHud.tsx:269`).\n\n**Medium (4)**\n- **Keyboard focus in the hero:** the display's doors and recommendation dots are tabbable at the landing pose. There they sit below the fold and under the hint gradient (`src/components/hud/BusinessHud.tsx:338`, `src/components/hero/HeroBusiness.tsx:200`).\n- **Story copy hidden from screen readers:** Scaling beats 2-5 on phones and the inactive Process steps below 1024px are removed from the accessibility tree by `visibility:hidden` (`src/components/scaling/ScalingCaptions.tsx:41`, `src/components/process/process.module.css:14`).\n- **Contrast:** inactive Loop beat labels use `--text-3`, which is 2.55:1 on the void background. They are real, enabled button text (`src/components/loop/LoopSection.tsx:49`).\n- **Reduced motion and step buttons:** `ScrollStory.goTo` always passes `behavior: \"smooth\"`, even for reduced-motion visitors. `src/components/chrome/anchor.tsx:33` already handles this case correctly (`src/components/motion/ScrollStory.tsx:147`).\n\n**Low (4)**\n- **Hero camera move:** it is still scrubbed on scroll under reduced motion, where every other scene snaps (`src/components/hero/HeroBusiness.tsx:86`).\n- **Tap targets on phones:** story Prev/Next are 32px, \"Skip sequence\" is about 11px tall, and the Pause control is 36px (`src/components/department/Caption.tsx:26`).\n- **Small native text on phones:** 8.5\u20139.5px labels outside any scaled display (`src/components/scaling/WorkSurface.tsx:81`, `src/components/hud/MobileBusiness.tsx:51`).\n- **Pause control order:** `MotionToggle` is the last element in the tab order of every page (`src/app/layout.tsx:42`).\n\n**Checked and found fine**\n- Inert and tabIndex handling of the hero display below 768px, and the duplicate door links in `MobileBusiness`, which are `display:none` from md up.\n- Nav menu visibility, Escape handling and the keyboard-inside pin.\n- The skip link.\n- The activity list is `aria-live=\"off\"`; the Caption step announcer and the form error region are the only live regions.\n- The canvases are `aria-hidden` and have DOM equivalents.\n- The HUD script, the Tools and Company map loops, the queue simulation and the closing agent mark all respect reduced motion and the paused flag.\n- `overflow:clip` on sticky stages, so focus cannot scroll them.\n- No vh units anywhere; svh is used throughout.\n- Hero headline against the CEO agent between 768 and 1100px wide: no overlap at 768x1024, 900x600, 1024x768 or 1100x700. The closest case is the lead paragraph at exactly 768px wide, where a full-width line can graze the agent body by at most 28px.\n\n**Outside this lens:** on phones, \"Back to The Business\" prevents the default `/#business` navigation and calls `router.push(\"/\")` with `homeScrollY` null (the doors in `MobileBusiness` are plain links). The visitor lands at the top of the home page instead of the door list (`src/components/department/useLeave.ts`, `src/components/motion/Transition.tsx:71-90`)."
+ },
+ {
+  "lens": "spec-seo",
+  "findings": [
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/content/departments.ts",
+    "line": 219,
+    "title": "The word \"HUD\" ships in visitor-facing captions on three department pages",
+    "scenario": "CREATIVE_PLAN section 5 and the copy deck both say visitor-facing copy never says \"HUD\" (the visitor only ever sees \"The Business\"). Three story bodies break it: line 219 (Marketing) \"One line on your HUD.\", line 299 (Sales) \"Already on your HUD.\", line 683 (Administration) \"Your to-do list on the HUD is already sorted.\" Caption.tsx renders `s.body` as the step caption, and the prerendered HTML confirms it: .next/server/app/departments/{marketing,sales,administration}.html each contain the string in a <p class=\"t-body\">. A visitor reaches the closing 'report' beat of the shift and reads an internal term that the site never introduced; it is also indexed.",
+    "fix": "Replace the three strings with the visitor's name for the display, e.g. \"One line on The Business.\", \"Already on The Business.\", \"Your to-do list on The Business is already sorted.\" Also rename the doc comments at departments.ts:89/109 if you want grep for HUD to stay clean."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/departments/[slug]/page.tsx",
+    "line": 29,
+    "title": "All seven department pages lose og:image and twitter:image",
+    "scenario": "generateMetadata returns its own `openGraph` object without `images`. Next only merges the file-based opengraph-image into the segment that owns the file (root), so the page-level openGraph replaces it wholesale. Verified in the build output: .next/server/app/index.html has og:image/twitter:image, but .next/server/app/departments/marketing.html has og:title/og:description, `twitter:card=summary_large_image`, and no og:image or twitter:image at all. Sharing /departments/sales in Slack, iMessage, LinkedIn or X (the plan calls these routes 'shareable') produces a bare text card with no picture.",
+    "fix": "Add `images: [{ url: \"/opengraph-image\", width: 1200, height: 630, alt: `${department.agentName} \u2014 ${SITE.name}` }]` to the page's openGraph and `twitter: { card: \"summary_large_image\", images: [\"/opengraph-image\"] }`, or (better) add src/app/departments/[slug]/opengraph-image.tsx that renders the agent name in the department accent so the file-based merge applies to that segment."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hud/BusinessHud.tsx",
+    "line": 154,
+    "title": "Live revenue ticks make the arc read 59-60% while the copy beside it still says 58% and 92%",
+    "scenario": "The arc is computed from live state (`pct = state.revenue / REVENUE.target`, rendered with Math.round at line 161), but the sentence under the figure is hard-coded (\"3 deals worth $410,000 ... That is 92%.\") and recommendation 2 in hud.ts:90 is static (\"Revenue is at 58% of target ... brings the month to 92%\"). HUD_SCRIPT adds 8,400 at event 1, 12,650 at event 7 and 5,200 at event 14. Computed: 5.2 s after load the arc shows 59% (704,400) and the true with-pending figure is 93%; from 20.8 s it shows 60% and 94%. The 'revenue' recommendation is typed at about 18 s (first `recommend` event), so the CEO Agent says \"58%\" directly beside an arc reading 59%, then 60% one tick later. The plan promises 'one fictional company with internally consistent numbers'.",
+    "fix": "Derive both figures from state: in BusinessHud compute `Math.round(((state.revenue + REVENUE.pending) / REVENUE.target) * 100)` for the 'That is N%' line and format REVENUE.pending/REVENUE.target instead of the literals at lines 149/154; make the revenue recommendation's observation a function of revenue. Minimal alternative: cut the three `add` values in HUD_SCRIPT so a full lap totals under $4,000 (keeps 58% and 92% true through the lap)."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/content/departments.ts",
+    "line": 478,
+    "title": "Capacity is 88% and 94% on the same display, both \"+9 pts\"",
+    "scenario": "On The Business the key-metric tile reads \"Capacity booked 88% +9 pts\" (hud.ts:38), the alert reads \"Capacity at 88% and rising\" (hud.ts:138), the default recommendation says \"88% booked\" (hud.ts:83) and the network relay has Operations report \"88% booked. 12 slots can open.\" (copy.ts:58, timeline.ts BOOKED = 0.88). Directly below the key metrics, the Operations door shows \"94% Capacity used +9 pts\" (departments.ts:478-479) and on hover \"Capacity at 94% \u00b7 1 bottleneck forming\" (line 484); the same chip is the Operations console header. On phones MobileBusiness puts the \"88% booked\" recommendation card immediately above an Operations row reading \"Capacity at 94%\" / \"94%\". Two 'Capacity at N%' claims with identical deltas, 6 points apart, in one frame. The Operations console data does compute to 94% for this week (244/260 h), so the two numbers measure different windows, but nothing on screen says so.",
+    "fix": "Pick one story. Either relabel the Operations tile so it is visibly a different measure (metricLabel \"This week's hours used\", hover \"This week at 94% \u00b7 1 bottleneck forming\", and a different delta), or set the tile to 88% with a spark ending at 88 and change report.detail (line 544) to match."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/api/contact/route.ts",
+    "line": 13,
+    "title": "Rate limiter keys on the client-controlled leftmost X-Forwarded-For, shares one \"unknown\" bucket, and prunes in O(n) per request",
+    "scenario": "clientKey() takes `x-forwarded-for.split(\",\")[0]`. Anywhere except a platform that overwrites the header (Vercel does; nginx `$proxy_add_x_forwarded_for`, most load balancers and bare `next start` do not), the leftmost value is whatever the caller sent, so `curl -H 'X-Forwarded-For: <random>'` gets a fresh 5-message budget per request and the limiter stops nothing. Each spoofed value also adds a Map entry; once `hits.size > 2000` the prune loop at lines 20-22 walks the entire map on every request and only removes fully expired keys, so a burst of spoofed keys turns each POST into an O(n) scan with unbounded memory for 10 minutes. Conversely, when neither header is present (direct `next start`, or a proxy that uses cf-connecting-ip / fly-client-ip), every visitor shares the key \"unknown\": the sixth genuine enquiry site-wide in 10 minutes gets a 429, and one script sending 5 requests every 10 minutes keeps the form closed for everyone.",
+    "fix": "Prefer a platform-set header (`x-vercel-forwarded-for`, `x-real-ip`, `cf-connecting-ip`) and otherwise take the right-most X-Forwarded-For hop (the one your own proxy appended), not the first. Hard-cap the map (evict oldest insertion when size exceeds N instead of scanning), and give the \"unknown\" key a separate, higher global ceiling rather than the per-visitor limit of 5."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/layout.tsx",
+    "line": 14,
+    "title": "Missing NEXT_PUBLIC_SITE_URL silently ships the placeholder domain into sitemap, robots and og:image",
+    "scenario": "layout.tsx:14, robots.ts:3 and sitemap.ts:4 each fall back to \"https://onespot.example\" with no warning, and .env.example even pre-fills that value. There is no .env.local in the repo and the current build output proves the effect: robots.txt says `Sitemap: https://onespot.example/sitemap.xml`, every <loc> in sitemap.xml is on onespot.example, and og:image is https://onespot.example/opengraph-image?... A production deploy that forgets the variable (it is a build-time NEXT_PUBLIC value, so setting it later needs a rebuild) publishes a sitemap Search Console rejects (URLs not on the submitting host) and social cards whose image points at a reserved TLD that never resolves. Separately, `??` does not cover an empty string: `NEXT_PUBLIC_SITE_URL=` makes `new URL(\"\")` throw at module load in the root layout (every route fails) while robots/sitemap emit relative URLs.",
+    "fix": "Move the base into one helper, e.g. src/lib/site.ts: `const raw = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)`; throw during a production build when it is empty, strip trailing slashes once, and import it from layout.tsx, robots.ts and sitemap.ts. Remove the placeholder value from .env.example (leave it blank with a comment)."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/layout.tsx",
+    "line": 13,
+    "title": "No canonical URL or og:url on any page",
+    "scenario": "Neither the root metadata nor the department generateMetadata sets `alternates.canonical` or `openGraph.url`; the built index.html and departments/*.html contain no <link rel=\"canonical\"> and no og:url. The homepage is the target of /#business, /#agents, /#contact links plus any campaign URLs (/?utm_source=...), and preview/alias hosts serve the same HTML, so each variant is a separate indexable URL with nothing consolidating them; scrapers such as Facebook also key share counts on og:url.",
+    "fix": "Add `alternates: { canonical: \"./\" }` to the root layout metadata (Next resolves \"./\" against the current pathname and metadataBase, verified in next/dist/lib/metadata/resolvers/resolve-url.js) and `url: \"./\"` inside both openGraph objects (layout.tsx:18 and departments/[slug]/page.tsx:29)."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/cta/ContactForm.tsx",
+    "line": 220,
+    "title": "Error message tells the visitor to \"email me directly\" when no address exists anywhere on the site",
+    "scenario": "CTA.error (copy.ts:123) is \"That didn't send. Please try again, or email me directly.\" The mailto link only renders when the optional NEXT_PUBLIC_CONTACT_EMAIL is set (.env.example ships it blank) and the Footer contains no email address. In exactly the situations the README designs for (503 because no delivery channel is configured, 502 because Resend rejected the send) the visitor is told to email an address they cannot find, and the enquiry is lost. The same string is shown for 429, where 'Please try again' immediately fails again; the Retry-After the server sends is ignored.",
+    "fix": "Split the copy: `error: \"That didn't send. Please try again.\"` plus `errorDirect: \"Or email me directly:\"` rendered only when DIRECT_EMAIL is set (or make NEXT_PUBLIC_CONTACT_EMAIL required in production). For status 429 show the server's message (\"Try again in a few minutes\") instead of the generic retry prompt."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/department/Caption.tsx",
+    "line": 74,
+    "title": "Department pages jump from h1 straight to h3, with the only h2 after them",
+    "scenario": "Heading outline extracted from the prerendered HTML of every department page: H1 \"Marketing Agent\", then ten H3 step titles (Caption.tsx:74), then H2 \"It tells the CEO Agent. The CEO Agent tells you.\" (DepartmentOutro), then the footer H2s. There is no h2 above the step h3s, so a screen-reader user navigating by heading level finds the whole shift nested under nothing and the report section apparently preceding its own sub-steps; axe flags this as heading-order, and the step titles (the page's main keyword-bearing copy) are demoted below the footer's \"Site\" heading in the outline. Homepage outline is fine (one h1, h2 per scene, h3 only under How I work).",
+    "fix": "Change the step title element in Caption.tsx from <h3> to <h2> (its size is set by class/style, so nothing moves), or add an sr-only <h2>A shift with the {agentName}</h2> at the top of the ScrollStory stage and keep the h3s."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/loop/LoopSection.tsx",
+    "line": 26,
+    "title": "Homepage loop miniature shows different Spring Promotion figures from the Marketing console it links to",
+    "scenario": "The loop section hard-codes its own campaign table: Spring Promotion at \"$52.80 +38%\" falling to \"$31.10 \u221241%\" (lines 26 and 92) alongside campaigns named Always-on search / Referral programme / Local awareness. The Marketing console data (screens/marketing/data.ts) tells the same story with the same campaign name but $58.10 (6,391 / 110) falling to $34.36, and a different roster (New Customer Offer, Local Search, Refer a Friend, Win-back Email). A visitor watches the miniature, clicks the Marketing Agent door directly beneath it, and sees the same campaign with a different cost per lead before and after. The data file's own header says its figures are meant to match the rest of the site.",
+    "fix": "Change the literals to \"$58.10\" (line 26) and \"$34.36\" (line 92) and rename the three other rows to campaigns that exist in marketing/data.ts with their CPLs ($35.00, $36.00, $24.26), or export a small `LOOP_CAMPAIGNS` from content and have both places read it."
+   },
+   {
+    "severity": "low",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/api/contact/route.ts",
+    "line": 110,
+    "title": "JSON content-type gate is a substring test, so cross-site pages can POST without a preflight",
+    "scenario": "The only cross-origin protection is `content-type ... .includes(\"application/json\")`. A header such as `Content-Type: text/plain; application/json` parses to the MIME essence text/plain, which is CORS-safelisted, so any third-party page can `fetch(\"https://<site>/api/contact\", { method: \"POST\", mode: \"no-cors\", headers: { \"Content-Type\": \"text/plain; application/json\" }, body: JSON.stringify({...}) })` (or sendBeacon with such a Blob) with no preflight, and the substring check passes. There are no cookies to abuse, but it lets a hostile page turn its own visitors into senders: each enquiry arrives from a different real IP, walking straight past the per-IP limiter, and lands in the owner's inbox via Resend.",
+    "fix": "Compare the essence exactly: `const type = (request.headers.get(\"content-type\") ?? \"\").split(\";\")[0].trim().toLowerCase(); if (type !== \"application/json\") return 415`. Additionally reject when `Sec-Fetch-Site` is \"cross-site\" or when an `Origin` header is present and does not equal the site origin."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/network/NetworkSection.tsx",
+    "line": 13,
+    "title": "Section numbering skips: the page shows 02, (none), 04, 05, 06",
+    "scenario": "Eyebrow indexes extracted from the built homepage: The Business has none, \"02 Agents at work\", Agent network has none, \"04 Autonomous scaling\", \"05 How I work\", \"06 Before / After\". LoopSection, ScalingSection, ProcessSection and BeforeAfterSection pass `index`, NetworkSection (line 13) and the two Business headings (HeroBusiness.tsx:187, MobileBusiness.tsx:19) do not. A visitor scrolling the film sees chapter 02 followed by an unnumbered chapter and then 04; 01 and 03 never appear.",
+    "fix": "Pass `index=\"03\"` to SectionHeading in NetworkSection.tsx:13 and `index=\"01\"` to the Eyebrow in HeroBusiness.tsx:187 and MobileBusiness.tsx:19 (or drop the indexes everywhere)."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/department/story.ts",
+    "line": 63,
+    "title": "Shared console clock contradicts the timestamps typed into the Sales, Knowledge and Finance panels",
+    "scenario": "ConsoleFrame and AgentLog stamp every step with logTime(i): 09:14, 09:19, 09:24, 09:26, 09:31... The panels carry their own literals. Sales, step 'follow-up': the bar reads \"Tue 21 \u00b7 09:24\" and the log line is \"09:24 Reply sent to Dana Whitfield. 2 min 40 s after enquiry\", while region B on the same display shows \"Dana \u00b7 08:44\", \"Replied 08:47\" (Conversation.tsx:27/81) and the CRM rows are stamped 08:47-08:52; the queue lists Dana as \"1 min\" ago at 09:14. Knowledge, step 'answers-agents': log stamped 09:26 says it served Sales and Service, while the two rows that appear in region D are stamped \"10:44\" (knowledge/data.ts:116-117), and an 'earlier' row is 09:31, later than the step-0 clock. Finance: the invoice is dated \"20 Oct 2026\" (finance/data.ts:52) but the bar says \"Tue 21\" and 21 Oct 2026 is a Wednesday (Tue 21 Oct is the 2025 calendar, which the Marketing week Mon 27 ... Fri 31 also follows). The camera pushes into exactly these regions, so the mismatch is legible.",
+    "fix": "Add an optional `time?: string` to StoryStep and have ConsoleFrame/AgentLog use `s.time ?? logTime(i)`; give the Sales steps 08:44-08:52 times and set knowledge SERVED_NOW to the step's time (09:26) with SERVED_EARLIER before 09:14. Drop the year from INVOICE.date (\"20 Oct\", matching the DOCS rows)."
+   }
+  ],
+  "summary": "I reviewed the tree read-only against docs/CREATIVE_PLAN.md, README.md and docs/panel/copy.md. I also read the existing prerendered output in .next/server/app (built 15:52; only globals.css, ScalingAgents.tsx and MotionToggle.tsx are newer) to confirm what actually ships in the HTML. There are 13 findings: 6 medium, 7 low, none high or critical.\n\n**Medium**\n- **\"HUD\" in visitor copy:** three department captions say \"HUD\" (Marketing, Sales, Administration). Both the plan and the copy deck ban the word, and it is in the server HTML.\n- **No share image on department pages:** all seven lose `og:image` and `twitter:image`, because the page-level `openGraph` object replaces the root file-based image. Confirmed in the built HTML.\n- **Revenue drifts from its own copy:** the live script moves the arc to 59% after 5 s and 60% after 21 s. The sentence under it and the CEO Agent's recommendation still say 58% and 92%.\n- **Two capacity figures in one frame:** the key metric, the alert, the recommendation and the network relay say 88%. The Operations door and its console header say 94%. Both carry \"+9 pts\".\n- **Contact rate limiter:** it keys on the first `X-Forwarded-For` value. That value is client-supplied anywhere except a platform that overwrites the header (Vercel does). When no header is present every visitor shares one \"unknown\" bucket of 5 messages per 10 minutes. The cleanup loop scans the whole map on every request once it passes 2,000 keys.\n- **Placeholder domain:** `layout.tsx`, `robots.ts` and `sitemap.ts` each fall back silently to `https://onespot.example`. The current build output already carries that host in robots.txt, sitemap.xml and `og:image`. An empty `NEXT_PUBLIC_SITE_URL` makes `new URL(\"\")` throw in the root layout.\n\n**Low**\n- No canonical link or `og:url` on any page.\n- The contact form's error message says \"email me directly\", but no address renders unless the optional `NEXT_PUBLIC_CONTACT_EMAIL` is set, and the footer has none.\n- The department page heading outline runs h1, then the step h3s, then the only h2.\n- The homepage loop shows Spring Promotion at $52.80 falling to $31.10. The Marketing console it links to shows $58.10 falling to $34.36, with a different campaign list.\n- The contact API's JSON check is a substring test, so a cross-site page can POST with no preflight using `text/plain; application/json`.\n- Section numbers on the homepage read 02, none, 04, 05, 06.\n- The shared console clock (09:14 onward) contradicts timestamps typed into the panels:\n  - Sales shows \"Replied 08:47\" while the log stamps that step 09:24.\n  - Knowledge stamps the served rows 10:44 while the log says 09:26.\n  - Finance dates an invoice 2026, but 21 Oct 2026 is a Wednesday, not \"Tue 21\".\n\n**Minor things noticed (not filed as findings)**\n- `layout.tsx:15-17` re-types `SITE.title` and `SITE.description` instead of importing them, so editing `copy.ts` changes the manifest but not the title or meta description.\n- `BUSINESS.prompt` is unused while `BusinessHud.tsx:187` hard-codes \"Select one to step inside\".\n- The two pauses `afterHero` and `beforeAgents` sit back to back in `page.tsx:18-19`, because the hero and The Business merged. That is two static 92svh screens with no scene between them.\n- Only the first of the eight recommendations is in the server HTML. The README says every recommendation is.\n- The Knowledge story log says \"Service Agent\" where everything else says \"Customer Service Agent\" (`departments.ts:597`).\n\n**Checked and clean**\n- No exclamation marks, emoji, hype words or real brand names in visitor-facing strings.\n- No `backdrop-filter` anywhere.\n- Every step id used by `storyFlags` exists, and every story step has a visible effect.\n- `robots.ts` disallows `/lab` and `/api`, and `/lab` is noindex, nofollow.\n- The sitemap lists the home page and all seven department slugs on one base.\n- Exactly one h1 on the home page, the department pages and the 404.\n- The Open Graph image route is valid and prerendered. The manifest's `/icon.svg` resolves to `src/app/icon.svg`.\n- The contact route caps the body size, strips CR/LF from subject fields, uses the email only as `reply_to`, and the email pattern forbids whitespace. The honeypot returns a plain success, and no enquiry content is logged outside development.\n- The numbers I checked add up: 58% and 92% at rest, pipeline 48 deals at $4.82M, 9 + 61 + 76 = 146 emails, 309 + 3 = 312 answers, 128 jobs in each phase, and a 9.5-day median job."
+ }
+]

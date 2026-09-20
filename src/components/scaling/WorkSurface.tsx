@@ -78,7 +78,7 @@ const QueueCard = memo(function QueueCard({ card, col, index, count }: QueueCard
         }}
       >
         <span className="truncate text-[11px] leading-none tracking-[-0.005em] text-[var(--text-0)] md:text-[12px]">{card.text}</span>
-        <span className={cn("t-label !text-[8.5px] transition-colors duration-500", working && "text-[rgb(var(--accent-rgb))]")}>{LANES[card.lane]}</span>
+        <span className={cn("t-label !text-[10px] md:text-[8.5px] transition-colors duration-500", working && "text-[rgb(var(--accent-rgb))]")}>{LANES[card.lane]}</span>
       </div>
     </li>
   );
@@ -87,7 +87,7 @@ const QueueCard = memo(function QueueCard({ card, col, index, count }: QueueCard
 function Metric({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
   return (
     <div className={cn("flex min-w-0 flex-col gap-1.5 border-l border-[var(--line)] px-2.5 py-2.5 first:border-l-0 md:px-4 md:py-3", className)}>
-      <dt className="t-label !text-[9px] md:!text-[9.5px]">{label}</dt>
+      <dt className="t-label !text-[10px] md:text-[9px] md:!text-[10px] md:text-[9.5px]">{label}</dt>
       <dd className="t-num flex items-baseline gap-1.5 whitespace-nowrap font-mono text-[15px] leading-none text-[var(--text-0)] md:text-[19px]">{children}</dd>
     </div>
   );

@@ -77,6 +77,8 @@ export interface StoryStep {
   focus: RegionId;
   /** What the agent writes in its log during this step. */
   log: string;
+  /** Console clock for this step, when the console's own content pins the time. Defaults to a running clock. */
+  time?: string;
 }
 
 export interface DepartmentTile {
@@ -86,7 +88,7 @@ export interface DepartmentTile {
   deltaTone: "ok" | "warn" | "crit" | "neutral";
   spark: number[];
   status: "ok" | "warn";
-  /** Latest thing the agent did. Rotates in the HUD. */
+  /** Latest thing the agent did. Shown on the door in The Business. */
   activity: string[];
   /** Contextual line shown when the visitor points at the tile. */
   hover: string;
@@ -106,7 +108,7 @@ export interface Department {
   handles: string[];
   tile: DepartmentTile;
   story: StoryStep[];
-  /** The line that lands on the owner's HUD when the story ends. */
+  /** The line that lands on the owner's display when the story ends. */
   report: { headline: string; detail: string };
 }
 
@@ -216,7 +218,7 @@ export const DEPARTMENTS: Department[] = [
         id: "report",
         beat: "report",
         title: "It reports to the CEO Agent.",
-        body: "What changed, what it cost, what it earned. One line on your HUD.",
+        body: "What changed, what it cost, what it earned. One line on The Business.",
         focus: "E",
         log: "Report sent to CEO Agent.",
       },
@@ -247,6 +249,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "leads",
         beat: "observe",
+        time: "08:45",
         title: "New leads arrive.",
         body: "Website, referrals, calls, events. One queue, nothing lost in an inbox.",
         focus: "A",
@@ -255,6 +258,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "score",
         beat: "think",
+        time: "08:46",
         title: "It scores each one.",
         body: "Fit, intent, timing. Judged against the deals you have actually won.",
         focus: "A",
@@ -263,6 +267,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "follow-up",
         beat: "act",
+        time: "08:47",
         title: "It follows up in minutes.",
         body: "A personal reply, written from the lead's own words, sent while they still care.",
         focus: "B",
@@ -271,6 +276,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "crm",
         beat: "act",
+        time: "08:52",
         title: "It keeps the CRM honest.",
         body: "Every call, email and meeting is logged. Nobody updates fields on Friday afternoon.",
         focus: "C",
@@ -279,6 +285,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "proposal",
         beat: "act",
+        time: "08:58",
         title: "It writes the proposal.",
         body: "Scope, pricing, terms. Assembled from your templates, ready to review.",
         focus: "D",
@@ -287,6 +294,7 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "learns",
         beat: "learn",
+        time: "09:06",
         title: "It learns what closes.",
         body: "Referrals convert 2.4x better than paid leads. Fast replies double the response rate.",
         focus: "A",
@@ -295,8 +303,9 @@ export const DEPARTMENTS: Department[] = [
       {
         id: "report",
         beat: "report",
+        time: "09:08",
         title: "It reports to the CEO Agent.",
-        body: "Pipeline, forecast, deals at risk. Already on your HUD.",
+        body: "Pipeline, forecast, deals at risk. Already on The Business.",
         focus: "E",
         log: "Report sent to CEO Agent.",
       },
@@ -474,14 +483,14 @@ export const DEPARTMENTS: Department[] = [
     console: "Operations Console",
     handles: ["Workflows", "Scheduling", "Inventory", "Vendors", "Capacity"],
     tile: {
-      metricLabel: "Capacity used",
+      metricLabel: "Hours used this week",
       metricValue: "94%",
-      delta: "+9 pts",
+      delta: "+6 pts",
       deltaTone: "warn",
       spark: [71, 73, 72, 76, 78, 80, 79, 84, 86, 89, 92, 94],
       status: "warn",
       activity: ["Rescheduled Thursday to clear a conflict", "Drafted a reorder at the best vendor price", "Flagged a slow handoff in intake"],
-      hover: "Capacity at 94% · 1 bottleneck forming",
+      hover: "This week at 94% · 1 bottleneck forming",
     },
     story: [
       {
@@ -594,7 +603,7 @@ export const DEPARTMENTS: Department[] = [
         title: "It answers the other agents.",
         body: "Sales needs the pricing rule. Service needs the returns policy. Same source of truth.",
         focus: "D",
-        log: "Served pricing rule to Sales Agent. Returns policy to Service Agent.",
+        log: "Served pricing rule to Sales Agent. Returns policy to Customer Service Agent.",
       },
       {
         id: "gaps",
@@ -680,7 +689,7 @@ export const DEPARTMENTS: Department[] = [
         id: "report",
         beat: "report",
         title: "It reports to the CEO Agent.",
-        body: "Your to-do list on the HUD is already sorted.",
+        body: "Your to-do list on The Business is already sorted.",
         focus: "E",
         log: "Report sent to CEO Agent.",
       },

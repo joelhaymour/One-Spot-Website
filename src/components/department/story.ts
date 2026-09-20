@@ -64,3 +64,9 @@ export function logTime(index: number): string {
   const minutes = 9 * 60 + 14 + index * 4 + ((index * 7) % 3);
   return `${pad2(Math.floor(minutes / 60))}:${pad2(minutes % 60)}`;
 }
+
+/** The clock shown for a step: the step's own time when the console's content pins one, else the running clock. */
+export function stepTime(story: StoryStep[], index: number): string {
+  const i = Math.min(index, story.length - 1);
+  return story[i]?.time ?? logTime(index);
+}

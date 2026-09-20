@@ -6,7 +6,7 @@ import { Panel, PanelHeader } from "@/components/ui/Panel";
 import { TypedText } from "@/components/ui/TypedText";
 import { gsap, EASE } from "@/lib/gsap";
 import { cn } from "@/lib/cn";
-import { logTime } from "./story";
+import { stepTime } from "./story";
 
 interface AgentLogProps {
   story: StoryStep[];
@@ -71,7 +71,7 @@ export function AgentLog({ story, step, live }: AgentLogProps) {
             return (
               <li key={s.id} className="grid grid-cols-[36px_minmax(0,1fr)] gap-2.5 font-mono text-[10.5px] leading-[1.5]">
                 <span className={cn("t-num transition-colors duration-500", newest ? "text-[rgb(var(--accent-rgb))]" : "text-[var(--text-3)]")}>
-                  {logTime(i)}
+                  {stepTime(story, i)}
                 </span>
                 <span className={cn("transition-colors duration-500", newest ? "text-[var(--text-0)]" : "text-[var(--text-2)]")}>
                   {newest ? <TypedText text={s.log} active={live} speed={54} /> : s.log}

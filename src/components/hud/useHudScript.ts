@@ -88,7 +88,9 @@ export function useHudScript(running: boolean) {
 
   useEffect(() => {
     if (!live) return;
-    const id = window.setInterval(() => dispatch({ type: "tick" }), 2600);
+    const id = window.setInterval(() => {
+      if (!document.hidden) dispatch({ type: "tick" });
+    }, 2600);
     return () => window.clearInterval(id);
   }, [live]);
 

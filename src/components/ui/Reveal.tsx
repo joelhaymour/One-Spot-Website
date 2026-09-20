@@ -11,12 +11,16 @@ interface RevealProps {
   delay?: number;
   /** px of upward travel */
   y?: number;
-  once?: boolean;
   style?: CSSProperties;
 }
 
-/** Quiet entrance for editorial content: fade and a short rise, once, when it enters the viewport. */
-export function Reveal({ children, as = "div", className, delay = 0, y = 18, once = true, style }: RevealProps) {
+/**
+ * Quiet entrance for editorial copy: a fade and a short rise, once, when it enters the viewport.
+ * Progressive: the copy is visible in the server HTML, without JS, and if this chunk never loads.
+ * The hidden starting state only exists under html[data-motion="on"] (set by the boot script in the
+ * root layout), and is removed the moment the element is seen. See globals.css.
+ */
+export function Reveal({ children, as = "div", className, delay = 0, y = 18, style }: RevealProps) {
   // Polymorphic tag, typed as a div: every tag we pass accepts the same props.
   const Tag = as as "div";
   const ref = useRef<HTMLDivElement>(null);
@@ -29,26 +33,22 @@ export function Reveal({ children, as = "div", className, delay = 0, y = 18, onc
       ([entry]) => {
         if (entry.isIntersecting) {
           setShown(true);
-          if (once) io.disconnect();
-        } else if (!once) setShown(false);
+          io.disconnect();
+        }
       },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.1 },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [once]);
+  }, []);
 
   return (
     <Tag
       ref={ref}
-      className={cn("transition-[opacity,transform,filter] duration-[1100ms] ease-[var(--ease-out)]", className)}
-      style={{
-        opacity: shown ? 1 : 0,
-        transform: shown ? "none" : `translate3d(0, ${y}px, 0)`,
-        filter: shown ? "none" : "blur(6px)",
-        transitionDelay: `${delay}s`,
-        ...style,
-      }}
+      data-reveal=""
+      data-shown={shown ? "" : undefined}
+      className={cn(className)}
+      style={{ ["--reveal-delay" as string]: `${delay}s`, ["--reveal-y" as string]: `${y}px`, ...style }}
     >
       {children}
     </Tag>

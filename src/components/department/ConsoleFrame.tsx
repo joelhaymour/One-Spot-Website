@@ -8,7 +8,7 @@ import { StatusChip } from "@/components/ui/Panel";
 import { useExperience } from "@/state/experience";
 import { AgentLog } from "./AgentLog";
 import { Region } from "./contract";
-import { logTime } from "./story";
+import { stepTime } from "./story";
 
 interface ConsoleFrameProps {
   department: Department;
@@ -38,7 +38,7 @@ export function ConsoleFrame({ department, step, live, children }: ConsoleFrameP
         </div>
         <div className="flex items-center gap-3">
           <span className="t-label t-num">
-            {COMPANY.dayLabel} · {logTime(step)}
+            {COMPANY.dayLabel} · {stepTime(department.story, step)}
           </span>
           <StatusChip tone={department.tile.status}>{department.tile.hover}</StatusChip>
           <StatusChip tone="accent" pulse={live && !paused}>

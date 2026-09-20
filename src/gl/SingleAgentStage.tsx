@@ -52,10 +52,13 @@ function AgentObject({ agent, mood = "idle", load = 0, learnCount = 0, pulseCoun
 
   const learned = useRef(0);
   useEffect(() => {
+    // Forward: each new mark lands with a stroke. Backward (scrolling up): marks simply go out.
+    if (learnCount < learned.current) rig.setMarks(learnCount);
     while (learned.current < learnCount) {
       rig.learn();
       learned.current++;
     }
+    learned.current = learnCount;
   }, [rig, learnCount]);
 
   const pulsed = useRef(pulseCount);
@@ -66,16 +69,25 @@ function AgentObject({ agent, mood = "idle", load = 0, learnCount = 0, pulseCoun
     }
   }, [rig, pulseCount]);
 
+  // Layout is read once per new gaze target, never per frame.
+  const aimed = useRef<object | null>(null);
   useFrame(({ clock, camera }, delta) => {
     if (followHover) {
       // Discrete store reads only: no React render, no raycast, no pointer-rate work.
       const { gazeTarget, hoveredDept } = useExperience.getState();
       if (gazeTarget) {
-        const rect = gl.domElement.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height * 0.42;
-        rig.setGaze(clamp((gazeTarget.x - cx) / (window.innerWidth * 0.42), -1, 1), clamp(-(gazeTarget.y - cy) / (window.innerHeight * 0.55), -1, 1));
-        rig.setMood("observe");
+        if (aimed.current !== gazeTarget) {
+          aimed.current = gazeTarget;
+          const rect = gl.domElement.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height * 0.42;
+          rig.setGaze(clamp((gazeTarget.x - cx) / (window.innerWidth * 0.42), -1, 1), clamp(-(gazeTarget.y - cy) / (window.innerHeight * 0.55), -1, 1));
+          rig.setMood("observe");
+        }
+      } else if (aimed.current) {
+        aimed.current = null;
+        rig.setGaze(null);
+        rig.setMood(mood);
       } else {
         rig.setGaze(null);
         rig.setMood(mood);
@@ -90,12 +102,15 @@ function AgentObject({ agent, mood = "idle", load = 0, learnCount = 0, pulseCoun
 
 export default function SingleAgentStage(props: SingleAgentStageProps) {
   const isCeo = props.agent === "ceo";
+  // While motion is paused the stage sleeps; any change of state buys it a moment to settle into it.
+  const hovered = useExperience((s) => (props.followHover ? s.hoveredDept : null));
+  const wakeKey = `${props.mood}|${props.load}|${props.learnCount}|${props.pulseCount}|${hovered}`;
   // Frame the whole object with a little air. The CEO is taller and carries a wider ring.
   const camera = isCeo
     ? { position: [0, 2.35, 13.4] as [number, number, number], target: [0, 1.85, 0] as [number, number, number], fov: 24 }
     : { position: [0, 1.7, 9.6] as [number, number, number], target: [0, 1.3, 0] as [number, number, number], fov: 24 };
   return (
-    <GLStage camera={camera} tier={props.tier} className={props.className} onReady={props.onReady}>
+    <GLStage camera={camera} tier={props.tier} className={props.className} onReady={props.onReady} holdWhenPaused wakeKey={wakeKey}>
       <AgentObject {...props} />
     </GLStage>
   );

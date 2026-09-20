@@ -23,7 +23,7 @@ function StepButton({ label, back, enabled, onClick }: { label: string; back?: b
       aria-disabled={!enabled}
       onClick={enabled ? onClick : undefined}
       className={cn(
-        "grid h-8 w-8 place-items-center rounded-full border border-[var(--line)] text-[var(--text-1)] transition-[color,border-color,opacity] duration-200 ease-[var(--ease-out)]",
+        "grid h-10 w-10 place-items-center rounded-full border border-[var(--line)] text-[var(--text-1)] transition-[color,border-color,opacity] duration-200 ease-[var(--ease-out)]",
         enabled ? "hover:border-[var(--line-strong)] hover:text-[var(--text-0)]" : "cursor-default opacity-35",
       )}
     >
@@ -71,9 +71,9 @@ export function Caption({ story }: { story: StoryStep[] }) {
               )}
             >
               {/* Caption scale: a step title is one line of a running story, not a section heading. */}
-              <h3 className="t-title" style={{ fontSize: "clamp(1.2rem, 1.75vw, 1.8rem)", lineHeight: 1.1 }}>
+              <h2 className="t-title" style={{ fontSize: "clamp(1.2rem, 1.75vw, 1.8rem)", lineHeight: 1.1 }}>
                 {s.title}
-              </h3>
+              </h2>
               <p className="t-body mt-2 lg:mt-3" style={{ textWrap: "pretty" }}>
                 {s.body}
               </p>

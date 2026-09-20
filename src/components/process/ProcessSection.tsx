@@ -22,6 +22,15 @@ function Steps() {
   const { step, goTo } = useStory();
   return (
     <div>
+      {/* Below 1024px only the active step is visible (the rest are visibility:hidden). This is the
+          complete text equivalent for assistive technology at those sizes. */}
+      <ol className="sr-only lg:hidden">
+        {PROCESS.steps.map((s) => (
+          <li key={s.title}>
+            {s.title} {s.body}
+          </li>
+        ))}
+      </ol>
       <ol className={css.steps}>
         {PROCESS.steps.map((s, i) => {
           const active = i === step;

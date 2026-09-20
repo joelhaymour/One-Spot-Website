@@ -367,6 +367,12 @@ export class AgentRig {
     this.pulse();
   }
 
+  /** Set the record marks outright (scrolling back through a story un-learns). */
+  setMarks(count: number) {
+    this.marks = Math.max(0, Math.min(12, Math.round(count)));
+    this.glass.uMarks.value = this.marks;
+  }
+
   /** One short halo stroke: "that action is done". */
   pulse() {
     this.stroke = 1;

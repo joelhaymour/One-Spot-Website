@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { cn } from "@/lib/cn";
 
@@ -31,6 +31,9 @@ interface AnimatedNumberProps {
 export function AnimatedNumber({ value, format = "int", duration = 0.9, className, prefix = "", suffix = "" }: AnimatedNumberProps) {
   const el = useRef<HTMLSpanElement>(null);
   const current = useRef({ v: value });
+  // React renders this text once. After that the tween below is the only writer, so a new value can
+  // never flash on screen for a frame before the count reaches it.
+  const [initial] = useState(() => prefix + formatters[format](value) + suffix);
 
   useEffect(() => {
     const node = el.current;
@@ -51,8 +54,8 @@ export function AnimatedNumber({ value, format = "int", duration = 0.9, classNam
   }, [value, format, duration, prefix, suffix]);
 
   return (
-    <span ref={el} className={cn("t-num", className)}>
-      {prefix + formatters[format](value) + suffix}
+    <span ref={el} className={cn("t-num", className)} suppressHydrationWarning>
+      {initial}
     </span>
   );
 }

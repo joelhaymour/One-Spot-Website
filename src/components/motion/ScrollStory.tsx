@@ -143,8 +143,9 @@ export function ScrollStory({
       const stuck = el.offsetHeight - window.innerHeight;
       // Land a little inside the step so the index is unambiguous.
       const y = el.getBoundingClientRect().top + window.scrollY + stuck * storyEnd * ((s + 0.35) / steps);
-      if (lenis) lenis.scrollTo(y, { duration: 1.1 });
-      else window.scrollTo({ top: y, behavior: "smooth" });
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (lenis && !reduce) lenis.scrollTo(y, { duration: 1.1 });
+      else window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
     },
     [steps, storyEnd, lenis],
   );

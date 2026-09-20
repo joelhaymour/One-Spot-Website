@@ -38,14 +38,18 @@ export const useLenis = () =>
 export function SmoothScroll({ children }: { children: ReactNode }) {
   const lenis = useLenis();
   const pathname = usePathname();
-  const firstPath = useRef(true);
+  const lastPath = useRef(pathname);
   const setTier = useExperience((s) => s.setTier);
 
   useEffect(() => {
     const tier = detectTier();
     setTier(tier);
+    // Tells the boot script in the root layout that the app is alive (see layout.tsx).
+    (window as Window & { __osReady?: boolean }).__osReady = true;
 
-    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    // ScrollTrigger re-applies its own cached restoration mode after every refresh, so set it through
+    // ScrollTrigger rather than on history directly.
+    ScrollTrigger.clearScrollMemory("manual");
 
     const coarse = window.matchMedia("(pointer: coarse)").matches;
     if (tier === "static" || coarse) return;
@@ -73,17 +77,35 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     };
   }, [setTier]);
 
+  // Remember where the visitor was on the homepage whenever they walk into a department by any door
+  // (the display, the loop grid, the footer, the phone list), so Back returns them to that spot.
   useEffect(() => {
-    if (firstPath.current) {
-      firstPath.current = false;
-      return;
-    }
+    const onClick = (e: MouseEvent) => {
+      if (window.location.pathname !== "/" || e.defaultPrevented) return;
+      const link = (e.target as Element | null)?.closest?.('a[href^="/departments/"]');
+      if (link) useExperience.getState().setHomeScrollY(window.scrollY);
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, []);
+
+  useEffect(() => {
+    // Only a real route change may move the page. Lenis arriving a tick after mount is not one.
+    if (lastPath.current === pathname) return;
+    lastPath.current = pathname;
+
     const { homeScrollY, setHomeScrollY } = useExperience.getState();
-    const target = pathname === "/" && homeScrollY !== null ? homeScrollY : 0;
-    if (pathname === "/") setHomeScrollY(null);
+    const home = pathname === "/";
+    if (home) setHomeScrollY(null);
 
     // Wait one frame so the new route's sticky stories have laid out before we jump and re-measure.
     const id = requestAnimationFrame(() => {
+      let target = 0;
+      if (home && homeScrollY !== null) target = homeScrollY;
+      else if (window.location.hash.length > 1) {
+        const el = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+        if (el) target = el.getBoundingClientRect().top + window.scrollY;
+      }
       if (lenis) lenis.scrollTo(target, { immediate: true, force: true });
       else window.scrollTo(0, target);
       ScrollTrigger.refresh();

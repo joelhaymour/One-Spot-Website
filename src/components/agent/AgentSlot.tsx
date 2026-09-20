@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import type { AgentId, AgentMood } from "@/content/departments";
 import { CEO, DEPARTMENT_BY_ID } from "@/content/departments";
 import { useExperience } from "@/state/experience";
 import { cn } from "@/lib/cn";
+import { useNearViewport } from "@/lib/useNearViewport";
 import { AgentSvg } from "./AgentSvg";
+import { GlBoundary } from "./GlBoundary";
 
 // The only doorway to three.js for single agents. Never fetched on the static tier.
 const SingleAgentStage = dynamic(() => import("@/gl/SingleAgentStage"), { ssr: false });
@@ -30,22 +32,25 @@ interface AgentSlotProps {
 export function AgentSlot({ agent, mood = "idle", load, learnCount, pulseCount, followHover, className, deferMs = 300 }: AgentSlotProps) {
   const tier = useExperience((s) => s.tier);
   const hoveredDept = useExperience((s) => s.hoveredDept);
+  const host = useRef<HTMLDivElement>(null);
+  const near = useNearViewport(host);
   const [mount, setMount] = useState(false);
   const [ready, setReady] = useState(false);
   const accent = agent === "ceo" ? CEO.accent : DEPARTMENT_BY_ID[agent].accent;
   const live = tier === "full" || tier === "lite";
 
+  // A WebGL context is only worth creating once the visitor is approaching this agent.
   useEffect(() => {
-    if (!live) return;
+    if (!live || !near) return;
     const id = window.setTimeout(() => setMount(true), deferMs);
     return () => window.clearTimeout(id);
-  }, [live, deferMs]);
+  }, [live, near, deferMs]);
 
   // If the 3D layer fails later (context lost, render error) the tier drops and the SVG returns.
   const showGl = live && mount && ready;
 
   return (
-    <div className={cn("relative", className)}>
+    <div ref={host} className={cn("relative", className)}>
       <div
         className="absolute inset-0 transition-opacity duration-700 ease-[var(--ease-out)]"
         style={{ opacity: showGl ? 0 : 1 }}
@@ -60,6 +65,7 @@ export function AgentSlot({ agent, mood = "idle", load, learnCount, pulseCount, 
         />
       </div>
       {live && mount && (
+        <GlBoundary>
         <SingleAgentStage
           agent={agent}
           tier={tier}
@@ -71,6 +77,7 @@ export function AgentSlot({ agent, mood = "idle", load, learnCount, pulseCount, 
           onReady={() => setReady(true)}
           className={cn("absolute inset-0 transition-opacity duration-700 ease-[var(--ease-out)]", showGl ? "opacity-100" : "opacity-0")}
         />
+        </GlBoundary>
       )}
     </div>
   );

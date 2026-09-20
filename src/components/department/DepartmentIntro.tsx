@@ -75,7 +75,7 @@ export function DepartmentIntro({ department }: { department: Department }) {
             <span aria-hidden className="block h-6 w-px bg-[var(--line-strong)]" />
             Scroll through a full shift
           </p>
-          <a href="#report" onClick={skip} className={QUIET_LINK}>
+          <a href="#report" onClick={skip} className={`${QUIET_LINK} -my-3 inline-block py-3`}>
             Skip sequence
           </a>
         </div>

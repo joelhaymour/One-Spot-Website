@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site";
 import { DEPARTMENTS } from "@/content/departments";
 
-const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://onespot.example").replace(/\/+$/, "");
+const BASE = SITE_URL;
 
 // No lastModified: a build-time date would claim every page changed on every deploy.
 export default function sitemap(): MetadataRoute.Sitemap {

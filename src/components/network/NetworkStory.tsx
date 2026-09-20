@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import dynamic from "next/dynamic";
 import { ScrollStory } from "@/components/motion/ScrollStory";
+import { GlBoundary } from "@/components/agent/GlBoundary";
 import { cn } from "@/lib/cn";
 import { useMediaQuery, useReducedMotion } from "@/lib/useReducedMotion";
 import { useExperience } from "@/state/experience";
@@ -63,6 +64,7 @@ function Stage({ step }: { step: number }) {
       <div className={styles.scene}>
         <div className={styles.canvas}>
           {live && near && (
+            <GlBoundary>
             <NetworkStage
               step={step}
               tier={tier}
@@ -71,6 +73,7 @@ function Stage({ step }: { step: number }) {
               onReady={() => setReady(true)}
               className={cn("absolute inset-0 transition-opacity duration-700 ease-[var(--ease-out)]", showGl ? "opacity-100" : "opacity-0")}
             />
+            </GlBoundary>
           )}
           <div className={styles.fadeTop} />
           <div className={styles.fadeBottom} />

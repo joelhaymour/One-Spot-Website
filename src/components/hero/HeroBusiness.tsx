@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BUSINESS, HERO } from "@/content/copy";
 import { AgentSlot } from "@/components/agent/AgentSlot";
 import { VirtualDisplay } from "@/components/display/VirtualDisplay";
@@ -12,7 +12,7 @@ import { ScrollStory, useStoryProgress } from "@/components/motion/ScrollStory";
 import { registerStage } from "@/components/motion/Transition";
 import { Eyebrow } from "@/components/ui/Section";
 import { clamp, easeInOutCubic, lerp, segment } from "@/lib/math";
-import { useMediaQuery } from "@/lib/useReducedMotion";
+import { useMediaQuery, useMounted, useReducedMotion } from "@/lib/useReducedMotion";
 import { useExperience } from "@/state/experience";
 
 /**
@@ -39,9 +39,11 @@ interface Geometry {
   agentFinalY: number;
 }
 
-function measure(): Geometry {
+function measure(text: HTMLElement | null): Geometry {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
+  // offsetTop/offsetHeight ignore transforms, so this is the copy's resting box whatever the scroll.
+  const copyBottom = text ? text.offsetTop + text.offsetHeight : 0;
   const zone = clamp(vh * 0.17, 112, 176);
   const width = Math.min(vw * 0.94, 1560, ((vh - NAV_H - zone - 26) * HUD_SIZE.width) / HUD_SIZE.height);
   const top = NAV_H + zone;
@@ -50,7 +52,7 @@ function measure(): Geometry {
   return {
     width,
     top,
-    landingY: vh * 0.6 - top,
+    landingY: Math.max(vh * 0.6, copyBottom + 44) - top,
     agentH,
     agentLandingX: Math.min(vw * 0.23, 360),
     agentLandingY: vh * 0.085,
@@ -61,6 +63,8 @@ function measure(): Geometry {
 
 function Scene() {
   const desktop = useMediaQuery("(min-width: 768px)");
+  const mounted = useMounted();
+  const reduce = useReducedMotion();
   const text = useRef<HTMLDivElement>(null);
   const agent = useRef<HTMLDivElement>(null);
   const display = useRef<HTMLDivElement>(null);
@@ -73,11 +77,12 @@ function Scene() {
 
   const { state, showRecommendation } = useHudScript(visible);
 
-  const write = (p: number) => {
+  const write = useCallback((p: number) => {
     const g = geo.current;
     if (!g || !display.current || !agent.current || !text.current || !heading.current) return;
-    const t = easeInOutCubic(clamp(p / 0.56));
-    const out = segment(p, 0, 0.2);
+    // Reduced motion: two still poses, no journey between them.
+    const t = reduce ? (p < 0.28 ? 0 : 1) : easeInOutCubic(clamp(p / 0.56));
+    const out = reduce ? t : segment(p, 0, 0.2);
     text.current.style.opacity = String(1 - out);
     text.current.style.transform = `translate3d(0, ${-40 * out}px, 0)`;
     text.current.style.pointerEvents = out > 0.6 ? "none" : "auto";
@@ -88,10 +93,10 @@ function Scene() {
     const s = lerp(1, g.agentFinalScale, t);
     agent.current.style.transform = `translate3d(calc(-50% + ${lerp(g.agentLandingX, 0, t)}px), ${lerp(g.agentLandingY, g.agentFinalY, t)}px, 0) scale(${s})`;
 
-    const inn = segment(p, 0.42, 0.58);
+    const inn = reduce ? t : segment(p, 0.42, 0.58);
     heading.current.style.opacity = String(inn);
     heading.current.style.transform = `translate3d(0, ${(1 - inn) * 16}px, 0)`;
-  };
+  }, [reduce]);
 
   useLayoutEffect(() => {
     if (!desktop) {
@@ -99,7 +104,7 @@ function Scene() {
       return;
     }
     const apply = () => {
-      geo.current = measure();
+      geo.current = measure(text.current);
       const g = geo.current;
       if (display.current) {
         display.current.style.width = `${g.width}px`;
@@ -119,7 +124,7 @@ function Scene() {
     apply();
     window.addEventListener("resize", apply);
     return () => window.removeEventListener("resize", apply);
-  }, [desktop]);
+  }, [desktop, write]);
 
   useStoryProgress((p) => {
     progress.current = p;
@@ -135,6 +140,10 @@ function Scene() {
     return () => {
       io.disconnect();
       registerStage(null);
+      // The store outlives this page: never come back to a door that still thinks it is hovered.
+      const s = useExperience.getState();
+      s.setHoveredDept(null);
+      s.setGazeTarget(null);
     };
   }, []);
 
@@ -160,10 +169,10 @@ function Scene() {
       {/* words */}
       <div
         ref={text}
-        className="z-10 max-w-[36rem] will-change-transform md:absolute md:left-[var(--gutter)] md:top-[clamp(96px,15svh,170px)] lg:left-[max(var(--gutter),calc(50vw-700px))]"
+        className="z-10 max-w-[46rem] will-change-transform md:absolute md:left-[var(--gutter)] md:top-[clamp(96px,15svh,170px)] lg:left-[max(var(--gutter),calc(50vw-700px))]"
       >
         <Eyebrow>{HERO.eyebrow}</Eyebrow>
-        <h1 className="t-display mt-7">
+        <h1 className="t-display mt-7 md:[font-size:clamp(2.5rem,min(5.6vw,9.4svh),5.25rem)]">
           {HERO.headline.map((line) => (
             <span key={line} className="block">
               {line}
@@ -184,7 +193,7 @@ function Scene() {
       {/* The Business: section label, revealed once the display has arrived */}
       <div ref={heading} className="pointer-events-none z-10 hidden items-end justify-between pb-3 opacity-0 md:absolute md:left-1/2 md:flex md:-translate-x-1/2">
         <div className="max-w-[25rem]">
-          <Eyebrow>{BUSINESS.eyebrow}</Eyebrow>
+          <Eyebrow index="01">{BUSINESS.eyebrow}</Eyebrow>
           <h2 className="mt-3 text-[clamp(1.25rem,1.9vw,1.75rem)] font-medium leading-[1.1] tracking-[-0.03em]">{BUSINESS.heading}</h2>
         </div>
         <p className="max-w-[19rem] text-right text-[0.9rem] leading-[1.45] text-[var(--text-1)]">{BUSINESS.lead}</p>
@@ -194,7 +203,7 @@ function Scene() {
       <div
         ref={display}
         className="hero-display z-0 origin-top will-change-transform max-md:mt-2 max-md:w-full md:absolute md:left-1/2"
-        inert={!desktop}
+        inert={mounted && !desktop}
       >
         <VirtualDisplay width={HUD_SIZE.width} height={HUD_SIZE.height} label="The Business: a live view of one company">
           <BusinessHud state={state} onPickRecommendation={showRecommendation} interactive={desktop} />
