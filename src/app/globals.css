@@ -326,6 +326,16 @@ button {
   }
 }
 
+/* A WebGL floor must never end in a rectangle: feather the canvas into the void on three sides. */
+.gl-feather {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16%, #000 84%, transparent 100%),
+    linear-gradient(to bottom, #000 0, #000 70%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0, #000 16%, #000 84%, transparent 100%),
+    linear-gradient(to bottom, #000 0, #000 70%, transparent 100%);
+  mask-composite: intersect;
+}
+
 html[data-paused="true"] *,
 html[data-paused="true"] *::before,
 html[data-paused="true"] *::after {

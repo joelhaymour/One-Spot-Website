@@ -1,6 +1,11 @@
 import { PAUSES } from "@/content/copy";
+import { BeforeAfterSection } from "@/components/beforeafter/BeforeAfterSection";
+import { ContactSection } from "@/components/cta/ContactSection";
 import { HeroBusiness } from "@/components/hero/HeroBusiness";
 import { LoopSection } from "@/components/loop/LoopSection";
+import { NetworkSection } from "@/components/network/NetworkSection";
+import { ProcessSection } from "@/components/process/ProcessSection";
+import { ScalingSection } from "@/components/scaling/ScalingSection";
 import { Statement } from "@/components/ui/Section";
 
 /**
@@ -13,6 +18,14 @@ export default function Home() {
       <Statement>{PAUSES.afterHero}</Statement>
       <Statement>{PAUSES.beforeAgents}</Statement>
       <LoopSection />
+      <NetworkSection />
+      <Statement>{PAUSES.beforeScaling}</Statement>
+      <ScalingSection />
+      <ProcessSection />
+      <Statement>{PAUSES.beforeAfter}</Statement>
+      <BeforeAfterSection />
+      <Statement>{PAUSES.beforeCta}</Statement>
+      <ContactSection />
     </main>
   );
 }

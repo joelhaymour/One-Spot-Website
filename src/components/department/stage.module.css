@@ -1,0 +1,221 @@
+/*
+ * Layout of the sticky department stage.
+ *
+ * Why a CSS module and not utilities: the stage has three regimes that depend on the viewport's
+ * SHAPE, not only its width (a portrait tablet wants the stacked film, a landscape phone wants the
+ * side-by-side one), and six elements share that one decision. Everything is sized from the small
+ * viewport height so the whole composition always fits inside the 100svh sticky frame:
+ *
+ *   phone, portrait     display keeps the full 92vw; the agent absorbs whatever height is left
+ *   stacked, >= 640px   display is capped by the height budget
+ *   wide (landscape)    copy on the left, agent above display on the right
+ */
+
+.stage {
+  --pad-top: calc(var(--nav-h) + 6px);
+  --pad-bottom: 14px;
+  /* rail + tallest caption */
+  --copy-h: 218px;
+  --agent-h: clamp(
+    56px,
+    calc(100svh - var(--pad-top) - var(--pad-bottom) - var(--copy-h) - 92vw * 0.594 - 40px),
+    132px
+  );
+  /* enough that the 3D agent's dock, which sits inside its canvas, meets the chassis edge */
+  --overlap: calc(var(--agent-h) * 0.14);
+  --rail-row: 36px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.2svh, 24px);
+  width: 100%;
+  height: 100%;
+  max-width: 2000px;
+  margin-inline: auto;
+  padding: var(--pad-top) 4vw var(--pad-bottom);
+}
+
+.workstation {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Copy comes first in the DOM (the narrative is the accessible reading order) and second on screen. */
+.copy {
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 40rem;
+}
+
+.agent {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  height: var(--agent-h);
+  aspect-ratio: 200 / 290;
+  margin-bottom: calc(var(--overlap) * -1);
+  pointer-events: none;
+}
+
+/* A permanent stacking context: the display's light spill sits at a negative z-index and must not
+   change layers when the arrival tween adds and then clears a transform. */
+.display {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  width: 100%;
+}
+
+/* ------------------------------------------------------------------ beat rail */
+
+.rail {
+  position: relative;
+  width: 100%;
+}
+
+.railTrack {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 9px;
+  height: 1px;
+  background: var(--line-strong);
+  pointer-events: none;
+}
+
+.railFill {
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--accent-rgb), 0.9);
+  transform-origin: left center;
+  transform: scaleX(var(--p, 0));
+}
+
+.railList {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.beat {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 0;
+}
+
+.beatIndex {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ regimes */
+
+/* A phone too short for agent, display and caption together: the agent steps out of frame. */
+@media (max-width: 559px) and (max-height: 540px) {
+  .agent {
+    display: none;
+  }
+}
+
+@media (max-height: 640px) {
+  .tallOnly {
+    display: none;
+  }
+}
+
+/* Stacked on a phone, the caption shares the height with the display: the log line is the first
+   thing to go (the console's own agent log still shows it). */
+@media (max-width: 559px) and (max-height: 720px) {
+  .tallOnly {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .stage {
+    --copy-h: 236px;
+    --agent-h: clamp(64px, 15svh, 150px);
+    padding-inline: var(--gutter);
+  }
+
+  .display {
+    max-width: calc(
+      (100svh - var(--pad-top) - var(--pad-bottom) - var(--copy-h) - var(--agent-h) + var(--overlap) - 66px) * 1.684
+    );
+  }
+}
+
+@media (min-width: 560px) and (min-aspect-ratio: 11/10) {
+  .stage {
+    --pad-bottom: clamp(12px, 3svh, 36px);
+    --agent-h: clamp(56px, 25svh, 280px);
+
+    display: grid;
+    grid-template-columns: clamp(200px, 23vw, 380px) minmax(0, 1fr);
+    column-gap: clamp(20px, 3.4vw, 72px);
+    align-items: center;
+    padding-inline: var(--gutter);
+  }
+
+  .copy {
+    order: 1;
+    gap: clamp(18px, 4.5svh, 48px);
+    max-width: none;
+  }
+
+  .workstation {
+    order: 2;
+  }
+
+  .display {
+    max-width: calc((100svh - var(--pad-top) - var(--pad-bottom) - var(--agent-h) + var(--overlap) - 24px) * 1.684);
+  }
+
+  .railTrack {
+    left: 3px;
+    right: auto;
+    top: calc(var(--rail-row) / 2);
+    bottom: calc(var(--rail-row) / 2);
+    width: 1px;
+    height: auto;
+  }
+
+  .railFill {
+    transform-origin: center top;
+    transform: scaleY(var(--p, 0));
+  }
+
+  .railList {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: var(--rail-row);
+  }
+
+  .beat {
+    height: 100%;
+    flex-direction: row;
+    gap: 14px;
+    padding: 0;
+  }
+
+  .beatIndex {
+    display: inline;
+  }
+}
+
+/* Landscape phones: five rail rows and a caption have to share about 300px. */
+@media (min-width: 560px) and (min-aspect-ratio: 11/10) and (max-height: 560px) {
+  .stage {
+    --rail-row: 26px;
+  }
+}
