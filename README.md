@@ -35,7 +35,8 @@ homepage after any dependency bump.
 | `src/content/` | All copy and data: `copy.ts` (deck), `departments.ts` (agents, stories, console regions), `hud.ts` (the fictional company + liveness script), `media.ts` (optional footage slots) |
 | `src/components/motion/` | `SmoothScroll` (Lenis on the GSAP ticker), `ScrollStory` (sticky scroll-film engine), `Transition` (stepping through the display) |
 | `src/components/display/VirtualDisplay.tsx` | The "computer": content authored at 1280 x 760 virtual px, scaled to fit, with a camera |
-| `src/components/hud/`, `hero/` | The Business display and the hero camera move |
+| `src/components/hero/` | The opening frame: copy plus `HeroOverview` (tools -> hub -> CEO Agent -> owner) |
+| `src/components/hud/`, `business/` | The Business display, its camera reveal and the seven doors (the closing chapter) |
 | `src/components/department/` | Department route shell, console frame, and the seven console screens |
 | `src/components/network/`, `scaling/`, `process/`, `beforeafter/`, `cta/`, `chrome/` | Homepage scenes and site chrome |
 | `src/components/agent/` | `AgentSlot` (SVG first, WebGL after), `AgentSvg`, `Mark` (the logo) |

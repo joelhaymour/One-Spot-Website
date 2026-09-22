@@ -309,17 +309,17 @@ button {
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero landing pose, in CSS, so the server-rendered first frame is    */
-/* already the frame the scroll script starts from (no jump on hydrate) */
+/* The Business landing pose, in CSS, so the server-rendered first     */
+/* frame is the frame the scroll script starts from (no jump on hydrate)*/
 /* ------------------------------------------------------------------ */
 
 @media (min-width: 768px) {
-  .hero-display {
+  .stage-display {
     top: 60svh;
     width: min(94vw, 1560px, calc((100svh - 90px - clamp(112px, 17svh, 176px)) * 1.6842));
     transform: translate3d(-50%, 0, 0) perspective(1800px) rotateX(15deg) scale(1.05);
   }
-  .hero-agent {
+  .stage-agent {
     height: clamp(300px, 52svh, 520px);
     width: calc(clamp(300px, 52svh, 520px) * 0.95);
     transform: translate3d(calc(-50% + min(23vw, 360px)), 8.5svh, 0);

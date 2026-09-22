@@ -1,0 +1,258 @@
+/*
+ * The hero overview: the company's software on a floor ring, the hub in the middle, the CEO Agent
+ * at the back, the recommendation arriving at the front.
+ *
+ * Layout is CSS. The column decides the width; the drawing (760 x 640) decides the height, plus
+ * whatever of the card hangs below it. --unit is one viewBox unit in CSS px, so the DOM pieces
+ * (agent, stem, card) stand exactly where overviewLayout.ts says. --u / --k are the shared
+ * diagram scale (user units per px, glyph scale) that the process diagram's label styles read;
+ * the values below are first-paint estimates and useSvgUnit refines them after mount.
+ */
+
+.root {
+  container: overview / inline-size;
+  width: 100%;
+}
+
+.frame {
+  /* first-paint estimates for the column-capped frame (about 480px wide); useSvgUnit refines them */
+  --u: 1.58;
+  --k: 1.26;
+  --budget: 62svh;
+  container: overview-frame / inline-size;
+  position: relative;
+  width: 100%;
+  /* the height budget, expressed as a width: the drawing is 760 : 640 */
+  max-width: calc(var(--budget) * 760 / 640);
+  margin-inline: auto;
+}
+
+@media (max-width: 767px) {
+  .frame {
+    --u: 2;
+    --k: 1.45;
+    --budget: 52svh;
+  }
+}
+
+/* short laptops: keep the drawing and the card's overhang inside one viewport */
+@media (min-width: 768px) and (max-height: 720px) {
+  .frame {
+    --budget: 52svh;
+  }
+}
+
+.stage {
+  --unit: calc(100cqw / 760);
+  --agent-h: clamp(120px, calc(218 * var(--unit)), 224px);
+  /* on the narrowest phones the 120px agent is taller than the floor above its foot: make room, never clip */
+  --pad: max(0px, calc(var(--agent-h) - var(--foot) * var(--unit)));
+  position: relative;
+  padding-top: var(--pad);
+  padding-bottom: 8px;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 760 / 640;
+  overflow: visible;
+}
+
+/* ------------------------------------------------------------------ */
+/* The floor: orbit, threads, beads, tiles. Recedes while the card is up. */
+/* ------------------------------------------------------------------ */
+
+.floor {
+  transition: opacity 700ms var(--ease-out);
+}
+.receded .floor {
+  opacity: 0.42;
+}
+
+/* A thread draws on from its tool to the hub. pathLength is 1. */
+.thread {
+  stroke: var(--line-strong);
+  stroke-width: calc(1px * var(--u));
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 640ms var(--ease-in-out);
+  transition-delay: calc(var(--i) * 80ms);
+}
+.drawn .thread {
+  stroke-dashoffset: 0;
+}
+
+/* One piece of work travels the thread. Motion path only: no JS per frame. */
+.bead {
+  display: none;
+}
+@supports (offset-path: path("M0 0L1 1")) {
+  .bead {
+    display: inline;
+    r: calc(2.6px * var(--u));
+    offset-rotate: 0deg;
+    offset-distance: 100%;
+    opacity: 0;
+  }
+  .flowing .bead {
+    animation: bead 1150ms var(--ease-in-out) both;
+    animation-delay: calc(var(--i) * 200ms);
+  }
+}
+@keyframes bead {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  86% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+/* The hub's glow doubles as the beads land, and lets go when the loop resets. */
+.glowUp {
+  opacity: 0;
+  transition: opacity 700ms linear;
+}
+.fed .glowUp {
+  opacity: 1;
+  transition-duration: 2200ms;
+}
+
+/* ------------------------------------------------------------------ */
+/* The CEO Agent, and the stem that connects the hub to its register ring */
+/* ------------------------------------------------------------------ */
+
+.agent {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: calc(var(--pad) + var(--foot) * var(--unit));
+  width: calc(var(--agent-h) * 0.85);
+  height: var(--agent-h);
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+
+.stem {
+  position: absolute;
+  z-index: 2;
+  left: calc(50% - 0.5px);
+  width: 1px;
+  top: calc(var(--pad) + var(--foot) * var(--unit) - (1 - var(--ring-front)) * var(--agent-h));
+  height: calc(var(--stem) * var(--unit) + (1 - var(--ring-front)) * var(--agent-h));
+  background: var(--line-strong);
+  transform-origin: 50% 100%;
+  transform: scaleY(0);
+  transition: transform 300ms var(--ease-out);
+  pointer-events: none;
+}
+.stemOn {
+  transform: scaleY(1);
+}
+
+/* One bead rises from the hub to the ring's front. */
+.rise {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.rise::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: var(--spot);
+  box-shadow: 0 0 10px 1px rgba(var(--spot-rgb), 0.55);
+}
+.rising .rise {
+  animation: rise 950ms var(--ease-in-out) 200ms both;
+}
+@keyframes rise {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  86% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+/* Where the message docks: the front of the register ring. */
+.dock {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--spot);
+  box-shadow: 0 0 12px 2px rgba(var(--spot-rgb), 0.5);
+  opacity: 0;
+  transition: opacity 300ms linear;
+}
+.landed .dock {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* The recommendation: for the visitor, so it arrives as interface     */
+/* ------------------------------------------------------------------ */
+
+.cardHost {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  /* its top edge sits just under the hub; the frame grows if the card is taller than what is left of the drawing */
+  margin-top: calc(-1 * var(--card-top) * var(--unit));
+  min-height: calc(var(--card-top) * var(--unit));
+  padding-inline: 4%;
+  pointer-events: none;
+}
+
+.card {
+  --fs: 0.875rem;
+  width: min(17.5rem, 100%);
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  transition:
+    opacity 480ms var(--ease-out),
+    transform 480ms var(--ease-out);
+}
+.cardOn .card {
+  opacity: 1;
+  transform: none;
+}
+.cardOut .card {
+  opacity: 0;
+  transform: none;
+  transition: opacity 700ms linear;
+}
+
+@container overview (max-width: 480px) {
+  .card {
+    --fs: 0.8125rem;
+  }
+}

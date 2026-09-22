@@ -29,9 +29,9 @@ const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const REQUIRED: Record<ContactField, string> = {
   name: "Add your name.",
-  email: "Add an email address I can reply to.",
+  email: "Add an email address we can reply to.",
   company: "Add your company, and what it does.",
-  stuck: "Tell me where the day gets stuck. One sentence is enough.",
+  stuck: "Tell us where the day gets stuck. One sentence is enough.",
 };
 
 export function validateField(field: ContactField, raw: string): string | null {

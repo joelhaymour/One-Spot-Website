@@ -22,6 +22,13 @@ Five full-screen typographic pauses separate the scenes. Nothing moves during th
 
 ## 2. Structure
 
+> **v2 (2026-09-21):** the homepage was re-sequenced so the film ends on the display the visitor can
+> step into. Order: hero (copy + a short overview animation: tools -> hub -> CEO Agent -> owner) ->
+> 01 How we work -> 02 Before / After -> 03 Autonomous scaling -> 04 Agents at work -> 05 Agent network ->
+> 06 The Business (the interactive display, its reveal and the seven doors) -> Contact. Company narration
+> is plural ("we"); individual agents still speak as "I". The table below is the v1 order.
+
+
 | # | Section | Medium |
 |---|---------|--------|
 | 0 | Hero: CEO Agent + The Business display. "Your whole business. One spot." | DOM display, WebGL agent |

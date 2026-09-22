@@ -66,7 +66,7 @@ export function DepartmentOutro({ department }: { department: Department }) {
         </Reveal>
 
         <Reveal delay={0.16} className="flex flex-wrap items-center gap-3 lg:col-start-1 lg:row-start-2 lg:self-start">
-          <LinkButton href="/#business" onClick={onLeave}>
+          <LinkButton href="/#business-doors" onClick={onLeave}>
             Back to The Business
           </LinkButton>
           <LinkButton href={departmentHref(next.id)} variant="ghost" arrow>

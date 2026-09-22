@@ -12,15 +12,19 @@ import { StatusChip } from "@/components/ui/Panel";
  * that matter are repeated here at native size: what the CEO Agent recommends, and the seven doors.
  * Hidden from md up, where the display itself is interactive.
  */
-export function MobileBusiness() {
+export function MobileBusiness({ heading = true }: { heading?: boolean }) {
   const rec = RECOMMENDATIONS[0];
   return (
-    <section className="px-[var(--gutter)] pb-24 pt-6 md:hidden" aria-labelledby="business-mobile">
-      <Eyebrow index="01">{BUSINESS.eyebrow}</Eyebrow>
-      <h2 id="business-mobile" className="t-title mt-5">
-        {BUSINESS.heading}
-      </h2>
-      <p className="t-lead mt-4">{BUSINESS.lead}</p>
+    <div className="px-[var(--gutter)] pb-24 pt-6 md:hidden">
+      {heading && (
+        <>
+          <Eyebrow index="06">{BUSINESS.eyebrow}</Eyebrow>
+          <h2 id="business-mobile" className="t-title mt-5">
+            {BUSINESS.heading}
+          </h2>
+          <p className="t-lead mt-4">{BUSINESS.lead}</p>
+        </>
+      )}
 
       <div className="panel-raised mt-8 p-4">
         <div className="flex items-center justify-between">
@@ -56,6 +60,6 @@ export function MobileBusiness() {
           ))}
         </ul>
       </nav>
-    </section>
+    </div>
   );
 }

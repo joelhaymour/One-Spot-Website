@@ -72,7 +72,7 @@ interface ScalingSectionProps {
   index?: string;
 }
 
-export function ScalingSection({ index = "04" }: ScalingSectionProps) {
+export function ScalingSection({ index = "03" }: ScalingSectionProps) {
   return (
     <section id="scaling" className="relative" aria-labelledby="scaling-heading">
       <div className="mx-auto max-w-[1320px] px-[var(--gutter)] pb-8 pt-28 md:pt-40">

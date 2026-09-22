@@ -39,12 +39,14 @@ export function useDepartmentTransition() {
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (!coverEl || reduce || state.tier === "static") {
         state.setHomeScrollY(window.scrollY);
+        state.setHomeFromDisplay(true);
         router.push(href);
         return;
       }
 
       const d = DEPARTMENT_BY_ID[dept];
       state.setHomeScrollY(window.scrollY);
+      state.setHomeFromDisplay(true);
       state.setPhase("entering", dept);
       lenis?.stop();
 
@@ -72,11 +74,11 @@ export function useDepartmentTransition() {
     const state = useExperience.getState();
     if (state.phase !== "idle") return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // "Back to The Business" means the doors. Use the saved position only if it is the display itself;
-    // otherwise (deep links, entries from the footer or the loop grid) land on the #business anchor.
-    const onDisplay = state.homeScrollY !== null && state.homeScrollY < window.innerHeight * 2.4;
+    // "Back to The Business" means the doors. Restore the saved position only if it was taken at a
+    // door; otherwise (deep links, entries from the footer or the loop grid) land on the doors anchor.
+    const onDisplay = state.homeScrollY !== null && state.homeFromDisplay;
     if (!onDisplay) state.setHomeScrollY(null);
-    const home = onDisplay ? "/" : "/#business";
+    const home = onDisplay ? "/" : "/#business-doors";
     if (!coverEl || reduce || state.tier === "static") {
       router.push(home);
       return;

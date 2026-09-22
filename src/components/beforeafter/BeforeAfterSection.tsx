@@ -93,11 +93,11 @@ function Stage({ step }: { step: number }) {
   );
 }
 
-export function BeforeAfterSection() {
+export function BeforeAfterSection({ index = "02" }: { index?: string }) {
   return (
     <section id="before-after" className="relative" aria-labelledby="before-after-heading">
       <div className="mx-auto max-w-[1320px] px-[var(--gutter)] pb-8 pt-28 md:pt-40">
-        <SectionHeading eyebrow={BEFORE_AFTER.eyebrow} index="06" title={<span id="before-after-heading">{BEFORE_AFTER.heading}</span>} lead={BEFORE_AFTER.lead} />
+        <SectionHeading eyebrow={BEFORE_AFTER.eyebrow} index={index} title={<span id="before-after-heading">{BEFORE_AFTER.heading}</span>} lead={BEFORE_AFTER.lead} />
       </div>
 
       <ScrollStory steps={3} stepLength={0.9} tail={0.5} aria-label="The same eight tools, before and after">

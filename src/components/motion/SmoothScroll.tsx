@@ -83,7 +83,12 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     const onClick = (e: MouseEvent) => {
       if (window.location.pathname !== "/" || e.defaultPrevented) return;
       const link = (e.target as Element | null)?.closest?.('a[href^="/departments/"]');
-      if (link) useExperience.getState().setHomeScrollY(window.scrollY);
+      if (!link) return;
+      const s = useExperience.getState();
+      s.setHomeScrollY(window.scrollY);
+      // Both the display's doors and the phone door list live inside the Business chapter; the footer and
+      // the loop grid do not.
+      s.setHomeFromDisplay(!!link.closest("#business"));
     };
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
@@ -106,8 +111,12 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
         const el = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
         if (el) target = el.getBoundingClientRect().top + window.scrollY;
       }
-      if (lenis) lenis.scrollTo(target, { immediate: true, force: true });
-      else window.scrollTo(0, target);
+      if (lenis) {
+        // Lenis clamps every target to a cached page height, and that cache still holds the previous
+        // route's height on the new route's first frame. Re-measure before jumping deep into the page.
+        lenis.resize();
+        lenis.scrollTo(target, { immediate: true, force: true });
+      } else window.scrollTo(0, target);
       ScrollTrigger.refresh();
     });
     return () => cancelAnimationFrame(id);

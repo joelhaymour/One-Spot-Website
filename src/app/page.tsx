@@ -1,7 +1,8 @@
 import { PAUSES } from "@/content/copy";
 import { BeforeAfterSection } from "@/components/beforeafter/BeforeAfterSection";
+import { BusinessSection } from "@/components/business/BusinessSection";
 import { ContactSection } from "@/components/cta/ContactSection";
-import { HeroBusiness } from "@/components/hero/HeroBusiness";
+import { HeroSection } from "@/components/hero/HeroSection";
 import { LoopSection } from "@/components/loop/LoopSection";
 import { NetworkSection } from "@/components/network/NetworkSection";
 import { ProcessSection } from "@/components/process/ProcessSection";
@@ -9,22 +10,32 @@ import { ScalingSection } from "@/components/scaling/ScalingSection";
 import { Statement } from "@/components/ui/Section";
 
 /**
- * The film, in order. Scenes are separated by full-screen typographic pauses where nothing moves.
+ * The film, in order. Full-screen typographic pauses sit beside the scenes they introduce.
+ *
+ *   hero            a preview of the connected business (its cue carries the visitor into 01)
+ *   01 how we work   it starts with your business, not with AI
+ *   02 before/after  same software, different company
+ *   03 scaling       it knows when it needs help
+ *   04 agents        watch one do the job
+ *   05 network       what marketing sees, operations knows
+ *   06 the business  the display you can step into
+ *   contact
  */
 export default function Home() {
   return (
     <main id="content">
-      <HeroBusiness />
-      <Statement>{PAUSES.beforeAgents}</Statement>
-      <LoopSection />
-      {/* The owner as the company's wiring: the thought the network scene answers. */}
-      <Statement>{PAUSES.afterHero}</Statement>
-      <NetworkSection />
-      <Statement>{PAUSES.beforeScaling}</Statement>
-      <ScalingSection />
-      <ProcessSection />
+      <HeroSection />
+      <ProcessSection index="01" />
       <Statement>{PAUSES.beforeAfter}</Statement>
-      <BeforeAfterSection />
+      <BeforeAfterSection index="02" />
+      <Statement>{PAUSES.beforeScaling}</Statement>
+      <ScalingSection index="03" />
+      <Statement>{PAUSES.beforeAgents}</Statement>
+      <LoopSection index="04" />
+      <NetworkSection index="05" />
+      {/* The owner as the company's wiring: the thought the display answers. */}
+      <Statement>{PAUSES.afterHero}</Statement>
+      <BusinessSection index="06" />
       <Statement>{PAUSES.beforeCta}</Statement>
       <ContactSection />
     </main>

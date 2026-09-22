@@ -33,6 +33,9 @@ interface ExperienceState {
   /** Scroll offset to restore when stepping back out of a department into the HUD. */
   homeScrollY: number | null;
   setHomeScrollY: (y: number | null) => void;
+  /** True when that offset was taken at one of the display's doors (so "Back to The Business" restores it). */
+  homeFromDisplay: boolean;
+  setHomeFromDisplay: (v: boolean) => void;
 
   /** Visitor pressed "Pause motion": ambient loops and the HUD's event script stop (WCAG 2.2.2). */
   paused: boolean;
@@ -56,6 +59,8 @@ export const useExperience = create<ExperienceState>((set) => ({
 
   homeScrollY: null,
   setHomeScrollY: (homeScrollY) => set({ homeScrollY }),
+  homeFromDisplay: false,
+  setHomeFromDisplay: (homeFromDisplay) => set({ homeFromDisplay }),
 
   paused: false,
   setPaused: (paused) => set({ paused }),

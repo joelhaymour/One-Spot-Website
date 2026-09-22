@@ -197,11 +197,11 @@ function Stage({ step }: { step: number }) {
   );
 }
 
-export function LoopSection() {
+export function LoopSection({ index = "04" }: { index?: string }) {
   return (
     <section id="agents" className="relative" aria-labelledby="agents-heading">
       <div className="mx-auto max-w-[1320px] px-[var(--gutter)] pb-8 pt-28 md:pt-40">
-        <SectionHeading eyebrow={LOOP.eyebrow} index="02" title={<span id="agents-heading">{LOOP.heading}</span>} lead={LOOP.lead} />
+        <SectionHeading eyebrow={LOOP.eyebrow} index={index} title={<span id="agents-heading">{LOOP.heading}</span>} lead={LOOP.lead} />
       </div>
 
       <ScrollStory steps={5} stepLength={0.7} tail={0.3} aria-label="One agent, one job, five steps">
@@ -239,7 +239,7 @@ export function LoopSection() {
             <Mark size={26} className="text-[var(--text-2)]" />
             <span>
               <span className="block text-[1.05rem] font-medium tracking-[-0.02em] text-[var(--text-0)]">Your departments</span>
-              <span className="mt-1.5 block text-[0.875rem] leading-snug text-[var(--text-2)]">These seven are an example. I design the agents around how your company is actually organised.</span>
+              <span className="mt-1.5 block text-[0.875rem] leading-snug text-[var(--text-2)]">These seven are an example. We design the agents around how your company is actually organised.</span>
             </span>
           </li>
         </ul>

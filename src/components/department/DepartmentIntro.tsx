@@ -40,7 +40,7 @@ export function DepartmentIntro({ department }: { department: Department }) {
         <nav aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <li>
-              <Link href="/#business" onClick={onLeave} className={QUIET_LINK}>
+              <Link href="/#business-doors" onClick={onLeave} className={QUIET_LINK}>
                 {CEO.name}
               </Link>
             </li>

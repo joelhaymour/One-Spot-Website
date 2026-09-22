@@ -12,7 +12,7 @@ import { cn } from "@/lib/cn";
 import { AnchorLink, scrollToElement, useAnchorNav, usePendingAnchor } from "./anchor";
 
 const CONTACT_HREF = "/#contact";
-const BUSINESS_HREF = NAV[0].href;
+const BUSINESS_HREF = NAV.find((item) => item.href.endsWith("#business"))?.href ?? "/#business";
 const SECTION_IDS = [...NAV.map((item) => item.href.split("#")[1]), "contact"];
 
 /** The bar turns solid once the page has moved this far (px). */
@@ -286,7 +286,7 @@ export function Nav() {
                 closeMenu();
                 go(event, CONTACT_HREF);
               }}
-              className="h-9! px-4! text-[0.8125rem]!"
+              className="h-9! whitespace-nowrap px-4! text-[0.8125rem]! max-[400px]:px-3!"
             >
               {SITE.action}
             </LinkButton>

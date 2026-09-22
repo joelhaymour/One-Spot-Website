@@ -27,6 +27,7 @@ export interface CinematicAsset {
 
 export type CinematicSlotId =
   | "hero-room"
+  | "business-room"
   | "network-wide"
   | "arrival"
   | "before"
@@ -36,6 +37,7 @@ export type CinematicSlotId =
 
 export const MEDIA: Partial<Record<CinematicSlotId, CinematicAsset | null>> = {
   "hero-room": null,
+  "business-room": null,
   "network-wide": null,
   arrival: null,
   before: null,

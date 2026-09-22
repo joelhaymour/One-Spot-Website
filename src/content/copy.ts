@@ -1,6 +1,7 @@
 /**
  * The copy deck. One voice: calm, precise, plainspoken, numerate.
- * Rules: the founder says "I". No adjective that cannot be measured. No exclamation marks.
+ * Rules: the company says "we"; an individual agent speaking says "I". No adjective that cannot be
+ * measured. No exclamation marks.
  * Visitor-facing copy never says "HUD"; the visitor sees "The Business".
  * One action name everywhere: "Map my company".
  */
@@ -15,17 +16,20 @@ export const SITE = {
 };
 
 export const NAV = [
-  { label: "The Business", href: "/#business" },
+  { label: "How we work", href: "/#how" },
   { label: "Agents", href: "/#agents" },
   { label: "Network", href: "/#network" },
-  { label: "How I work", href: "/#how" },
+  { label: "The Business", href: "/#business" },
 ];
 
 export const HERO = {
   eyebrow: "The AI operating layer",
   headline: ["Your whole business.", "One spot."],
-  sub: "I build AI agents that work across the people and software you already have. They watch. They act. They report to you.",
-  hint: "Scroll to step inside",
+  sub: "We build AI agents that work across the people and software you already have. They watch. They act. They report to you.",
+  /** The opening scroll cue. Points at the first chapter. */
+  cue: "See how we work",
+  /** Quiet SR/overview line for the hero animation. */
+  overview: "Your email, CRM, spreadsheets, documents, chat, accounting, calendar and support feed one hub. The hub feeds the CEO Agent. The CEO Agent brings you one recommendation.",
 };
 
 export const BUSINESS = {
@@ -33,6 +37,7 @@ export const BUSINESS = {
   heading: "This is a company. Go inside.",
   lead: "Revenue, cash, pipeline, deadlines, and what to fix first. Pick a department.",
   prompt: "Select a department",
+  hint: "Scroll to step inside",
 };
 
 export const LOOP = {
@@ -76,11 +81,11 @@ export const SCALING = {
 };
 
 export const PROCESS = {
-  eyebrow: "How I work",
+  eyebrow: "How we work",
   heading: "It starts with your business. Not with AI.",
-  lead: "Six steps. One person accountable for all of them.",
+  lead: "Six steps. One team accountable for all of them.",
   steps: [
-    { title: "Learn the business.", body: "I sit with you and your team. How the money comes in, where the time goes." },
+    { title: "Learn the business.", body: "We sit with you and your team. How the money comes in, where the time goes." },
     { title: "Find the friction.", body: "Where people wait, retype, chase and forget. Ranked by what it costs you." },
     { title: "Draw the org chart.", body: "Which agents, which jobs, what needs your sign-off. On one page, before anything is built." },
     { title: "Build one, prove it.", body: "One department first. It proves itself on your real work before the next begins." },
@@ -109,8 +114,8 @@ export const PAUSES = {
 
 export const CTA = {
   eyebrow: "Start here",
-  heading: "Show me how your company works.",
-  lead: "One call. I map where the hours go and name the first agent I'd build.",
+  heading: "Show us how your company works.",
+  lead: "One call. We map where the hours go and name the first agent we'd build.",
   button: "Map my company",
   fields: {
     name: "Your name",
@@ -118,9 +123,9 @@ export const CTA = {
     company: "Company, and what it does",
     stuck: "Where the day gets stuck",
   },
-  reassurance: "I answer every message myself. If agents won't pay for themselves in your business, I'll say so.",
-  success: { title: "Received.", body: "I'll reply within one working day with a time to talk." },
+  reassurance: "We answer every message ourselves. If agents won't pay for themselves in your business, we'll say so.",
+  success: { title: "Received.", body: "We'll reply within one working day with a time to talk." },
   error: "That didn't send. Please try again.",
-  errorDirect: "Or email me directly:",
+  errorDirect: "Or email us directly:",
   errorBusy: "Too many messages from this connection. Try again in a few minutes.",
 };

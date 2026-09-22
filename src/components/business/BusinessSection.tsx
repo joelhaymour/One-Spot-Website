@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { BUSINESS, HERO } from "@/content/copy";
+import { BUSINESS } from "@/content/copy";
 import { AgentSlot } from "@/components/agent/AgentSlot";
 import { VirtualDisplay } from "@/components/display/VirtualDisplay";
 import { BusinessHud, HUD_SIZE } from "@/components/hud/BusinessHud";
@@ -11,15 +11,16 @@ import { useHudScript } from "@/components/hud/useHudScript";
 import { ScrollStory, useStoryProgress } from "@/components/motion/ScrollStory";
 import { registerStage } from "@/components/motion/Transition";
 import { Eyebrow } from "@/components/ui/Section";
+import { cn } from "@/lib/cn";
 import { clamp, easeInOutCubic, lerp, segment } from "@/lib/math";
 import { useMediaQuery, useMounted, useReducedMotion } from "@/lib/useReducedMotion";
 import { useExperience } from "@/state/experience";
 
 /**
- * Hero and "The Business" are one continuous camera move.
+ * The Business: the closing showcase, one continuous camera move.
  *
- * Landing: five words, the CEO Agent, and the top of a live display tilted away from you.
- * Scroll: the words leave, the display straightens and rises to fill the frame, the agent docks above
+ * Landing: the chapter heading, the CEO Agent, and the top of a live display tilted away from you.
+ * Scroll: the heading leaves, the display straightens and rises to fill the frame, the agent docks above
  * it and starts looking at whatever you point at. From there every department is a door.
  *
  * Desktop scrubs transforms from scroll progress (written straight to style: no React per frame).
@@ -61,7 +62,7 @@ function measure(text: HTMLElement | null): Geometry {
   };
 }
 
-function Scene() {
+function Scene({ index }: { index: string }) {
   const desktop = useMediaQuery("(min-width: 768px)");
   const mounted = useMounted();
   const reduce = useReducedMotion();
@@ -163,38 +164,34 @@ function Scene() {
   }, [phase]);
 
   return (
-    <div ref={stage} className="relative h-full w-full max-md:flex max-md:flex-col max-md:items-center max-md:px-[var(--gutter)] max-md:pb-10 max-md:pt-[calc(var(--nav-h)+28px)]">
-      <CinematicSlot slot="hero-room" className="max-md:hidden" />
+    <div ref={stage} className={cn("relative h-full w-full max-md:flex max-md:flex-col max-md:items-center max-md:px-[var(--gutter)] max-md:pb-6 max-md:pt-24")}>
+      <CinematicSlot slot="business-room" className="max-md:hidden" />
 
-      {/* words */}
+      {/* the chapter heading, in the slot the display then takes over */}
       <div
         ref={text}
         className="z-10 max-w-[46rem] will-change-transform md:absolute md:left-[var(--gutter)] md:top-[clamp(96px,15svh,170px)] lg:left-[max(var(--gutter),calc(50vw-700px))]"
       >
-        <Eyebrow>{HERO.eyebrow}</Eyebrow>
-        <h1 className="t-display mt-7 md:[font-size:clamp(2.5rem,min(5.6vw,9.4svh),5.25rem)]">
-          {HERO.headline.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          ))}
-        </h1>
-        <p className="t-lead mt-7 max-w-[30rem]">{HERO.sub}</p>
+        <Eyebrow index={index}>{BUSINESS.eyebrow}</Eyebrow>
+        <h2 id="business-heading" className="t-title mt-7 md:[font-size:clamp(1.75rem,min(3.1vw,6.4svh),2.75rem)]">
+          {BUSINESS.heading}
+        </h2>
+        <p className="t-lead mt-6 max-w-[30rem]">{BUSINESS.lead}</p>
       </div>
 
       {/* the CEO Agent */}
       <div
         ref={agent}
-        className="hero-agent pointer-events-none z-20 origin-top will-change-transform max-md:mt-6 max-md:h-[300px] max-md:w-[285px] md:absolute md:left-1/2 md:top-0"
+        className="stage-agent pointer-events-none z-20 origin-top will-change-transform max-md:mt-6 max-md:h-[300px] max-md:w-[285px] md:absolute md:left-1/2 md:top-0"
       >
         <AgentSlot agent="ceo" mood="idle" followHover pulseCount={state.spoke} className="h-full w-full" deferMs={500} />
       </div>
 
-      {/* The Business: section label, revealed once the display has arrived */}
-      <div ref={heading} className="pointer-events-none z-10 hidden items-end justify-between pb-3 opacity-0 md:absolute md:left-1/2 md:flex md:-translate-x-1/2">
+      {/* the same heading, compact, once the display has arrived (an echo: the h2 above is the heading) */}
+      <div ref={heading} aria-hidden className="pointer-events-none z-10 hidden items-end justify-between pb-3 opacity-0 md:absolute md:left-1/2 md:flex md:-translate-x-1/2">
         <div className="max-w-[25rem]">
-          <Eyebrow index="01">{BUSINESS.eyebrow}</Eyebrow>
-          <h2 className="mt-3 text-[clamp(1.25rem,1.9vw,1.75rem)] font-medium leading-[1.1] tracking-[-0.03em]">{BUSINESS.heading}</h2>
+          <Eyebrow index={index}>{BUSINESS.eyebrow}</Eyebrow>
+          <p className="mt-3 text-[clamp(1.25rem,1.9vw,1.75rem)] font-medium leading-[1.1] tracking-[-0.03em]">{BUSINESS.heading}</p>
         </div>
         <p className="max-w-[19rem] text-right text-[0.9rem] leading-[1.45] text-[var(--text-1)]">{BUSINESS.lead}</p>
       </div>
@@ -202,7 +199,7 @@ function Scene() {
       {/* the display */}
       <div
         ref={display}
-        className="hero-display z-0 origin-top will-change-transform max-md:mt-2 max-md:w-full md:absolute md:left-1/2"
+        className="stage-display z-0 origin-top will-change-transform max-md:mt-2 max-md:w-full md:absolute md:left-1/2"
         inert={mounted && !desktop}
       >
         <VirtualDisplay width={HUD_SIZE.width} height={HUD_SIZE.height} label="The Business: a live view of one company">
@@ -214,7 +211,7 @@ function Scene() {
       <div ref={hint} className="pointer-events-none absolute inset-x-0 bottom-0 z-30 hidden h-[22svh] items-end justify-center bg-gradient-to-t from-[var(--void)] via-[rgba(4,5,6,0.82)] to-transparent pb-7 md:flex">
         <span className="t-label flex items-center gap-3 text-[var(--text-1)]">
           <span className="h-px w-8 bg-[var(--line-strong)]" />
-          {HERO.hint}
+          {BUSINESS.hint}
           <span className="h-px w-8 bg-[var(--line-strong)]" />
         </span>
       </div>
@@ -222,22 +219,24 @@ function Scene() {
   );
 }
 
-export function HeroBusiness() {
+export function BusinessSection({ index = "06" }: { index?: string }) {
   return (
-    <div className="relative">
-    <ScrollStory
-      steps={2}
-      stepLength={1}
-      tail={0.9}
-      aria-label="One Spot: your whole business on one display"
-      className="max-md:!h-auto"
-      stageClassName="max-md:!static max-md:!h-auto max-md:!overflow-visible"
-    >
-      {() => <Scene />}
-    </ScrollStory>
-      {/* Where "The Business" links land: the explore pose on desktop, the native door list on phones. */}
-      <span id="business" aria-hidden className="block h-0 md:absolute md:top-[128svh]" />
-      <MobileBusiness />
-    </div>
+    <section id="business" className="relative" aria-labelledby="business-heading">
+      <ScrollStory
+        steps={2}
+        stepLength={1}
+        tail={0.9}
+        aria-label="The Business: your whole company on one display"
+        className="max-md:!h-auto"
+        stageClassName="max-md:!static max-md:!h-auto max-md:!overflow-visible"
+      >
+        {() => <Scene index={index} />}
+      </ScrollStory>
+      {/* "The doors": where Back to The Business and keyboard focus land. The straightened display on
+          desktop (about 1.3 viewports into the story); the native door list on phones. */}
+      <span id="business-doors" aria-hidden className="block h-0 md:absolute md:top-[128svh]" />
+      {/* Phones: the display above is atmosphere; the recommendation and the doors repeat here at native size. */}
+      <MobileBusiness heading={false} />
+    </section>
   );
 }

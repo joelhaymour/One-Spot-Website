@@ -44,7 +44,7 @@ One front elevation and one three-quarter view per agent (CEO + 7 departments), 
 
 ## S1. `hero-room` — the room behind the hero (video, 8 s, LOOP, about 72 credits)
 
-- **Slot:** behind the hero and The Business, full-bleed, 35% opacity, feathered into the void.
+- **Slot:** `hero-room` behind the hero, and `business-room` behind The Business (same plate, two slots), full-bleed, 35% opacity, feathered into the void.
 - **Agent:** none. The real-time CEO Agent is composited by the site.
 - **Environment:** the black studio floor receding to darkness; two tall cool strip lights far behind, out of
   focus; the faintest haze.

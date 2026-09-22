@@ -342,7 +342,7 @@ const DepartmentDoor = memo(function DepartmentDoor({ department: d, flash, inte
       onFocus={() => {
         attend();
         // Keyboard users reach the doors while the display is still below the fold: bring it up.
-        const anchor = document.getElementById("business");
+        const anchor = document.getElementById("business-doors") ?? document.getElementById("business");
         const el = ref.current;
         if (anchor && el && el.getBoundingClientRect().bottom > window.innerHeight * 0.92) anchor.scrollIntoView({ block: "start" });
       }}
