@@ -1,0 +1,209 @@
+[
+ {
+  "lens": "regressions",
+  "summary": "Read-only review of the uncommitted v2 reorder (v2 HEAD == main; the work is in the working tree). The relocation itself is clean: BusinessSection keeps registerStage, the IntersectionObserver-gated HUD script, the `.stage-display`/`.stage-agent` CSS pose (aligned with measure()), the \"returning\" settle animation, the mobile in-flow layout, followHover on the business CEO only, and inert handling. HeroOverview's timers/observers clean up correctly, the static tier never touches WebGL, and hidden-tab/paused/reduced-motion all fall back to the final still. lenis.resize() before the restore jump is the right fix for the now-deep #business offset. GLStage only advances on-screen canvases, so the second CEO context is not a rendering cost. Five findings survived: (1) the footer's department nav also carries aria-label=\"Departments\", so footer entries are misclassified as door entries and \"Back to The Business\" drops the visitor at the footer; (2)+(3) the #business id moved from the explore-pose anchor (128svh) to the section top, which silently breaks the keyboard door-focus helper and changes where the non-door return path lands; (4) three singular company-voice strings remain; (5) two pauses were moved away from the scenes main's comments say they introduce. Nothing found in scroll timing, step buttons, recommendation selectors, department routes, Pause Motion or reduced-motion behaviour.",
+  "findings": [
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "src/components/motion/SmoothScroll.tsx",
+    "line": 91,
+    "title": "Footer department links are treated as display doors, so 'Back to The Business' lands on the footer",
+    "scenario": "The capture-phase click listener marks an entry as a door entry with `link.closest('nav[aria-label=\"Departments\"]')`, but src/components/chrome/Footer.tsx:40 also renders `<nav aria-label=\"Departments\">`. A visitor on the homepage scrolls to the footer, clicks 'Marketing' there, reads the department page and presses 'Back to The Business'. leave() sees homeScrollY !== null && homeFromDisplay === true, pushes '/' and SmoothScroll restores the saved offset, which is the footer. The cover says 'The Business' and lifts on the footer, about two viewports below the doors. On main the `homeScrollY < innerHeight * 2.4` heuristic rejected footer positions and sent these visitors to /#business; the comment in Transition.tsx:77-78 still promises that behaviour.",
+    "fix": "Scope the door test to the Business section instead of the nav label: `s.setHomeFromDisplay(!!link.closest(\"#business\"));` (both the HUD doors and the phone door list live inside `<section id=\"business\">`; the footer and loop grid do not)."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "src/components/hud/BusinessHud.tsx",
+    "line": 345,
+    "title": "Keyboard door focus now scrolls to the landing pose, leaving the focused door below the fold",
+    "scenario": "DepartmentDoor.onFocus brings the doors up with `document.getElementById(\"business\").scrollIntoView({block:\"start\"})` when the focused door's bottom is below 92% of the viewport. On main #business was a span at md:top-[128svh] inside the hero, i.e. the explore pose (display straight, doors visible). It is now the id of `<section id=\"business\">` in BusinessSection.tsx:224, whose top is the landing pose: display at 60svh, tilted, doors (HUD y 370-740 of 760) starting around 95% of viewport height on a 1440x800 screen. A keyboard user tabbing from the chapter heading (or after Nav's 'The Business' focuses the section) reaches a door, the helper fires, the page snaps to the section top, and the doors stay under the hint gradient; if they had scrolled a little further already it scrolls them backwards. Focus sits on an invisible link.",
+    "fix": "Restore an anchor at the explore pose inside the section, e.g. `<span id=\"business-doors\" aria-hidden className=\"block h-0 md:absolute md:top-[128svh]\" />` right after the ScrollStory in BusinessSection.tsx, and target it here: `document.getElementById(\"business-doors\") ?? document.getElementById(\"business\")`."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "src/components/motion/Transition.tsx",
+    "line": 81,
+    "title": "Return path for non-door entries lands on the chapter intro, not the doors",
+    "scenario": "leave()'s comment says 'Back to The Business means the doors' and falls back to '/#business' for deep links and entries from the loop grid. Because #business now resolves to the section top (BusinessSection.tsx:224) rather than the old 128svh explore-pose anchor, a visitor who entered Marketing from the loop grid (or opened /departments/marketing directly) and presses 'Back to The Business' arrives at '06 The Business / This is a company. Go inside.' with the display tilted away, the agent at landing size and 'Scroll to step inside' showing; they must scroll another ~1.1 viewports to reach the doors they were promised. On main the same click landed on the straightened display with the doors interactive.",
+    "fix": "Point the fallback at the explore-pose anchor from the previous finding: `const home = onDisplay ? \"/\" : \"/#business-doors\";` (SmoothScroll's route-change effect already scrolls to whatever hash is present). Nav/footer 'The Business' links can keep landing on the section heading."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "src/content/copy.ts",
+    "line": 129,
+    "title": "Three company-voice strings are still singular",
+    "scenario": "The brief moved company narration to 'we', keeping only agent dialogue singular. `CTA.errorDirect` still reads 'Or email me directly:' (shown when the contact form fails), and src/components/cta/validate.ts:32 and :34 still say 'Add an email address I can reply to.' and 'Tell me where the day gets stuck.' A visitor who mistypes their email or leaves the last field empty sees the founder's 'I' under a form whose heading says 'Show us how your company works.' and whose reassurance says 'We answer every message ourselves.'",
+    "fix": "copy.ts:129 \u2192 `errorDirect: \"Or email us directly:\"`; validate.ts:32 \u2192 `\"Add an email address we can reply to.\"`; validate.ts:34 \u2192 `\"Tell us where the day gets stuck. One sentence is enough.\"`."
+   },
+   {
+    "severity": "low",
+    "confidence": "possible",
+    "file": "src/app/page.tsx",
+    "line": 28,
+    "title": "Two pauses were moved away from the scenes they were written to introduce",
+    "scenario": "Main placed PAUSES.afterHero ('Every company has an operating layer. Usually it's the owner.') directly before NetworkSection with the comment 'The owner as the company's wiring: the thought the network scene answers', and PAUSES.beforeCta ('You still run the company. Now you can see all of it.') directly before ContactSection. v2 puts afterHero before ProcessSection and beforeCta before BusinessSection, leaving the network scene with no pause and the contact section following the Business story's 0.9svh tail with no beat between. The brief asked to 'preserve the existing transition sentences and place them beside the sections they introduce'; a visitor now reads the owner-as-wiring line and gets 'How we work', and the 'now you can see all of it' payoff arrives before the display it describes has been shown.",
+    "fix": "Move `<Statement>{PAUSES.afterHero}</Statement>` to sit directly above `<NetworkSection index=\"05\" />` (restoring main's comment) and `<Statement>{PAUSES.beforeCta}</Statement>` to sit between `<BusinessSection index=\"06\" />` and `<ContactSection />`; if a beat is wanted between the hero and 'How we work', add a new sentence rather than reusing these."
+   }
+  ]
+ },
+ {
+  "lens": "spec-copy",
+  "findings": [
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "src/components/cta/validate.ts",
+    "line": 32,
+    "title": "Contact form validation still speaks as the founder (\"I can reply\", \"Tell me\")",
+    "scenario": "A visitor presses \"Map my company\" with the email or the \"Where the day gets stuck\" field empty. Under the form they read \"Add an email address I can reply to.\" and \"Tell me where the day gets stuck. One sentence is enough.\" directly beneath a section whose heading and reassurance now say \"Show us\", \"We answer every message ourselves\". These are company-voice strings (REQUIRED map, lines 32 and 34) that the plural sweep missed because they live outside src/content/copy.ts; they surface on the single most common error path of the form.",
+    "fix": "In REQUIRED: email \u2192 \"Add an email address we can reply to.\", stuck \u2192 \"Tell us where the day gets stuck. One sentence is enough.\""
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "src/components/motion/SmoothScroll.tsx",
+    "line": 91,
+    "title": "Footer department links count as display doors, so \"Back to The Business\" returns to the footer",
+    "scenario": "The click handler sets homeFromDisplay = !!link.closest('nav[aria-label=\"Departments\"]'). The Footer's department list (src/components/chrome/Footer.tsx:40) is also a <nav aria-label=\"Departments\">, so a homepage visitor who scrolls to the footer and clicks \"Marketing\" gets homeFromDisplay = true with homeScrollY = the footer's offset. On the department page, \"Back to The Business\" (Transition.tsx leave(), line 79) sees onDisplay true, pushes \"/\" and restores that offset: the visitor lands at the bottom of the homepage, under the contact form, not at the doors. Transition.tsx's own comment says footer entries must land on #business.",
+    "fix": "Exclude the footer: s.setHomeFromDisplay(!!link.closest('nav[aria-label=\"Departments\"]') && !link.closest('footer')); or give the footer nav a distinct label (e.g. aria-label=\"Departments, footer\") so only BusinessHud and MobileBusiness match."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "src/app/page.tsx",
+    "line": 37,
+    "title": "Two pauses moved away from the sections they were written to introduce; the CTA lost its closing line",
+    "scenario": "Current placement: afterHero \"Every company has an operating layer. Usually it's the owner.\" (line 28) now precedes 01 How we work \"It starts with your business. Not with AI.\"; beforeAfter \u2192 02 Before/After, beforeScaling \u2192 03 Scaling and beforeAgents \u2192 04 Agents keep their original pairings; beforeCta \"You still run the company. Now you can see all of it.\" (line 37) now precedes 06 The Business, and Contact follows the display's explore pose with no pause at all. The copy deck (docs/panel/copy.md \u00a77) wrote the owner line as the line into The Business (Hero \u2192 The Business) and the fifth line as the film's close (Before/After \u2192 CTA). In the new order the \"owner as operating layer\" thought is dropped before a section about the six-step process and only answered two chapters later, and the film no longer closes on a still frame before \"Show us how your company works.\" The brief asked for each transition sentence to sit beside the section it introduces.",
+    "fix": "Swap the two: put <Statement>{PAUSES.afterHero}</Statement> immediately before <BusinessSection index=\"06\" /> (\"\u2026Usually it's the owner.\" \u2192 \"This is a company. Go inside.\") and <Statement>{PAUSES.beforeCta}</Statement> back between BusinessSection and ContactSection. The hero's \"See how we work\" cue already carries the visitor into 01, so no pause is needed after the hero."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "src/content/copy.ts",
+    "line": 129,
+    "title": "CTA.errorDirect still says \"Or email me directly:\"",
+    "scenario": "When NEXT_PUBLIC_CONTACT_EMAIL is set and the send fails (502/503), ContactForm.tsx:227 renders \"That didn't send. Please try again. Or email me directly: <address>\" under a form whose reassurance line now reads \"We answer every message ourselves\". Company voice, singular.",
+    "fix": "errorDirect: \"Or email us directly:\""
+   },
+   {
+    "severity": "low",
+    "confidence": "likely",
+    "file": "src/components/business/BusinessSection.tsx",
+    "line": 224,
+    "title": "#business now lands on the chapter's landing pose, one viewport above the doors it used to reach",
+    "scenario": "On main the anchor was <span id=\"business\" className=\"block h-0 md:absolute md:top-[128svh]\" /> after the ScrollStory: 128svh into a 2.9svh-travel story is progress \u22480.64, the fully straightened display with the seven doors (and on phones the span sat directly above the MobileBusiness door list). Now id=\"business\" is on the <section>, so every \"/#business\" path (nav \"The Business\", footer, DepartmentOutro \"Back to The Business\" for visitors who entered from the loop grid or a deep link, DepartmentIntro breadcrumb) lands at progress 0: the tilted display, the chapter heading and \"Scroll to step inside\". On phones it lands above the heading, agent and atmosphere display, roughly 1.5 screens above the door list. Transition.tsx:77 still documents \"Back to The Business means the doors\", which is no longer true for the /#business branch.",
+    "fix": "Keep the section for aria/scroll-spy but restore the door anchor: add <span id=\"business-doors\" aria-hidden className=\"block h-0 md:absolute md:top-[128svh]\" /> after the ScrollStory (before MobileBusiness) and point Transition.leave()'s fallback, DepartmentOutro and DepartmentIntro at \"/#business-doors\"; or, if the reveal is wanted on every entry, update the Transition.tsx comment and accept the extra scroll."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "src/components/hero/HeroOverview.tsx",
+    "line": 84,
+    "title": "HERO.overview is dead copy; the hero hardcodes a duplicate DESCRIPTION",
+    "scenario": "copy.ts:32 adds HERO.overview (\"Your email, CRM, spreadsheets\u2026 one recommendation.\") documented as the SR line for the hero animation, but nothing imports it; HeroOverview.tsx:84-85 defines the identical sentence as a local DESCRIPTION and renders that in the sr-only <p>. The deck's one-source rule is broken: editing copy.ts changes nothing on the page.",
+    "fix": "In HeroOverview.tsx import HERO from \"@/content/copy\", delete the local DESCRIPTION and render {HERO.overview}."
+   }
+  ],
+  "summary": "Reviewed the working tree of /Users/joelhaymour/Projects/one-spot against HEAD (v2 and main are the same commit; the reorder is uncommitted). Page order in src/app/page.tsx is exactly the brief: HeroSection \u2192 01 ProcessSection \u2192 02 BeforeAfterSection \u2192 03 ScalingSection \u2192 04 LoopSection (once) \u2192 05 NetworkSection \u2192 06 BusinessSection \u2192 ContactSection. Each relocated section is the same component; the only content changes are the new index props, the LoopSection \"I design\" \u2192 \"We design\" edit, and HeroBusiness \u2192 BusinessSection (75% similarity rename) where the h1/HERO copy became the h2/BUSINESS chapter heading, the compact strip became aria-hidden with a <p>, the hero-display/hero-agent CSS poses were renamed stage-display/stage-agent in globals.css, and a business-room media slot was added. Nothing was dropped: ScrollStory steps/tail, the CEO AgentSlot, VirtualDisplay + BusinessHud, MobileBusiness (heading suppressed to avoid a duplicate h2), the returning-phase settle animation and registerStage are intact. Anchors #how, #before-after, #scaling, #agents, #network, #business, #contact each exist once; NAV order (How we work, Agents, Network, The Business) follows DOM order and the footer reuses NAV; Nav's BUSINESS_HREF no longer assumes NAV[0]; eyebrows read 01..06 in DOM order and the compact Business strip uses the same index. The hero cue \"See how we work\" points at /#how and \"Scroll to step inside\" moved to BUSINESS.hint. Copy: copy.ts, the voice-rule comment, nav, footer, process, CTA and success copy are plural; \"Map my company\", the eight \"I recommend\u2026\" lines in hud.ts and \"I am becoming the bottleneck\" are preserved; metadata, not-found, error, opengraph, sitemap and department content are clean. Three singular strings remain (validate.ts lines 32/34, copy.ts errorDirect). Hero: HeroOverview reuses ToolGlyph, the process diagram label/glyph styles and useSvgUnit, AgentSlot (ceo, moods observe/think/transmit), RECOMMENDATIONS[0], StatusChip and TypedText; the hub redraws the same circle-and-dot mark used by ToolsDiagram; the loop reads tools \u2192 hub \u2192 stem \u2192 CEO Agent \u2192 recommendation card and contains no \"You in the middle\" beat, so it is a preview, not a before/after; it shows the final still under reduced motion, Pause Motion, hidden tab and off-screen. Pauses: beforeAfter, beforeScaling and beforeAgents keep their original pairings; afterHero now introduces How we work and beforeCta now introduces The Business, leaving Contact with no pause (flagged). One functional regression found in the return path: the footer's Departments nav matches the new homeFromDisplay selector, so footer entries restore the footer offset instead of landing on #business. Optional docs: docs/panel/copy.md still documents the singular deck (\"The founder speaks as I\", \"How I work\"); CREATIVE_PLAN and README carry the v2 note."
+ },
+ {
+  "lens": "responsive-a11y-motion",
+  "summary": "Read-only review of the v2 working tree (uncommitted vs main) through the responsive/a11y/motion lens. Verified as fine: exactly one h1 (hero) and one h2 per chapter incl. The Business (the compact strip is aria-hidden and now a <p>, MobileBusiness renders no heading, `business-heading` exists at every width); the \"Scroll to step inside\" hint is md+ only; the display is inert only below md after mount; #business is a `main > section[id]` so nav highlighting and SECTION_IDS work with the new order; BUSINESS_HREF resolves by hash rather than NAV[0]; the hero loop gates on IntersectionObserver (0.2), document.hidden, `paused` and reduced motion and resumes at `flow` with the threads/stem already drawn (card and glow fade out over 480-700 ms, no hard cut); tool labels are held at ~10 px CSS by useSvgUnit down to ~330 px viewports (9.6 px at 320); no horizontal overflow of the overview at 340-400 px (label/tile slots were checked numerically). Findings, most severe first: (1) the lg grid `minmax(0,46rem) minmax(0,1fr)` gives the copy column its full 46rem before the overview gets the leftover, so the hero animation is 155 px wide at 1024 and ~290 px at 1180 (iPad landscape, small laptops) \u2014 labels 5 px, tiles overlapping, a 143 px-wide card several hundred px tall; (2) DepartmentDoor's onFocus scrolls `#business` into view, which is now the landing pose where the doors are clipped below the fold, so keyboard users are yanked away from the door they just focused on every Tab (regression from moving the id off the 128svh explore-pose span); (3) footer department links match `nav[aria-label=\"Departments\"]`, so \"Back to The Business\" now restores the footer scroll position instead of landing on #business; (4) reduced-motion / Pause-motion still keeps the floor at 0.42 opacity, leaving the eight tool names at ~1.8:1 contrast in the only frame those visitors ever see; plus low items: first-paint --u/--k estimates that snap labels from ~7-8.6 px to 10 px on hydrate, three singular-voice strings left in company copy, sr-exposed aria-disabled buttons in the hero card, the card overhang pushing the hero to ~686 px on 1366x650 / 1536x664, the docked CEO Agent immediately followed by the Contact CEO Agent with no pause between them (judgment call), and an unused HERO.overview duplicated as a hardcoded DESCRIPTION. Not verifiable from code alone (left out): whether the nowrap mobile CTA + brand + menu button fit inside 340 px; my width estimate lands within ~10 px of the available 300 px, so worth a quick look at 340 px in a browser.",
+  "findings": [
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/HeroSection.tsx",
+    "line": 17,
+    "title": "Hero overview collapses to 155-290px at lg widths (1024-1180)",
+    "scenario": "`lg:grid-cols-[minmax(0,46rem)_minmax(0,1fr)]`: per the grid algorithm the non-flexible track is maximised to its 46rem (736px) limit before the fr track receives the leftover. At 1024px (gutter 41px, gap 51px) the free space is 891px, so the copy column is 736px and the overview column 155px; at 1180 it is 291px, at 1280 still only 378px, and only from ~1400px does it reach its 482px ceiling. An iPad-landscape or 1024-1180 laptop visitor sees the 'sophisticated' opening animation as a 155px-wide diagram: --unit = 0.2px, tiles 18px, labels 5px (useSvgUnit clamps --u at 2.6), the 120px minimum-height agent adds 65px of padding, and the recommendation card is 143px wide and several hundred px tall. The copy itself needs at most ~480-600px at these widths, so the 46rem track is pure slack.",
+    "fix": "Size the copy column to its content instead of its cap: `lg:grid-cols-[fit-content(46rem)_minmax(0,1fr)]` (copy = max(h1 longest line, the 30rem lead) capped at 46rem; overview gets ~415px at 1024, ~520px at 1280+). Alternatively guarantee the overview a floor so the copy column yields first: `lg:grid-cols-[minmax(0,46rem)_minmax(24rem,1fr)]`. Either way re-check the first-paint --u/--k estimates in overview.module.css (see separate finding)."
+   },
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hud/BusinessHud.tsx",
+    "line": 345,
+    "title": "Keyboard focus on a door now scrolls back to the landing pose, hiding the focused door",
+    "scenario": "DepartmentDoor's onFocus does `document.getElementById(\"business\").scrollIntoView({block:\"start\"})` whenever the door's bottom is below 92% of the viewport. On main, #business was a span at `md:top-[128svh]` inside the story, i.e. the explore pose (progress ~0.64, t=1, display straight and full-frame). In BusinessSection the id moved to the outer <section>, whose top is progress 0: the display sits at top:60svh tilted 15deg, so the first door row starts at ~94vh and is clipped by the sticky stage's overflow-clip. Tabbing into any door: the browser scrolls the door into view, the story straightens the display, then the handler fires (bottom > 0.92vh is always true at the landing pose) and yanks the page back to the section top, where the focused door is off-screen/clipped. Every subsequent Tab repeats it, so a keyboard user can never see the door that has focus.",
+    "fix": "Restore an explore-pose anchor and target it from the door: in BusinessSection add `<span id=\"business-doors\" aria-hidden className=\"block h-0 md:absolute md:top-[128svh]\" />` inside `<section id=\"business\" className=\"relative\">` (next to the ScrollStory), and in DepartmentDoor use `document.getElementById(\"business-doors\") ?? document.getElementById(\"business\")`. Keep #business on the section for nav/links."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/motion/SmoothScroll.tsx",
+    "line": 91,
+    "title": "Footer department links are treated as display doors, so 'Back to The Business' returns to the footer",
+    "scenario": "`setHomeFromDisplay(!!link.closest('nav[aria-label=\"Departments\"]'))` is meant to match the display's doors (BusinessHud) and the phone door list (MobileBusiness), but Footer.tsx also renders `<nav aria-label=\"Departments\">`. A visitor who opens Marketing from the footer gets homeFromDisplay=true; Transition.leave() then sees onDisplay=true and pushes '/' with the saved scrollY, landing them back at the footer instead of on #business. The comment in leave() explicitly says footer entries should land on the #business anchor, and the old `< innerHeight*2.4` heuristic did that.",
+    "fix": "Scope the test to the chapter rather than the nav label: `s.setHomeFromDisplay(!!link.closest('#business'));` (both the HUD doors and MobileBusiness live inside `<section id=\"business\">`; the footer does not)."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/HeroOverview.tsx",
+    "line": 156,
+    "title": "Reduced-motion and Pause-motion still dims the eight tools to ~1.8:1 contrast permanently",
+    "scenario": "`cardOn = final || deliver || hold` and the stage gets `css.receded` whenever cardOn, so for prefers-reduced-motion, 'Pause motion', hidden-tab and off-screen visitors the floor is fixed at `.receded .floor { opacity: 0.42 }`. Tool labels are --text-2 (#7a828e) which is 5.3:1 on --void at full opacity but ~#363940 at 0.42, roughly 1.8:1 at 10px. The SVG is aria-hidden so this is not a WCAG text failure, but the brief's core image, 'existing business systems surrounding a central hub', is the one thing a low-vision or reduced-motion visitor cannot make out in the only frame they ever see; the live loop only dims it for a few seconds.",
+    "fix": "Recede only while the loop is live: replace `cardOn && css.receded` with `live && (phase === \"deliver\" || phase === \"hold\") && css.receded` so the final still keeps the floor at full opacity (or, if the card must still read as 'in front', add `.stage:not(.flowing) .receded .floor`-style rule raising the still's opacity to >= 0.7)."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/overview.module.css",
+    "line": 37,
+    "title": "First-paint --u/--k estimates assume a frame that the grid never allows; labels snap on hydrate",
+    "scenario": "The frame is capped by its grid column (<= 482px at >= 1400px wide, 378px at 1280 with the current grid), but the stylesheet's first-paint estimates are `--u: 1.35` (base) and `--u: 1.15` at >= 1440px, i.e. frames of 563px and 661px. Server HTML therefore renders the tool labels at 13.5 x 0.634 = 8.6px (base) or 11.5 x 0.634 = 7.3px (>= 1440) and the tiles ~9-18% smaller; when useSvgUnit runs after hydration they snap to 10px / --k 1.26. On the very first frame the visitor looks at, the diagram's type and tiles visibly pop, which the module comment says it was written to avoid.",
+    "fix": "Match the estimates to the column-capped frame: set the base `.frame { --u: 1.58; --k: 1.26; }` and delete the 1440px override (or set it to the same values). If the grid is changed to fit-content(46rem), re-derive: 760 / expected frame width, --k = 0.55 + 0.45 * --u."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/content/copy.ts",
+    "line": 129,
+    "title": "Three company-voice strings still speak in the singular",
+    "scenario": "The brief asked for company narration to move to 'we' (keeping agent dialogue and 'Map my company'). Left behind: `CTA.errorDirect: \"Or email me directly:\"` (shown when the form fails), and in src/components/cta/validate.ts lines 32 and 34 the validation messages \"Add an email address I can reply to.\" and \"Tell me where the day gets stuck. One sentence is enough.\" A visitor who mistypes their email or leaves the form incomplete sees 'I/me' right under a heading that now says 'Show us how your company works.'",
+    "fix": "copy.ts: `errorDirect: \"Or email us directly:\"`; validate.ts: `email: \"Add an email address we can reply to.\"`, `stuck: \"Tell us where the day gets stuck. One sentence is enough.\"`."
+   },
+   {
+    "severity": "low",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/HeroOverview.tsx",
+    "line": 252,
+    "title": "Inert Approve/Review/Not now chips are still exposed to screen readers as unavailable buttons",
+    "scenario": "The recommendation card is 'a picture of a decision, not a control', and pointer-events:none plus tabIndex=-1 keep mouse and Tab away from the three chips, but they remain <button aria-disabled=\"true\"> in the accessibility tree. A screen-reader user browsing the hero hears, right after the group 'To you, from the CEO Agent' and the recommendation, 'Approve, button, dimmed / Review, button, dimmed / Not now, button, dimmed' with nothing to explain why the first controls on the page cannot be used.",
+    "fix": "Hide the row from the tree since the sr-only description and the typed recommendation already carry the meaning: put `aria-hidden` on the wrapping `<div className=\"mt-3.5 flex flex-wrap gap-2\">` and render the chips as <span>s (dropping aria-disabled/tabIndex)."
+   },
+   {
+    "severity": "low",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/overview.module.css",
+    "line": 20,
+    "title": "Card overhang is outside the 62svh budget, so the hero exceeds one viewport on short laptops",
+    "scenario": "--budget caps only the 760x640 drawing; the recommendation card (~245px at 14px text: header, chip, 4-line observation, 2-line action, chip row, 32px padding) hangs from CARD_TOP_Y=392 and grows the frame by ~88px when the SVG is 406px tall. At 1366x650 or 1536x664 (frame 482px wide) the frame is ~502px and the hero grid is 104px top padding + 502 + 80px bottom padding = ~686px, so the card's action row and part of the card sit below the fold in the first viewport, and the copy column (items-center) is pushed off its intended centre.",
+    "fix": "Fold the overhang into the budget on short viewports, e.g. add `@media (min-width: 768px) and (max-height: 720px) { .frame { --budget: 52svh; } }` (or reduce `md:pb-20` to `md:pb-10` on the hero grid)."
+   },
+   {
+    "severity": "low",
+    "confidence": "possible",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/app/page.tsx",
+    "line": 37,
+    "title": "Two CEO Agents back to back at the page end with no pause between them",
+    "scenario": "With PAUSES.beforeCta now placed before BusinessSection, the display's final pose (CEO Agent docked above the HUD at ~150-210px, held for the 0.9svh tail) is followed directly by ContactSection, whose AgentMark shows a second 160-190px CEO Agent standing idle, then forming into the mark. The visitor sees the same figure twice within about a viewport and a half, and the closing 'agent becomes the logo' beat loses the breathing room it had on main (where a Statement preceded Contact). Judgment call: it can also read as the same agent stepping off the display to become the brand.",
+    "fix": "If it feels redundant in the browser, move `<Statement>{PAUSES.beforeCta}</Statement>` to between `<BusinessSection index=\"06\" />` and `<ContactSection />` ('You still run the company. Now you can see all of it.' works equally well as the line after the display), restoring the pause-before-CTA rhythm of main."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/HeroOverview.tsx",
+    "line": 84,
+    "title": "HERO.overview is defined but unused; the sr-only description is a hardcoded duplicate",
+    "scenario": "copy.ts adds `HERO.overview` as the 'Quiet SR/overview line for the hero animation', but HeroOverview.tsx declares its own `DESCRIPTION` with the same sentence and never imports HERO. Editing the copy deck (the single source of truth for every other string) leaves the screen-reader description of the hero unchanged, and the two will silently drift.",
+    "fix": "`import { HERO } from \"@/content/copy\";` and render `<p className=\"sr-only\">{HERO.overview}</p>`; delete the local DESCRIPTION constant."
+   }
+  ]
+ }
+]

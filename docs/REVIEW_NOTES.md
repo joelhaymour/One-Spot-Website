@@ -48,3 +48,17 @@ the build. 45 findings, none critical. Raw output: `docs/panel/review-findings.j
 
 Safari (macOS + iOS) rendering of the additive glow over a transparent canvas; 120 Hz frame pacing in Chrome
 on ProMotion; Low Power Mode; a real phone for the department camera push (strength 1 below 640px).
+
+## v2 reorder review (2026-09-21)
+
+Three reviewers (regressions, spec/copy, responsive/a11y) read the reorder. Raw output:
+`docs/panel/review-findings-v2.json`. Fixed: footer department links were classified as display doors
+(door test now scoped to `#business`); the keyboard door-focus helper and the non-door return path
+targeted the chapter's landing pose instead of the doors (restored a `#business-doors` anchor at the
+explore pose); the hero overview collapsed to 155-290px at 1024-1180px (overview column floor 26rem);
+the final still for reduced-motion / paused visitors dimmed the tools to ~1.8:1 (floor recedes only while
+the live loop delivers); three singular company-voice strings; unused `HERO.overview`; inert chips exposed
+to screen readers; card overhang on short laptops; first-paint label size estimates; and the two pauses
+that had drifted from the scenes they were written for. Also found during verification: Lenis clamps
+`scrollTo` to a cached page height, so restoring a deep position on the first frame of a new route landed
+at the previous route's maximum (fixed with `lenis.resize()` before the jump).
