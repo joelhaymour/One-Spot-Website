@@ -28,7 +28,7 @@ export const NAV = [
   { label: "How we work", href: "/#how" },
   { label: "The Hub", href: "/#business" },
   { label: "Agents", href: "/#agents" },
-  { label: "Network", href: "/#network" },
+  { label: "In action", href: "/#in-action" },
 ];
 
 /**
@@ -38,7 +38,7 @@ export const NAV = [
 export const BEFORE_AFTER = {
   before: "Eight tools. You in the middle.",
   after: "Eight tools. One Spot in the middle.",
-  tools: ["Email", "CRM", "Spreadsheets", "Documents", "Chat", "Accounting", "Calendar", "Support"],
+  tools: ["Email", "CRM", "Spreadsheets", "Documents", "Chat", "Accounting", "Calendar", "Support"] as const,
 };
 
 export const HERO = {
@@ -52,6 +52,12 @@ export const HERO = {
     before: { label: "Before", text: BEFORE_AFTER.before },
     after: { label: "After", text: BEFORE_AFTER.after },
   },
+  /** A working day, counted, under the drawing. Before, the first two climb with every jump of attention. */
+  counters: [
+    { label: "Tab switches today", before: 325, after: 14 },
+    { label: "Copy-pastes", before: 144, after: 0 },
+    { label: "Things waiting on you", before: 41, after: 3 },
+  ],
   /** Quiet SR line for the hero animation (the drawing itself is aria-hidden). */
   overview:
     "The same eight tools, before and after: email, CRM, spreadsheets, documents, chat, accounting, calendar and support. Before, you stand in the middle, holding them together. After, One Spot stands in the middle, connected to every tool, and you are connected to One Spot by one line.",
@@ -63,9 +69,11 @@ export const BUSINESS = {
   short: "The Hub",
   heading: "This is a company. Go inside.",
   lead: "Everything happening across the business. Only what needs you rises to the top.",
-  prompt: "Select a department",
-  hint: "Scroll to step inside",
   back: "Back to the Hub",
+  /** The display's two tabs, and the two words it says as each one arrives. */
+  tabs: { dashboard: "Dashboard", todo: "To Do" },
+  seeMore: "See more.",
+  doLess: "Do less.",
 };
 
 export const LOOP = {
@@ -84,16 +92,19 @@ export const LOOP = {
   doorsNote: "These seven are an example. We design the digital workforce around how your company is actually organized.",
 };
 
-export const NETWORK = {
-  eyebrow: "Across departments",
-  heading: "Your digital workforce works across departments.",
-  lead: "Agents share what matters across the business. Executive agents connect the dots, coordinate work and bring the decisions that actually require you to the surface.",
-  relay: [
-    { from: "sales", to: "ceo", speaker: "Sales Agent", line: "New inquiries up 46% in six days.", caption: "Sales notices demand climbing faster than planned." },
-    { from: "ceo", to: "operations", speaker: "CEO Agent", line: "Checking delivery capacity.", caption: "An executive agent connects the dots and asks the department that would feel it first." },
-    { from: "operations", to: "ceo", speaker: "Operations Agent", line: "88% booked. 12 more slots can open.", caption: "Operations checks people, hours and materials." },
-    { from: "ceo", to: "owner", speaker: "To you", line: "Open the 12 slots before taking on more work.", caption: "One recommendation reaches you, with the answer attached. You decide." },
+export const FLOWS = {
+  eyebrow: "In action",
+  heading: "Something happens. You get one decision.",
+  lead: "Three things that happen in every business, handled the way One Spot handles them. Only the systems that matter take part; the rest stay quiet.",
+  /** The pattern every scenario follows, in five beats. Shown under the heading. */
+  pattern: [
+    "Something happens",
+    "One Spot finds the relevant information",
+    "Work moves between the right systems",
+    "One Spot connects the dots",
+    "You receive one clear decision",
   ],
+  /** The three scenarios themselves live in content/flows.ts. */
 } as const;
 
 export const SCALING = {

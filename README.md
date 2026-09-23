@@ -33,13 +33,14 @@ homepage after any dependency bump.
 
 | Path | What lives there |
 |---|---|
-| `src/content/` | All copy and data: `copy.ts` (deck), `departments.ts` (agents, stories, console regions), `hud.ts` (the fictional company + liveness script), `media.ts` (optional footage slots) |
+| `src/content/` | All copy and data: `copy.ts` (deck), `flows.ts` (the three routed scenarios), `departments.ts` (agents, stories, console regions), `hud.ts` (the fictional company + liveness script), `media.ts` (optional footage slots) |
 | `src/components/motion/` | `SmoothScroll` (Lenis on the GSAP ticker), `ScrollStory` (sticky scroll-film engine), `Transition` (stepping through the display) |
 | `src/components/display/VirtualDisplay.tsx` | The "computer": content authored at 1280 x 760 virtual px, scaled to fit, with a camera |
 | `src/components/hero/` | The opening frame: copy plus `HeroTools`, the eight tools before and after (auto-playing, time-based) |
-| `src/components/hud/`, `business/` | The Business display, its camera reveal and the seven doors (chapter 02, right after How we work) |
+| `src/components/hud/`, `business/` | The Business display with its two tabs (Dashboard, then To Do: see more, then do less) and the seven doors (chapter 02, right after How we work) |
 | `src/components/department/` | Department route shell, console frame, and the seven console screens |
-| `src/components/network/`, `scaling/`, `process/`, `cta/`, `chrome/` | Homepage scenes and site chrome |
+| `src/components/flows/` | In action: the after ring with three routed scenarios (chapter 05) |
+| `src/components/scaling/`, `process/`, `cta/`, `chrome/` | Homepage scenes and site chrome |
 | `src/components/agent/` | `AgentSlot` (SVG first, WebGL after), `AgentSvg`, `Mark` (the logo) |
 | `src/gl/` | The only code allowed to import three.js. `agent/rig.ts` is the DATUM agent; `stage/GLStage.tsx` is the in-flow canvas |
 

@@ -170,3 +170,6 @@ export const HUD_SCRIPT: HudEvent[] = [
   { type: "activity", dept: "administration", line: "Prepared 3 contracts for signature." },
   { type: "metric", id: "leads", add: 2 },
 ];
+
+/** The three recommendations the To Do tab shows as cards, in order. The rest cycle on the agent. */
+export const TODO_RECOMMENDATIONS = ["capacity", "revenue", "approvals"] as const;

@@ -5,8 +5,8 @@ lighting rig and camera language, and states only what is specific to the shot.
 
 **Status: nothing generated yet.** The connected Higgsfield account is on the free plan with 0 credits
 (checked 2026-09-20). Measured prices: 2 credits per 2K still (`nano_banana_pro`), 72 credits per 8 s 1080p clip
-(`seedance_2_0`, std mode, no audio). Budget for everything below: about 40 credits of stills + about 750
-credits of video = **about 790 credits**. Minimum useful set (S1, S2, S10, S13): about 300 credits.
+(`seedance_2_0`, std mode, no audio). Budget for everything below: about 45 credits of stills + about 630
+credits of video = **about 675 credits**. Minimum useful set (S1, S2, S10, S13): about 300 credits.
 
 Every slot on the site already has a real-time or CSS fallback, so the site is complete without these.
 To install a clip: export per "Delivery", drop the files in `public/media/`, and fill in the slot in
@@ -96,18 +96,6 @@ One front elevation and one three-quarter view per agent (CEO + 7 departments), 
   smoothly upward and downward from the plane of the ring, precise and silent, until it forms [lock]. No sparks,
   no particles, no glow bursts.`
 - **Fallback in place:** this exact sequence runs in real time in `AgentRig.arrive()`.
-
-## S11. `network-wide` — the organisation (video, 8 s, about 72 credits + 1 still)
-
-- **Slot:** poster and background for the network section on the static tier.
-- **Composition:** CEO Agent raised at centre-back; seven department agents on a shallow arc in front of it, each
-  over a small dock disc with its accent underglow; deep black behind; floor reflections.
-- **Camera:** slow crane down from 20 degrees elevation to 12 degrees, 8 s.
-- **Start frame:** higher angle, all eight visible, CEO smallest. **End frame:** lower angle, CEO rising above the arc.
-- **Prompt:** `Eight [lock, short form] monoliths in a black studio: one taller seamless one raised at the back
-  centre with two rings and a white light, seven shorter two-block ones on a shallow arc in front, each with a
-  different coloured point of light (orchid, mint, citron, aqua, blue, violet, sand) and a faint matching glow on
-  the floor beneath it. Slow crane down. Nothing else in the room.`
 
 ## S13. `cta-macro` — the agent is the logo (video, 6 s, about 54 credits + 2 stills)
 

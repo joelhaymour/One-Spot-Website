@@ -8,9 +8,10 @@ import { easeInOutCubic, easeOutCubic, segment } from "@/lib/math";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { useExperience } from "@/state/experience";
 import { useOnScreen, useSvgUnit } from "@/components/process/hooks";
+import { AnimatedNumber, formatNumber } from "@/components/ui/AnimatedNumber";
 import diagram from "@/components/process/diagram.module.css";
 import css from "./hero.module.css";
-import { ToolGlyph } from "./ToolGlyph";
+import { AgentDot, MarkGlyph, THREAD, TileNode, YouGlyph } from "./nodes";
 import { DWELL, HOPS, HUB, RING_RADIUS, THREADS, TOOLS, VIEW, YOU, lerpPt, threadPath, translate } from "./layout";
 
 /**
@@ -21,6 +22,9 @@ import { DWELL, HOPS, HUB, RING_RADIUS, THREADS, TOOLS, VIEW, YOU, lerpPt, threa
  *   after   agents sit on the connections, "You" are connected to the centre by one line, work flows in calmly
  *   fade    the whole drawing goes dark: the company is never seen tangling back up
  *   in      the drawing returns, already a tangle again, and the loop repeats
+ *
+ * Under the caption, three counters keep the day's score: two climb with the hops of attention, all three
+ * fall when the morph lands, and they go dark with the drawing and reset unseen at the cut.
  *
  * Time-based, never scroll-driven. One timer sets a discrete phase; CSS and one gsap tween do the motion
  * inside it. The loop waits for the opening logo sequence to lift, then holds (timer cleared, picture kept)
@@ -34,8 +38,17 @@ type Phase = "before" | "morph" | "after" | "fade" | "in";
 const DURATION: Record<Exclude<Phase, "morph">, number> = { before: 2600, after: 6500, fade: 600, in: 600 };
 const NEXT: Record<Phase, Phase> = { before: "morph", morph: "after", after: "fade", fade: "in", in: "before" };
 const MORPH_SECONDS = 1.5;
-const THREAD = "rgba(255, 255, 255, 0.17)";
 const STATES = ["before", "after"] as const;
+
+/** How the counters climb before: every hop of attention is a tab switch, every third one a copy-paste. */
+const climb = (hops: number): readonly number[] => [hops, Math.floor(hops / 3), 0];
+
+/** The counters as one sentence for the SR line (the row itself is aria-hidden, like the caption). */
+const TALLY = (() => {
+  const before = HERO.counters.map((counter) => `${counter.before} ${counter.label.toLowerCase()}`).join(", ");
+  const after = HERO.counters.map((counter) => String(counter.after));
+  return `Before: ${before}. After: ${after.slice(0, -1).join(", ")} and ${after[after.length - 1]}.`;
+})();
 
 const markTransform = (scale: number) => `${translate(HUB.b)} scale(${scale.toFixed(3)})`;
 
@@ -49,65 +62,6 @@ const useDocumentHidden = () =>
     () => document.hidden,
     () => false,
   );
-
-/** A tool tile with its label. `index` marks the live copy the morph moves (and gives it its flash ring). */
-function TileNode({ tool, at, index }: { tool: (typeof TOOLS)[number]; at: readonly [number, number]; index?: number }) {
-  return (
-    <g data-tile={index} transform={translate(at)}>
-      <g className={diagram.glyph}>
-        <rect x="-26" y="-26" width="52" height="52" rx="13" fill="var(--bg-2)" stroke="var(--line-strong)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-        {index !== undefined && (
-          <rect data-flash x="-26" y="-26" width="52" height="52" rx="13" fill="none" stroke="var(--text-0)" strokeWidth="1.25" vectorEffect="non-scaling-stroke" style={{ opacity: 0 }} />
-        )}
-        <ToolGlyph name={tool.label} />
-      </g>
-      <text className={diagram.label} textAnchor="middle" style={{ transform: "translate(0, calc(var(--k) * 26px + var(--u) * 15px))" }}>
-        {tool.label}
-      </text>
-    </g>
-  );
-}
-
-/** One Spot, in the middle. */
-function MarkGlyph() {
-  return (
-    <>
-      <g className={diagram.glyph}>
-        <circle r="36" fill="rgba(var(--spot-rgb), 0.05)" />
-        <circle r="23" fill="var(--void)" stroke="var(--text-0)" strokeWidth="1.4" vectorEffect="non-scaling-stroke" />
-        <circle r="5.8" fill="var(--spot)" />
-      </g>
-      <text className={cn(diagram.label, diagram.labelStrong)} style={{ transform: "translate(calc(var(--k) * 23px + var(--u) * 9px), calc(var(--u) * 3.5px))" }}>
-        One Spot
-      </text>
-    </>
-  );
-}
-
-/** The owner. */
-function YouGlyph() {
-  return (
-    <>
-      <g className={diagram.glyph}>
-        <circle r="13" fill="var(--void)" />
-        <circle r="6.5" fill="var(--text-0)" />
-      </g>
-      <text className={cn(diagram.label, diagram.labelStrong)} style={{ transform: "translate(calc(var(--k) * 6.5px + var(--u) * 8px), calc(var(--u) * 3.5px))" }}>
-        You
-      </text>
-    </>
-  );
-}
-
-/** An agent's spot on a connection. */
-function AgentDot() {
-  return (
-    <g className={diagram.glyph}>
-      <circle r="7" fill="rgba(var(--spot-rgb), 0.1)" />
-      <circle r="2.6" fill="var(--spot)" />
-    </g>
-  );
-}
 
 export function HeroTools({ className }: { className?: string }) {
   const frame = useRef<HTMLDivElement>(null);
@@ -131,6 +85,11 @@ export function HeroTools({ className }: { className?: string }) {
   const [formed, setFormed] = useState(false);
   // True once the morph has passed its midpoint: the caption swaps there, not when the move ends.
   const [half, setHalf] = useState(false);
+  // Hops of attention this cycle: the ref is what the timeline's callback counts on, the state what renders.
+  const hopCount = useRef(0);
+  const [hops, setHops] = useState(0);
+  // Bumped at every cut: it keys the counters, so they remount on their before values at once, unseen.
+  const [cycle, setCycle] = useState(0);
 
   /** One frame of the morph. Every sub-move is a window on the same clock. */
   const apply = useCallback((p: number) => {
@@ -194,6 +153,9 @@ export function HeroTools({ className }: { className?: string }) {
         apply(0);
         setFormed(false);
         setHalf(false);
+        hopCount.current = 0;
+        setHops(0);
+        setCycle((c) => c + 1);
       }
       phaseRef.current = next;
       setPhase(next);
@@ -244,6 +206,10 @@ export function HeroTools({ className }: { className?: string }) {
   // (The reduced-motion still is the after state whatever phase the clock stopped in, so no attention there.)
   const tangled = !reduced && (phase === "before" || phase === "in");
   const frantic = running && tangled;
+  const onHop = useCallback(() => {
+    hopCount.current += 1;
+    setHops(hopCount.current);
+  }, []);
   useEffect(() => {
     const root = svg.current;
     const focus = root?.querySelector("[data-focus]");
@@ -256,13 +222,15 @@ export function HeroTools({ className }: { className?: string }) {
       at += DWELL[n % DWELL.length];
       tl.to(focus, { x: TOOLS[tool].a[0], y: TOOLS[tool].a[1], duration: 0.16, ease: EASE.ui }, at);
       at += 0.16;
+      // landing on another tool is a tab switch: the counters keep score
+      tl.call(onHop, undefined, at);
       if (flashes[tool]) tl.fromTo(flashes[tool], { opacity: 0.85 }, { opacity: 0, duration: 0.45, ease: "power1.out", immediateRender: false }, at);
     });
     return () => {
       tl.kill();
       gsap.set(flashes, { opacity: 0 });
     };
-  }, [frantic]);
+  }, [frantic, onHop]);
 
   // After: one piece of work at a time travels from a tool, through its agent, to the centre.
   // It keeps going under the fade, so nothing vanishes mid-flight; the reset clears it unseen.
@@ -288,6 +256,9 @@ export function HeroTools({ className }: { className?: string }) {
   // The fade is a live phase only: a pause during it brings the picture back rather than freezing it dark.
   const out = running && phase === "fade";
   const current = reduced || phase === "after" || phase === "fade" || (phase === "morph" && half) ? "after" : "before";
+  // The counters: climbing before, the after values once the morph has landed (and as the reduced-motion still).
+  const climbed = climb(hops);
+  const counts = HERO.counters.map((counter, i) => (settled ? counter.after : counter.before + climbed[i]));
 
   /** An after-state detail: fades in with a stagger once the morph lands, cuts out behind the fade. */
   const detail = (delay: number): CSSProperties => ({
@@ -300,8 +271,9 @@ export function HeroTools({ className }: { className?: string }) {
     <div className={cn(css.root, className)}>
       {/* the drawing is hidden from assistive tech; this is the whole of it */}
       <p className="sr-only">{HERO.overview}</p>
+      <p className="sr-only">{TALLY}</p>
 
-      <div ref={frame} className={cn(diagram.frame, css.drawing, out && css.drawingOut)}>
+      <div ref={frame} className={cn(diagram.frame, css.drawing, out && css.out)}>
         <svg ref={svg} viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} className={diagram.svg} aria-hidden focusable="false">
           {/* Reduced motion: the after picture as server HTML, so the script's arrival changes nothing on screen.
               CSS swaps this group in for the live one (hero.module.css). */}
@@ -406,6 +378,18 @@ export function HeroTools({ className }: { className?: string }) {
           <p key={key} className={cn(css.state, key === "after" ? css.stateAfter : css.stateBefore, current === key && css.stateOn)}>
             <span className="t-label">{HERO.states[key].label}</span>
             <span className={css.stateText}>{HERO.states[key].text}</span>
+          </p>
+        ))}
+      </div>
+
+      {/* the day, counted: climbs with every hop, falls over 1.4 s when the morph lands, goes dark with the drawing */}
+      <div aria-hidden className={cn(css.counters, out && css.out)}>
+        {HERO.counters.map((counter, i) => (
+          <p key={counter.label} className={css.counter}>
+            <span className={cn("t-label", css.counterLabel)}>{counter.label}</span>
+            <AnimatedNumber key={cycle} value={counts[i]} duration={settled ? 1.4 : 0.3} className={cn(css.counterNum, css.numLive)} />
+            {/* reduced motion: the after value in the server HTML, shown by CSS in place of the live one */}
+            <span className={cn("t-num", css.counterNum, css.numStill)}>{formatNumber(counter.after)}</span>
           </p>
         ))}
       </div>

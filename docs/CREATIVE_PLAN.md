@@ -7,7 +7,7 @@ red-teamers). Raw panel output lives in `docs/panel/`. This document is the deci
 
 > Written for v1. The beats below are the original panel argument. Since v4 the film opens with the eight
 > tools before and after (beat 6 lives in the hero), has four typographic pauses, and runs in the order given
-> in the v4 note in section 2.
+> in the v5 note in section 2.
 
 One idea, told as a product film: **a company is a set of departments that do not talk to each other, and the
 owner is the wiring. One Spot replaces the wiring.**
@@ -25,6 +25,19 @@ The visitor never gets AI explained to them. They are handed a company and allow
 Five full-screen typographic pauses separate the scenes. Nothing moves during them.
 
 ## 2. Structure
+
+> **v5 (2026-09-22): counters, the two-tab Hub, and three routed scenarios.** The hero drawing now counts a
+> working day under it: tab switches 325 -> 14, copy-pastes 144 -> 0, things waiting on you 41 -> 3. The Hub
+> chapter is a four-step sequence on one straight display with two tabs: "See more." -> the dashboard's
+> middle (revenue, four key metrics, the seven doors) -> "Do less." -> the To Do tab (calendar and deadlines,
+> waiting on you and needs attention, three recommendations). The Network chapter (the WebGL relay) was
+> replaced by "In action": the after ring with three scenarios (a new job comes in; a customer hasn't paid;
+> a contract renews Friday) played as full time-based animations, one per scroll step, each following the
+> same pattern (something happens -> One Spot finds the relevant information -> work moves between the right
+> systems -> One Spot connects the dots -> you receive one clear decision), with only the relevant systems
+> lit. Nav label: "In action". Current order: hero -> 01 How we work -> 02 The Hub -> 03 Scaling ->
+> 04 Agents at work -> 05 In action -> payoff -> Contact.
+
 
 > **v4 (2026-09-22): the opening.** The hero copy is now "Run the business. Not every task." /
 > "Organizing your business, made simple." with the eyebrow "Custom business operating system" and the cue
@@ -103,9 +116,9 @@ It never tracks the cursor. It surveys the display, and looks at what the visito
 
 A DOM dashboard authored at a fixed 1280 x 760 virtual resolution inside `VirtualDisplay` (machined chassis,
 one glass reflection, light spill), scaled to fit, with a camera that can push into any region.
-Visitor-facing copy never says "HUD". Layout: status bar / left rail (owner to-do, today, deadlines) /
-centre (revenue vs target, four key metrics, seven department doors) / right rail (CEO Agent recommendation,
-alerts and bottlenecks, agent activity). One fictional mid-market company with internally consistent numbers.
+Visitor-facing copy never says "HUD". Layout (v5): a bar with two tabs. Dashboard: revenue vs target,
+four key metrics, seven department doors and the open dock. To Do: calendar and deadlines, waiting on you
+and needs attention, three CEO Agent recommendations. (v1 had a left and a right rail around the centre.) One fictional mid-market company with internally consistent numbers.
 Liveness is scripted and budgeted: one event roughly every 2.6 s (a number ticks, a to-do completes with an
 agent's name on it, an activity line arrives, a recommendation is typed). Never two at once. A Pause control
 stops it (WCAG 2.2.2). Recommendations carry Approve / Review / Not now.
@@ -140,6 +153,9 @@ log. Standard regions make seven consoles read as one family and give phones a r
 screens the camera pushes fully into the focused region.
 
 ## 8. Agent-to-agent communication
+
+> Replaced in v5 by In action (section 2): the after ring with three routed scenarios, SVG and DOM on one GSAP
+> timeline. The v1 design follows.
 
 One sticky WebGL stage. CEO Agent raised at centre-back, departments on an arc in depth. A four-beat relay:
 `Marketing: enquiries up 46%` -> `CEO Agent: checking capacity` -> `Operations: 88% booked, 12 slots can open`
@@ -179,7 +195,7 @@ the same ticker. three.js without drei. zustand for discrete cross-component sta
 | Layer | Medium | Why |
 |---|---|---|
 | Displays, consoles, captions, charts | DOM + SVG | real text, crisp, accessible, indexable, cheap |
-| Agents, network, scaling | WebGL, in-flow canvases inside sticky stages | reflections and gaze need real 3D; in-flow canvases cannot drift against the DOM |
+| Agents, scaling (network until v5) | WebGL, in-flow canvases inside sticky stages | reflections and gaze need real 3D; in-flow canvases cannot drift against the DOM |
 | Environments and atmosphere | Higgsfield video, optional | poster-first enhancement, never load-bearing |
 
 Route transition: state machine idle -> dive -> hold -> arrive. A cover FLIPs from the clicked tile to the
@@ -192,9 +208,9 @@ cmd-click works, keyboard works, no-JS works.
 The WebGL model is ground truth; generated video is atmosphere. Shot list, prompts and the character lock are
 in `docs/VISUAL_BIBLE.md` and `docs/HIGGSFIELD_SHOTS.md`. Workflow: render stills of the real 3D agent ->
 use them as start frames for image-to-video -> short (4 to 8 s), slow camera, static rings, no audio.
-Planned: hero environment loop, seven department environment plates, the arrival cutaway, the network wide shot,
-OG image. Measured cost: 2 credits per 2K still, 72 credits per 8 s 1080p clip; the full list is about 900
-credits. **The connected account currently has 0 credits on the free plan, so nothing has been generated.**
+Planned: hero environment loop, seven department environment plates, the arrival cutaway, OG image. Measured
+cost: 2 credits per 2K still, 72 credits per 8 s 1080p clip; the full list is about 675 credits. **The connected
+account currently has 0 credits on the free plan, so nothing has been generated.**
 Every slot has a procedural fallback, so the site is complete without them.
 
 ## 14. Performance
@@ -211,7 +227,7 @@ pointer rate. LCP element is the H1 and is never hidden on first paint.
 Same HTML everywhere; layout decided in CSS. No Lenis on touch. Sticky stories work natively on iOS (svh units).
 Displays stay in frame as the "film" while the camera pushes fully into the region being discussed, so text
 is readable. The Business gets a native list of department doors beneath the display. Lite tier: capped DPR,
-fewer agents in the network scene. Static tier (reduced motion, save-data, no WebGL): SVG agents, final states,
+fewer agents in the WebGL scenes. Static tier (reduced motion, save-data, no WebGL): SVG agents, final states,
 zero 3D download.
 
 ## 16. Positioning and copy

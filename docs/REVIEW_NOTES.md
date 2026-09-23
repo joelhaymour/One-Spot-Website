@@ -101,3 +101,25 @@ the hero caption could run ahead of the drawing because the phase timer and the 
 different clocks (the move to `after` now happens when the tween lands). Refuted: hard-coded "06" on the
 phone Hub heading (it takes the index), "no hero reveals to release" (the gate is for the sections below),
 a reduced-motion edge during the fade (the still is CSS now), and the default index (fixed anyway).
+
+## v5 review: counters, the two-tab Hub, In action (2026-09-23)
+
+Four reviewers (flows runtime, Hub runtime, accessibility and motion, copy and layout) read the v5 diff
+and two refuters checked every finding. Raw output: `docs/panel/review-findings-v5.json` (23 confirmed,
+2 refuted). Fixed: the Hub's tab bar came after the panes in the DOM, so keyboard and screen-reader users
+who opened the Dashboard with the tab could not reach the doors (the bar is first now); the server still
+of the Hub was a black screen with both panes inert (the Dashboard is the still before mount and without
+JS, with seven real door links); on phones the story step jumped to 3 under the native flow (phones are
+pinned to step 0 and the display shows the Dashboard by CSS); the Dashboard tab read "pressed" while its
+pane was inert; three phone labels sat below 3:1 contrast; the flows readout cards clipped most lines on
+phones and tablets (wider cards on narrow frames, three-row clamps for the recommendation and the decision);
+the decision and log chips did not wrap ("Notify Michael + send reminder" ran out of its card); the top
+tiles' cards covered their labels on phones (the card's top now follows the same 26k + 15u the label uses,
+in CSS and in the camera box); the zoom and card measurements were frozen at build time across a breakpoint
+change; the Chat epilogue message never fit its two rows (split into two readout lines); dead copy
+(prompt, hint), dead state (the activity feed), stale labels and comments; the README and the plan still
+describing the camera reveal, the right rail and the WebGL relay as current; the two docs disagreeing on
+the Higgsfield budget. Accepted: at the One Spot beat the checks card covers part of the Support and Calendar
+tiles; it is the focus of that beat and there is no free space inside the ring for a card that size.
+Refuted: the flows reduced-motion still (it is rendered from the finished picture on the server too), and a
+hard-coded chapter index on the phone Hub heading (it takes the index).

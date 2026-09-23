@@ -28,7 +28,6 @@ export interface CinematicAsset {
 export type CinematicSlotId =
   | "hero-room"
   | "business-room"
-  | "network-wide"
   | "arrival"
   | "cta-macro"
   | `dept-${string}-room`;
@@ -36,7 +35,6 @@ export type CinematicSlotId =
 export const MEDIA: Partial<Record<CinematicSlotId, CinematicAsset | null>> = {
   "hero-room": null,
   "business-room": null,
-  "network-wide": null,
   arrival: null,
   "cta-macro": null,
 };

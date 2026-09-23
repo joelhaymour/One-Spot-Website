@@ -48,20 +48,21 @@
   }
 }
 
-/* desktop: the frame's own budget (100svh minus the nav and 120px) does not know about the caption and
-   the hero's padding, so the column itself is capped, as a width (the drawing is 6:5) */
+/* desktop: the frame's own budget (100svh minus the nav and 120px) does not know about the caption, the
+   counters and the hero's padding, so the column itself is capped, as a width (the drawing is 6:5) */
 @media (min-width: 1024px) {
   .root {
-    max-width: calc((100svh - var(--nav-h) - 200px) * 1.2);
+    max-width: calc((100svh - var(--nav-h) - 280px) * 1.2);
   }
 }
 
 /* Between cycles the whole drawing goes dark and comes back already tangled: a cut, never a reverse
-   morph. The fade is shorter than its phase so the reset happens fully unseen. */
-.drawing {
+   morph. The fade is shorter than its phase so the reset happens fully unseen. The counters go with it. */
+.drawing,
+.counters {
   transition: opacity 540ms linear;
 }
-.drawingOut {
+.out {
   opacity: 0;
 }
 
@@ -93,6 +94,56 @@
   text-wrap: balance;
 }
 
+/* the counters: one row of three. Labels and numbers sit on shared grid rows (subgrid), so the numbers
+   stay on one line however the labels wrap on a phone. */
+.counters {
+  display: grid;
+  width: 100%;
+  max-width: 36rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  margin-top: 22px;
+  text-align: center;
+}
+.counter {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 8px;
+  align-items: end;
+}
+.counterLabel {
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.counterNum {
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text-0);
+}
+.numStill {
+  display: none;
+}
+
+/* phones: the drawing already takes half the viewport, so the counters keep their height to a minimum,
+   and the labels tighten so the longest one fits its 100px column in two lines rather than three */
+@media (max-width: 767px) {
+  .counters {
+    column-gap: 8px;
+    margin-top: 12px;
+  }
+  .counter {
+    row-gap: 5px;
+  }
+  .counterLabel {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Reduced motion: the after still, in the server HTML, and its caption */
 /* ------------------------------------------------------------------ */
@@ -113,5 +164,11 @@
   }
   .caption .stateAfter {
     opacity: 1;
+  }
+  .numLive {
+    display: none;
+  }
+  .numStill {
+    display: inline;
   }
 }
