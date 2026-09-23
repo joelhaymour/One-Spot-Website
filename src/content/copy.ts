@@ -26,29 +26,35 @@ export const SITE = {
 
 export const NAV = [
   { label: "How we work", href: "/#how" },
+  { label: "The Hub", href: "/#business" },
   { label: "Agents", href: "/#agents" },
   { label: "Network", href: "/#network" },
-  { label: "The Hub", href: "/#business" },
 ];
+
+/**
+ * The eight tools. The opening animation shows them twice: first with the owner in the middle, then with
+ * One Spot in the middle. Nothing is ripped out; only what stands between the tools changes.
+ */
+export const BEFORE_AFTER = {
+  before: "Eight tools. You in the middle.",
+  after: "Eight tools. One Spot in the middle.",
+  tools: ["Email", "CRM", "Spreadsheets", "Documents", "Chat", "Accounting", "Calendar", "Support"],
+};
 
 export const HERO = {
   eyebrow: "Custom business operating system",
-  headline: ["Your whole business.", "One Spot."],
-  sub: "We learn how your company actually runs, build one central command center around it, and put a digital workforce to work across the systems you already use.",
-  promise: SITE.promise,
+  headline: ["Run the business.", "Not every task."],
+  sub: "Organizing your business, made simple.",
   /** The opening scroll cue. Points at the first chapter. */
   cue: "See how we work",
-  /** The layers the hero animation labels, top to bottom of the picture. */
-  layers: {
-    software: "Your business and its software",
-    spot: "One Spot",
-    hub: "Command center",
-    workforce: "Digital workforce",
-    owner: "Owner",
+  /** The two states of the opening animation, captioned under it as they change. */
+  states: {
+    before: { label: "Before", text: BEFORE_AFTER.before },
+    after: { label: "After", text: BEFORE_AFTER.after },
   },
-  /** Quiet SR/overview line for the hero animation. */
+  /** Quiet SR line for the hero animation (the drawing itself is aria-hidden). */
   overview:
-    "Your existing software feeds One Spot. Inside it, a command center shows the business and a digital workforce does the work. Only what needs you reaches you.",
+    "The same eight tools, before and after: email, CRM, spreadsheets, documents, chat, accounting, calendar and support. Before, you stand in the middle, holding them together. After, One Spot stands in the middle, connected to every tool, and you are connected to One Spot by one line.",
 };
 
 export const BUSINESS = {
@@ -75,7 +81,7 @@ export const LOOP = {
   ],
   /** Under the demonstration: the doors. */
   doors: "Every department runs the same loop. Step inside one.",
-  doorsNote: "These seven are an example. We design the digital workforce around how your company is actually organised.",
+  doorsNote: "These seven are an example. We design the digital workforce around how your company is actually organized.",
 };
 
 export const NETWORK = {
@@ -83,7 +89,7 @@ export const NETWORK = {
   heading: "Your digital workforce works across departments.",
   lead: "Agents share what matters across the business. Executive agents connect the dots, coordinate work and bring the decisions that actually require you to the surface.",
   relay: [
-    { from: "sales", to: "ceo", speaker: "Sales Agent", line: "New enquiries up 46% in six days.", caption: "Sales notices demand climbing faster than planned." },
+    { from: "sales", to: "ceo", speaker: "Sales Agent", line: "New inquiries up 46% in six days.", caption: "Sales notices demand climbing faster than planned." },
     { from: "ceo", to: "operations", speaker: "CEO Agent", line: "Checking delivery capacity.", caption: "An executive agent connects the dots and asks the department that would feel it first." },
     { from: "operations", to: "ceo", speaker: "Operations Agent", line: "88% booked. 12 more slots can open.", caption: "Operations checks people, hours and materials." },
     { from: "ceo", to: "owner", speaker: "To you", line: "Open the 12 slots before taking on more work.", caption: "One recommendation reaches you, with the answer attached. You decide." },
@@ -115,8 +121,7 @@ export const SCALING = {
 
 export const PROCESS = {
   eyebrow: "How we work",
-  heading: "It starts with your business. Not with AI.",
-  lead: "Six steps. One team accountable for all of them.",
+  heading: "It starts with your business.",
   steps: [
     {
       title: "Learn the business.",
@@ -136,9 +141,9 @@ export const PROCESS = {
       body: "We build a central command center around how your company already works: tasks, approvals, workflows, departments and operating information in one place.",
     },
     {
-      title: "Put the system to work.",
-      body: "We automate the right workflows and deploy agents where they create real operating leverage.",
-      note: "Some problems need an integration. Some need automation. Some need an agent. We build the smallest solution that works.",
+      title: "Assign the work.",
+      body: "Once the system understands the job, we move repeatable work out of your hands and into the right mix of people, automation and agents.",
+      note: "The goal isn't more technology. It's fewer things depending on you.",
     },
     {
       title: "See more. Do less.",
@@ -148,22 +153,11 @@ export const PROCESS = {
   ],
 };
 
-export const BEFORE_AFTER = {
-  eyebrow: "Before / After",
-  heading: "Same software. Different company.",
-  lead: "Nothing gets ripped out. Your email, spreadsheets, books and calendar stay. One Spot works between them.",
-  before: "Eight tools. You in the middle.",
-  after: "Eight tools. One Spot in the middle.",
-  payoff: "Your tools still do their jobs. You just stop being the thing holding them together.",
-  tools: ["Email", "CRM", "Spreadsheets", "Documents", "Chat", "Accounting", "Calendar", "Support"],
-};
-
 /** Full-screen pauses. One sentence, nothing moving. */
 export const PAUSES = {
-  afterHero: "Every company has an operating layer. Usually it's the owner.",
+  beforeHub: "Every company has an operating layer. Usually it's the owner.",
   beforeAgents: "A chatbot waits to be asked. An agent has a job.",
   beforeScaling: "You wouldn't hire one person to do every job.",
-  beforeAfter: "Your software works. It just doesn't work together.",
 };
 
 /** The end state. The owner moves from operator to governor. */

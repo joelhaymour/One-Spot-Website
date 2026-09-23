@@ -3,18 +3,20 @@ import { AnchorLink } from "@/components/chrome/anchor";
 import { CinematicSlot } from "@/components/media/CinematicSlot";
 import { Arrow } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Section";
-import { HeroOverview } from "./HeroOverview";
+import { HeroTools } from "./HeroTools";
 
 /**
- * The opening frame: five words, and a short preview of the connected business.
- * The visitor is not asked to do anything here; the display they can step into is the closing chapter.
+ * The opening frame: the headline in two lines, and the same eight tools before and after One Spot.
+ * The visitor is not asked to do anything here; the cue carries them into how we work.
+ * The container runs wider than the sections below it so the drawing gets the room a large screen has;
+ * the copy column sizes to its longest line (the headline; 634px at the largest size), the drawing takes the rest.
  */
 export function HeroSection() {
   return (
     <section className="relative overflow-x-clip" aria-labelledby="hero-heading">
       <CinematicSlot slot="hero-room" className="max-md:hidden" />
 
-      <div className="relative mx-auto grid min-h-[100svh] w-full max-w-[1400px] items-center gap-x-[clamp(32px,5vw,96px)] gap-y-12 px-[var(--gutter)] pb-16 pt-[calc(var(--nav-h)+40px)] md:pb-20 lg:grid-cols-[minmax(0,46rem)_minmax(26rem,1fr)]">
+      <div className="relative mx-auto grid min-h-[100svh] w-full max-w-[1520px] items-center gap-x-[clamp(32px,4vw,72px)] gap-y-8 px-[var(--gutter)] pb-16 pt-[calc(var(--nav-h)+40px)] md:gap-y-12 md:pb-20 lg:grid-cols-[auto_minmax(26rem,1fr)]">
         <div className="max-w-[46rem]">
           <Eyebrow>{HERO.eyebrow}</Eyebrow>
           <h1 id="hero-heading" className="t-display mt-7">
@@ -25,7 +27,6 @@ export function HeroSection() {
             ))}
           </h1>
           <p className="t-lead mt-7 max-w-[32rem]">{HERO.sub}</p>
-          <p className="mt-6 text-[clamp(1.25rem,1.9vw,1.6rem)] font-medium tracking-[-0.03em] text-[var(--text-0)]">{HERO.promise}</p>
 
           <AnchorLink href="/#how" className="group mt-10 inline-flex items-center gap-3 text-[var(--text-1)] transition-colors duration-200 hover:text-[var(--text-0)]">
             <span className="h-px w-8 bg-[var(--line-strong)] transition-colors duration-200 group-hover:bg-[var(--text-2)]" />
@@ -34,7 +35,7 @@ export function HeroSection() {
           </AnchorLink>
         </div>
 
-        <HeroOverview className="w-full max-w-[760px] justify-self-center lg:justify-self-end" />
+        <HeroTools className="min-w-0 justify-self-center" />
       </div>
     </section>
   );

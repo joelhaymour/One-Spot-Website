@@ -91,7 +91,7 @@ export const QUESTION = {
   from: "Tom Reyes · Customer support · 10:42",
   text: "What is our warranty on refurbished units?",
   answer:
-    "Refurbished units carry a 12-month warranty on parts and labour. New units carry 24 months. Claims need the original invoice.",
+    "Refurbished units carry a 12-month warranty on parts and labor. New units carry 24 months. Claims need the original invoice.",
   source: "Warranty policy 2026 · section 3.2",
   took: "Answered in 3 s",
 };

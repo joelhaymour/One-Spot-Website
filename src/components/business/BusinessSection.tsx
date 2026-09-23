@@ -17,7 +17,7 @@ import { useMediaQuery, useMounted, useReducedMotion } from "@/lib/useReducedMot
 import { useExperience } from "@/state/experience";
 
 /**
- * The Hub: the closing showcase, one continuous camera move.
+ * The Hub, chapter 02 (right after How we work): one continuous camera move.
  *
  * Landing: the chapter heading, the CEO Agent, and the top of a live display tilted away from you.
  * Scroll: the heading leaves, the display straightens and rises to fill the frame, the agent docks above
@@ -219,7 +219,7 @@ function Scene({ index }: { index: string }) {
   );
 }
 
-export function BusinessSection({ index = "06" }: { index?: string }) {
+export function BusinessSection({ index = "02" }: { index?: string }) {
   return (
     <section id="business" className="relative" aria-labelledby="business-heading">
       <ScrollStory

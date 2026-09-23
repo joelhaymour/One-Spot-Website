@@ -1,0 +1,117 @@
+/*
+ * The hero drawing: the same eight tools before and after, on a clock instead of a scroll position.
+ *
+ * Why a module: the shared diagram frame reads its height budget from --frame-h, which the hero sets
+ * per breakpoint, and the two captions share one grid cell so the swap never moves anything under it.
+ */
+
+.root {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* phones: the copy has been read by the time the drawing scrolls in, so it may take half the viewport */
+@media (max-width: 767px) {
+  .root {
+    --frame-h: 50svh;
+  }
+}
+
+/* landscape phones: wide but short. The copy sits above the drawing and the section scrolls, so the
+   drawing may take most of the height rather than the shared frame's 44svh. */
+@media (min-width: 640px) and (max-height: 500px) {
+  .root {
+    --frame-h: 80svh;
+  }
+}
+
+/* First-paint scale estimates for the hero's own frame widths (the shared .frame values were tuned for
+   the process drawing). Two classes, so these win at every breakpoint; useSvgUnit refines them after mount. */
+@media (min-width: 640px) {
+  .root .drawing {
+    --u: 1.4;
+    --k: 1.18;
+  }
+}
+@media (min-width: 1024px) {
+  .root .drawing {
+    --u: 1.35;
+    --k: 1.16;
+  }
+}
+@media (min-width: 1440px) {
+  .root .drawing {
+    --u: 1.1;
+    --k: 1.05;
+  }
+}
+
+/* desktop: the frame's own budget (100svh minus the nav and 120px) does not know about the caption and
+   the hero's padding, so the column itself is capped, as a width (the drawing is 6:5) */
+@media (min-width: 1024px) {
+  .root {
+    max-width: calc((100svh - var(--nav-h) - 200px) * 1.2);
+  }
+}
+
+/* Between cycles the whole drawing goes dark and comes back already tangled: a cut, never a reverse
+   morph. The fade is shorter than its phase so the reset happens fully unseen. */
+.drawing {
+  transition: opacity 540ms linear;
+}
+.drawingOut {
+  opacity: 0;
+}
+
+/* the caption: one grid cell, both states stacked, so the height never changes when they swap */
+.caption {
+  display: grid;
+  width: 100%;
+  margin-top: 16px;
+  text-align: center;
+}
+.state {
+  display: flex;
+  grid-area: 1 / 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 480ms var(--ease-out);
+}
+.stateOn {
+  opacity: 1;
+}
+.stateText {
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--text-0);
+  text-wrap: balance;
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion: the after still, in the server HTML, and its caption */
+/* ------------------------------------------------------------------ */
+
+.still {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live {
+    display: none;
+  }
+  .still {
+    display: inline;
+  }
+  .caption .stateBefore {
+    opacity: 0;
+  }
+  .caption .stateAfter {
+    opacity: 1;
+  }
+}

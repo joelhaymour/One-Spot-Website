@@ -40,6 +40,13 @@ interface ExperienceState {
   /** Visitor pressed "Pause motion": ambient loops and the HUD's event script stop (WCAG 2.2.2). */
   paused: boolean;
   setPaused: (paused: boolean) => void;
+
+  /**
+   * The opening logo sequence (chrome/Intro). "pending" until it has lifted or been skipped, so entrances
+   * under it (hero reveals, the hero animation) wait and begin as the cover goes.
+   */
+  intro: "pending" | "done";
+  setIntroDone: () => void;
 }
 
 export const useExperience = create<ExperienceState>((set) => ({
@@ -64,4 +71,7 @@ export const useExperience = create<ExperienceState>((set) => ({
 
   paused: false,
   setPaused: (paused) => set({ paused }),
+
+  intro: "pending",
+  setIntroDone: () => set({ intro: "done" }),
 }));

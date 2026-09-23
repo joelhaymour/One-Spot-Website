@@ -77,3 +77,27 @@ said "The Business" / "CEO Agent"; the Hub summarised the scaling event as 14 da
 gave a stray +22%; the hero's one-line workforce label crossed the DOM stem on phones; the loop
 re-typed its reasoning when scrolling back; "N approvals" over a list of calls and reviews.
 Accepted: the "Needs you" chips overhang their line by ~13px on 360px phones (cosmetic).
+
+## v4 opening review (2026-09-22)
+
+Four reviewers (runtime, motion and accessibility, copy and brand, layout) read the v4 diff and two
+refuters checked every finding against the code. Raw output: `docs/panel/review-findings-v4.json`
+(14 confirmed, 4 refuted). Fixed: the opening cover was the last element in a 350 KB body, so a slow
+connection could paint the nav, the hero copy and the tangle before the cover existed (the Intro is now
+the first child of the body, so its markup is in the first bytes and the mark's CSS entrance really does
+start at first paint); the slide waited on an animation event that background tabs and headless renderers
+hold back (it is now a timer from the animation's own start time, with first paint as the fallback); a
+Tab during the sequence landed on invisible controls (everything under the cover is `inert` while it is
+up); stopping Lenis changed the viewport width on classic-scrollbar desktops and shifted the centred
+lockup (`scrollbar-gutter: stable`); reduced-motion visitors saw the tangle until hydration and then a
+cut (the After still is now server HTML that CSS shows instead of the live drawing); the hero drawing
+inherited first-paint label sizes tuned for the process drawing (it has its own estimates now); landscape
+phones got a 180px drawing (a height-keyed budget); the Hub's comment and fallback number still said it was
+the closing chapter; the pause before the Hub was still named `afterHero`; the removed Before / After
+section's footage slot and shot S12 lingered; the plan's v1 narrative and journey read as current;
+"organised" beside the owner's "Organizing" (visitor copy is US English now: inquiries, license,
+fulfillment, labor); the hero comment called the headline "the promise". Also found during verification:
+the hero caption could run ahead of the drawing because the phase timer and the morph tween were on
+different clocks (the move to `after` now happens when the tween lands). Refuted: hard-coded "06" on the
+phone Hub heading (it takes the index), "no hero reveals to release" (the gate is for the sections below),
+a reduced-motion edge during the fade (the still is CSS now), and the default index (fixed anyway).

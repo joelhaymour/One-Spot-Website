@@ -65,7 +65,7 @@ const READOUT: ReadonlyArray<{ label: string; value: string }> = [
   { label: "Map complete", value: `${AREAS} areas / ${MEMBERS.length} nodes / ${HANDOFFS} handoffs` },
   { label: "Friction, classified", value: `${FRICTION.length} points` },
   { label: "One place", value: "tasks · approvals · workflows · departments · information" },
-  { label: "Put to work", value: REMEDY_SUMMARY },
+  { label: "Work assigned", value: REMEDY_SUMMARY },
   { label: SITE.promise, value: `needs you today: ${NEEDS_YOU.length} · running on its own: ${RUNNING_ALONE}` },
 ];
 

@@ -55,7 +55,7 @@ export const INVOICE = {
   lines: [
     { label: "Quarterly service", amount: "4,200.00" },
     { label: "Replacement parts x 6", amount: "2,055.00" },
-    { label: "Call-out, labour 8 h", amount: "1,400.00" },
+    { label: "Call-out, labor 8 h", amount: "1,400.00" },
   ],
   subtotal: "7,655.00",
   tax: "765.50",

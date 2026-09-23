@@ -5,6 +5,10 @@ red-teamers). Raw panel output lives in `docs/panel/`. This document is the deci
 
 ## 1. Narrative
 
+> Written for v1. The beats below are the original panel argument. Since v4 the film opens with the eight
+> tools before and after (beat 6 lives in the hero), has four typographic pauses, and runs in the order given
+> in the v4 note in section 2.
+
 One idea, told as a product film: **a company is a set of departments that do not talk to each other, and the
 owner is the wiring. One Spot replaces the wiring.**
 
@@ -21,6 +25,17 @@ The visitor never gets AI explained to them. They are handed a company and allow
 Five full-screen typographic pauses separate the scenes. Nothing moves during them.
 
 ## 2. Structure
+
+> **v4 (2026-09-22): the opening.** The hero copy is now "Run the business. Not every task." /
+> "Organizing your business, made simple." with the eyebrow "Custom business operating system" and the cue
+> "See how we work". The hero animation is the eight-tools before / after picture, auto-playing on a clock
+> (before 2.6 s, morph 1.5 s, after 6.5 s, cut, loop), captioned Before / After. The standalone Before /
+> After section was removed because the hero now makes that argument at the top. The Hub moved directly
+> after How we work. New order: hero -> 01 How we work -> 02 The Hub -> 03 Scaling -> 04 Agents at work ->
+> 05 Network -> payoff -> Contact. How we work lost its lead line and "Not with AI"; step 05 is "Assign the
+> work." (the goal is fewer things depending on you). The site opens with a logo sequence (mark in, slides
+> left, wordmark in, lockup flies to the nav) that reduced-motion and no-JS visitors never see.
+
 
 > **v3 (2026-09-22): positioning correction.** One Spot is the custom business operating system, not an
 > AI-agent service. Hierarchy: One Spot (system) > One Spot Hub (central command center) > Agents (digital
@@ -65,6 +80,9 @@ can read all seven; department sequences live on their own routes (shareable, co
 making the homepage 60 screens long.
 
 ## 3. Journey
+
+> The v1 journey. Since v4 the visitor lands on a logo sequence, then the headline beside the eight tools
+> resolving around One Spot, then How we work, then the display (section 2, v4 note).
 
 Land -> read five words -> notice the display is alive -> scroll, the camera pushes in -> point at a department,
 the CEO Agent looks at it -> click, fall through the display into that department -> scroll the agent's shift ->
@@ -204,3 +222,5 @@ They report to you. Alternates: "A business that reports to you." / "See everyth
 CTA: **Show me how your company works.** Button: **Map my company.** Full deck: `docs/panel/copy.md`.
 The headline wins because only this company can run it, it captions exactly what is on screen, and it has no
 AI word in it for an owner to distrust.
+
+v4: hero copy per the note in section 2.

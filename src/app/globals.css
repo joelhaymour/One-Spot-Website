@@ -98,6 +98,9 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scrollbar-color: #23282f transparent;
+  /* Stopping Lenis (the intro, the department covers) clips the root. Where scrollbars take space, that
+     would widen the viewport and shift everything centred in it; a reserved gutter keeps the width fixed. */
+  scrollbar-gutter: stable;
 }
 
 html.lenis,
@@ -351,6 +354,80 @@ html[data-motion="on"] [data-reveal]:not([data-shown]) {
 [data-reveal] {
   transition: opacity 1100ms var(--ease-out), transform 1100ms var(--ease-out);
   transition-delay: var(--reveal-delay, 0s);
+}
+
+/* ------------------------------------------------------------------ */
+/* Opening logo sequence (chrome/Intro)                                */
+/* The cover is in the server HTML and exists only under                */
+/* html[data-intro="on"], which the boot script sets before first paint */
+/* and the script removes when the lockup has landed on the nav logo.  */
+/* Without it (reduced motion, no JS, a boot that never finished, the   */
+/* sequence over) the layer is not displayed and cannot take input.     */
+/* ------------------------------------------------------------------ */
+
+.intro {
+  display: none;
+  pointer-events: none;
+}
+html[data-intro="on"] .intro {
+  display: block;
+  pointer-events: auto;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+/* the nav's own lockup waits under the travelling one: never two logos on screen */
+html[data-intro="on"] [data-logo] {
+  visibility: hidden;
+}
+
+.intro-lockup {
+  /* mirrors SCALE in Intro.tsx */
+  --intro-scale: 2.4;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: 0 0;
+  /* the mark's centre on the viewport's centre before the script can measure (22px mark, 22.5px line) */
+  transform: translate(calc(-11px * var(--intro-scale)), calc(-11.25px * var(--intro-scale))) scale(var(--intro-scale));
+  will-change: transform;
+}
+.intro-mark {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 22px;
+  /* starts at first paint, before any script: the loading screen is never a blank one */
+  animation: intro-mark-in 500ms var(--ease-out) both;
+}
+/* an entrance that starts while paused would freeze on its first, invisible frame; the mark is simply there */
+html[data-paused="true"] .intro-mark {
+  animation: none !important;
+}
+@keyframes intro-mark-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* the spot's glow, centred under the mark's own spot; the lockup's scale carries it */
+.intro-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 3px rgba(var(--spot-rgb), 0.12),
+    0 0 14px 2px rgba(var(--spot-rgb), 0.55);
+}
+.intro-word {
+  opacity: 0;
 }
 
 /* ------------------------------------------------------------------ */

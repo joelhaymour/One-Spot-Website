@@ -5,8 +5,8 @@ lighting rig and camera language, and states only what is specific to the shot.
 
 **Status: nothing generated yet.** The connected Higgsfield account is on the free plan with 0 credits
 (checked 2026-09-20). Measured prices: 2 credits per 2K still (`nano_banana_pro`), 72 credits per 8 s 1080p clip
-(`seedance_2_0`, std mode, no audio). Budget for everything below: about 40 credits of stills + about 860
-credits of video = **about 900 credits**. Minimum useful set (S1, S2, S10, S13): about 300 credits.
+(`seedance_2_0`, std mode, no audio). Budget for everything below: about 40 credits of stills + about 750
+credits of video = **about 790 credits**. Minimum useful set (S1, S2, S10, S13): about 300 credits.
 
 Every slot on the site already has a real-time or CSS fallback, so the site is complete without these.
 To install a clip: export per "Delivery", drop the files in `public/media/`, and fill in the slot in
@@ -108,16 +108,6 @@ One front elevation and one three-quarter view per agent (CEO + 7 departments), 
   centre with two rings and a white light, seven shorter two-block ones on a shallow arc in front, each with a
   different coloured point of light (orchid, mint, citron, aqua, blue, violet, sand) and a faint matching glow on
   the floor beneath it. Slow crane down. Nothing else in the room.`
-
-## S12. `before` / `after` — the transformation pair (2 videos, 6 s each, about 108 credits)
-
-- **Slot:** Before / After section background plates, 20% opacity, heavily blurred by CSS.
-- **Before:** a dim office desk at night with five mismatched monitors and a laptop, all out of focus, screens
-  glowing different colours, sticky notes, a phone lighting up. Slow handheld-free drift. No readable text, no
-  brands, no faces (a shoulder out of focus is acceptable).
-- **After:** the same desk, cleared, one thin dark display, one department agent floating above it, calm cool
-  light. Same camera drift.
-- **Start/end frames:** the two clips must share the same camera position so the site can cross-dissolve them.
 
 ## S13. `cta-macro` — the agent is the logo (video, 6 s, about 54 credits + 2 stills)
 

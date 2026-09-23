@@ -9,10 +9,11 @@ import { CompanyMap } from "./CompanyMap";
 import css from "./process.module.css";
 
 /**
- * How we work. The site stops showing agents here and says what we do for a client:
- * six plain steps on the left, one drawing of one company on the right that each step changes.
+ * How we work. The site stops showing agents here and says what we do for a client. The heading reads
+ * "It starts with your business." and has no lead line under it: six plain steps on the left, one drawing
+ * of one company on the right that each step changes.
  * Steps 3, 5 and 6 carry a quieter second line (the method behind the step: how friction is classified,
- * the smallest solution that works, operating history becoming intelligence).
+ * fewer things depending on you, operating history becoming intelligence).
  */
 
 // The digital workforce in the drawing is drawn in the Customer Service accent: one of its two agents answers customers.
@@ -129,7 +130,7 @@ export function ProcessSection({ index = "01" }: { index?: string }) {
   return (
     <section id="how" className="relative" aria-labelledby="how-heading">
       <div className="mx-auto max-w-[1320px] px-[var(--gutter)] pb-8 pt-28 md:pt-40">
-        <SectionHeading eyebrow={PROCESS.eyebrow} index={index} title={<span id="how-heading">{PROCESS.heading}</span>} lead={PROCESS.lead} />
+        <SectionHeading eyebrow={PROCESS.eyebrow} index={index} title={<span id="how-heading">{PROCESS.heading}</span>} />
       </div>
 
       <ScrollStory steps={PROCESS.steps.length} stepLength={0.8} tail={0.4} aria-label="Six steps, drawn on one company">

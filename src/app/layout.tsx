@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/chrome/Footer";
+import { Intro } from "@/components/chrome/Intro";
 import { MotionToggle } from "@/components/chrome/MotionToggle";
 import { Nav } from "@/components/chrome/Nav";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
@@ -38,14 +39,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
       <body className="min-h-svh">
-        {/* Runs before first paint. Arms the reveal starting state only when JS and motion are both
-            available, and disarms it if the app never boots, so copy can never be stranded invisible. */}
+        {/* Runs before first paint. Arms the reveal starting state and the opening logo cover only when
+            JS and motion are both available, and disarms both if the app never boots, so copy can never
+            be stranded invisible and no visitor can be stranded behind the cover. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var d=document.documentElement;if(matchMedia('(prefers-reduced-motion: no-preference)').matches){d.dataset.motion='on';setTimeout(function(){if(!window.__osReady)delete d.dataset.motion},4000)}}catch(e){}",
+              "try{var d=document.documentElement;if(matchMedia('(prefers-reduced-motion: no-preference)').matches){d.dataset.motion='on';d.dataset.intro='on';setTimeout(function(){if(!window.__osReady){delete d.dataset.motion;delete d.dataset.intro}},4000)}}catch(e){}",
           }}
         />
+        {/* First in the body on purpose: the cover's markup travels in the first bytes, so on a slow
+            connection the page cannot paint before the cover exists. It is fixed and z-[100]; order costs nothing. */}
+        <Intro />
         <SmoothScroll>
           <Nav />
           {children}

@@ -208,7 +208,7 @@ export const CONCEPT = {
 };
 
 export const BRIEFS: { id: VariationId; headline: string; format: string; audience: string }[] = [
-  { id: "A", headline: "Guaranteed. In writing.", format: "Image", audience: "Past enquirers" },
+  { id: "A", headline: "Guaranteed. In writing.", format: "Image", audience: "Past inquirers" },
   { id: "B", headline: "Done right. Or redone.", format: "Video 15 s", audience: "Similar to best customers" },
   { id: "C", headline: "Not happy? Don't pay.", format: "Testimonial", audience: "New in your area" },
   { id: "D", headline: "No small print.", format: "Text only", audience: "Lapsed customers" },

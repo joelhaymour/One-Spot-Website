@@ -242,8 +242,11 @@ export function Nav() {
             aria-label={`${SITE.name}, home`}
             className="flex items-center gap-2.5 justify-self-start text-[var(--text-0)]"
           >
-            <Mark size={22} />
-            <span className="text-[0.9375rem] font-medium tracking-[-0.02em]">{SITE.name}</span>
+            {/* The opening sequence (chrome/Intro) lands its lockup on this span, then hands over to it. */}
+            <span data-logo className="flex items-center gap-2.5">
+              <Mark size={22} />
+              <span className="text-[0.9375rem] font-medium tracking-[-0.02em]">{SITE.name}</span>
+            </span>
           </Link>
 
           {department ? (

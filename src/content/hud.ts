@@ -34,7 +34,7 @@ export interface KeyMetric {
 export const KEY_METRICS: KeyMetric[] = [
   { id: "cash", label: "Cash position", value: 2_410_000, format: "compact-currency", delta: "+3.2%", tone: "ok" },
   { id: "pipeline", label: "Pipeline", value: 4_820_000, format: "compact-currency", delta: "+12%", tone: "ok" },
-  { id: "leads", label: "New enquiries", value: 312, format: "int", delta: "+46%", tone: "ok" },
+  { id: "leads", label: "New inquiries", value: 312, format: "int", delta: "+46%", tone: "ok" },
   { id: "capacity", label: "Capacity booked", value: 88, format: "int", suffix: "%", delta: "+9 pts", tone: "warn" },
 ];
 
@@ -62,7 +62,7 @@ export const TODAY = [
 export const DEADLINES = [
   { label: "Payroll", due: "2 days", tone: "ok" as const },
   { label: "Quarterly tax filing", due: "9 days", tone: "ok" as const },
-  { label: "Licence renewal", due: "21 days", tone: "warn" as const },
+  { label: "License renewal", due: "21 days", tone: "warn" as const },
 ];
 
 export interface Recommendation {
@@ -80,7 +80,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     id: "capacity",
     tag: "Sales / Operations",
     dept: "operations",
-    observation: "New enquiries are up 46% in six days. The schedule is 88% booked for three weeks. Operations can open 12 more slots.",
+    observation: "New inquiries are up 46% in six days. The schedule is 88% booked for three weeks. Operations can open 12 more slots.",
     action: "I recommend opening them before taking on more work.",
   },
   {
@@ -135,7 +135,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
 ];
 
 export const ALERTS = [
-  { id: "cap", tone: "warn" as const, label: "Capacity at 88% and rising", detail: "New enquiries +46%, fulfilment unchanged" },
+  { id: "cap", tone: "warn" as const, label: "Capacity at 88% and rising", detail: "New inquiries +46%, fulfillment unchanged" },
   { id: "inv", tone: "warn" as const, label: "2 invoices on hold", detail: "One duplicate. One vendor changed bank details" },
   { id: "ok", tone: "ok" as const, label: "Payroll funded", detail: "Runs Thursday" },
 ];
@@ -154,7 +154,7 @@ export type HudEvent =
 export const HUD_SCRIPT: HudEvent[] = [
   { type: "activity", dept: "finance", line: "Reconciled 142 invoices. 2 on hold for you." },
   { type: "revenue", add: 1_240, note: "Payment received" },
-  { type: "activity", dept: "sales", line: "Replied to 9 new enquiries. Median 3 min." },
+  { type: "activity", dept: "sales", line: "Replied to 9 new inquiries. Median 3 min." },
   { type: "metric", id: "leads", add: 3 },
   { type: "todo", id: "contract" },
   { type: "activity", dept: "service", line: "Resolved 61 of 66 requests. 5 with a person." },

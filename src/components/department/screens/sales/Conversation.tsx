@@ -107,7 +107,7 @@ function ThreadView({ on }: { on: boolean }) {
 
       <Fade on={on} delayMs={REPLY_DONE_MS} y={4} className="ml-6 mt-2.5 flex items-center gap-2">
         <Tick on={on} delayMs={REPLY_DONE_MS + 150} />
-        <span className="text-[11.5px] text-[var(--text-0)]">Sent 2 min 40 s after enquiry</span>
+        <span className="text-[11.5px] text-[var(--text-0)]">Sent 2 min 40 s after inquiry</span>
         <span className="ml-auto text-[10.5px] text-[var(--text-2)]">Thu 10:00 held in the calendar</span>
       </Fade>
     </div>
