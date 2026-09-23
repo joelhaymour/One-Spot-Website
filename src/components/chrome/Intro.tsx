@@ -26,9 +26,9 @@ import { useExperience } from "@/state/experience";
 const SCALE = 2.4;
 /** The mark's CSS entrance (globals.css): its keyframes name and how long it runs. The slide starts when it is over. */
 const MARK_IN = "intro-mark-in";
-const MARK_IN_MS = 500;
+const MARK_IN_MS = 850;
 /** Hard ceiling on the sequence, ms. Past it the finish state is forced, whatever happened. */
-const FAILSAFE = 4500;
+const FAILSAFE = 7000;
 /** Keys that scroll the document: swallowed while the cover is up, so nothing moves under it. */
 const SCROLL_KEYS = new Set([" ", "PageUp", "PageDown", "Home", "End", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
 
@@ -175,13 +175,13 @@ export function Intro() {
       timeline = gsap.timeline({ onComplete: finish });
       if (target) {
         // FLIP: same DOM as the nav lockup, origin top left, so the landing is a scale and a move.
-        timeline.to(lockup, { x: target.left - cx, y: target.top - cy, scale: target.width / w, duration: 0.85, ease: EASE.camera }, 0);
+        timeline.to(lockup, { x: target.left - cx, y: target.top - cy, scale: target.width / w, duration: 1.25, ease: "power2.inOut" }, 0);
       } else {
-        timeline.to(lockup, { opacity: 0, duration: 0.5, ease: EASE.settle }, 0.1);
+        timeline.to(lockup, { opacity: 0, duration: 0.7, ease: EASE.settle }, 0.2);
       }
       // The page under the cover is released as the cover starts to go, so it enters while the logo travels.
-      timeline.call(setIntroDone, [], 0.1);
-      timeline.to(cover, { opacity: 0, duration: 0.7, ease: "power2.inOut" }, 0.1);
+      timeline.call(setIntroDone, [], 0.25);
+      timeline.to(cover, { opacity: 0, duration: 1.0, ease: "power2.inOut" }, 0.25);
     };
 
     const slide = () => {
@@ -196,18 +196,18 @@ export function Intro() {
 
       // Exactly where the CSS starting transform put it (mark centred), now under GSAP's control.
       gsap.set(lockup, { x: -mx * SCALE, y: -my * SCALE, scale: SCALE, transformOrigin: "0 0" });
-      gsap.set(word, { opacity: 0, x: 6 });
+      gsap.set(word, { opacity: 0, x: 10 });
 
       timeline = gsap.timeline();
-      timeline.to(lockup, { x: -(w / 2) * SCALE, y: -(h / 2) * SCALE, duration: 0.45, ease: EASE.enter }, 0);
-      timeline.to(word, { opacity: 1, x: 0, duration: 0.45, ease: EASE.enter }, 0.06);
-      timeline.call(handoff, [], "+=0.35");
+      timeline.to(lockup, { x: -(w / 2) * SCALE, y: -(h / 2) * SCALE, duration: 0.8, ease: "power2.inOut" }, 0);
+      timeline.to(word, { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" }, 0.15);
+      timeline.call(handoff, [], "+=0.7");
     };
 
     const start = () => {
       if (!alive || done) return;
       failsafe = window.setTimeout(finish, FAILSAFE);
-      timer = window.setTimeout(slide, markRemaining(mark) + 40);
+      timer = window.setTimeout(slide, markRemaining(mark) + 180);
     };
 
     // A tab opened in the background has no frames to animate with. Wait, and play when it is looked at.

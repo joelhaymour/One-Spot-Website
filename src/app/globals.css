@@ -400,6 +400,9 @@ html[data-intro="on"] [data-logo] {
   /* the mark's centre on the viewport's centre before the script can measure (22px mark, 22.5px line) */
   transform: translate(calc(-11px * var(--intro-scale)), calc(-11.25px * var(--intro-scale))) scale(var(--intro-scale));
   will-change: transform;
+  /* the lockup is scaled 2.4x and then flown to 1x: keep it on its own layer so text does not re-rasterise mid-flight */
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 .intro-mark {
   position: relative;
@@ -407,7 +410,7 @@ html[data-intro="on"] [data-logo] {
   width: 22px;
   height: 22px;
   /* starts at first paint, before any script: the loading screen is never a blank one */
-  animation: intro-mark-in 500ms var(--ease-out) both;
+  animation: intro-mark-in 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 /* an entrance that starts while paused would freeze on its first, invisible frame; the mark is simply there */
 html[data-paused="true"] .intro-mark {
@@ -416,7 +419,7 @@ html[data-paused="true"] .intro-mark {
 @keyframes intro-mark-in {
   from {
     opacity: 0;
-    transform: scale(0.6);
+    transform: scale(0.72);
   }
   to {
     opacity: 1;
