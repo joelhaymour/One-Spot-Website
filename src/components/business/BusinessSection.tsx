@@ -17,7 +17,7 @@ import { useMediaQuery, useMounted, useReducedMotion } from "@/lib/useReducedMot
 import { useExperience } from "@/state/experience";
 
 /**
- * The Business: the closing showcase, one continuous camera move.
+ * The Hub: the closing showcase, one continuous camera move.
  *
  * Landing: the chapter heading, the CEO Agent, and the top of a live display tilted away from you.
  * Scroll: the heading leaves, the display straightens and rises to fill the frame, the agent docks above
@@ -202,7 +202,7 @@ function Scene({ index }: { index: string }) {
         className="stage-display z-0 origin-top will-change-transform max-md:mt-2 max-md:w-full md:absolute md:left-1/2"
         inert={mounted && !desktop}
       >
-        <VirtualDisplay width={HUD_SIZE.width} height={HUD_SIZE.height} label="The Business: a live view of one company">
+        <VirtualDisplay width={HUD_SIZE.width} height={HUD_SIZE.height} label="One Spot Hub: a live view of one company">
           <BusinessHud state={state} onPickRecommendation={showRecommendation} interactive={desktop} />
         </VirtualDisplay>
       </div>
@@ -226,13 +226,13 @@ export function BusinessSection({ index = "06" }: { index?: string }) {
         steps={2}
         stepLength={1}
         tail={0.9}
-        aria-label="The Business: your whole company on one display"
+        aria-label="One Spot Hub: your whole company on one display"
         className="max-md:!h-auto"
         stageClassName="max-md:!static max-md:!h-auto max-md:!overflow-visible"
       >
         {() => <Scene index={index} />}
       </ScrollStory>
-      {/* "The doors": where Back to The Business and keyboard focus land. The straightened display on
+      {/* "The doors": where Back to the Hub and keyboard focus land. The straightened display on
           desktop (about 1.3 viewports into the story); the native door list on phones. */}
       <span id="business-doors" aria-hidden className="block h-0 md:absolute md:top-[128svh]" />
       {/* Phones: the display above is atmosphere; the recommendation and the doors repeat here at native size. */}

@@ -3,7 +3,7 @@ import { SectionHeading } from "@/components/ui/Section";
 import { NetworkStory } from "./NetworkStory";
 
 /**
- * Agent network. A demand spike travels Marketing -> CEO Agent -> Operations -> CEO Agent -> the owner.
+ * Agent network. A demand spike travels Sales -> CEO Agent -> Operations -> CEO Agent -> the owner.
  * The heading scrolls away, then the stage sticks and the relay plays one beat per step.
  */
 export function NetworkSection({ index = "05" }: { index?: string }) {

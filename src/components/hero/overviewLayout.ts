@@ -28,6 +28,8 @@ export const ORBIT = { rx: 296, ry: 180 } as const;
  */
 export const AGENT_FOOT_Y = 268;
 export const AGENT_RING_FRONT = 0.37;
+/** The agent body's width as a fraction of its height (AgentSvg: 120 of a 400-high viewBox, drawn to fit). */
+export const AGENT_BODY_W = 0.3;
 
 /** Top of the hub's ring: the lower end of the stem. */
 export const STEM_END_Y = HUB[1] - HUB_R;

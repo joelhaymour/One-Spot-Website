@@ -62,3 +62,18 @@ to screen readers; card overhang on short laptops; first-paint label size estima
 that had drifted from the scenes they were written for. Also found during verification: Lenis clamps
 `scrollTo` to a cached page height, so restoring a deep position on the first frame of a new route landed
 at the previous route's maximum (fixed with `lenis.resize()` before the jump).
+
+## v3 positioning review (2026-09-22)
+
+Three reviewers (regressions, message fidelity, responsive/a11y) read the v3 diff. Raw output:
+`docs/panel/review-findings-v3.json`. Fixed: marketing examples still playing on the Hub feed and
+to-do rail (now operational: PO-0878, part 2210); the scaling recommendation card covered the agent it
+was about (it now sits under the beat-4 caption, and the decision state lives in ScalingSection); the
+longer six-step bodies overflowed 720-899px-tall laptops (inactive bodies trim, visually only, so the
+notes stay in the accessibility tree); "Pause motion" let the approval overtake the still-typing
+recommendation (only reduced motion short-circuits now); the loop demo contradicted the Operations
+door (stock 18, Team B); the return cover, the Hub story region and the department breadcrumb still
+said "The Business" / "CEO Agent"; the Hub summarised the scaling event as 14 days vs three weeks and
+gave a stray +22%; the hero's one-line workforce label crossed the DOM stem on phones; the loop
+re-typed its reasoning when scrolling back; "N approvals" over a list of calls and reviews.
+Accepted: the "Needs you" chips overhang their line by ~13px on 360px phones (cosmetic).

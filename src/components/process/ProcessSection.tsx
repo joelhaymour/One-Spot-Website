@@ -11,9 +11,11 @@ import css from "./process.module.css";
 /**
  * How we work. The site stops showing agents here and says what we do for a client:
  * six plain steps on the left, one drawing of one company on the right that each step changes.
+ * Steps 3, 5 and 6 carry a quieter second line (the method behind the step: how friction is classified,
+ * the smallest solution that works, operating history becoming intelligence).
  */
 
-// The first agent built in the drawing serves customers, so "live" borrows the Customer Service accent.
+// The digital workforce in the drawing is drawn in the Customer Service accent: one of its two agents answers customers.
 const ACCENT = { "--accent": "var(--acc-service)", "--accent-rgb": "97, 216, 229" } as CSSProperties;
 
 const number = (i: number) => String(i + 1).padStart(2, "0");
@@ -23,17 +25,19 @@ function Steps() {
   return (
     <div>
       {/* Below 1024px only the active step is visible (the rest are visibility:hidden). This is the
-          complete text equivalent for assistive technology at those sizes. */}
+          complete text equivalent for assistive technology at those sizes, notes included. */}
       <ol className="sr-only lg:hidden">
         {PROCESS.steps.map((s) => (
           <li key={s.title}>
             {s.title} {s.body}
+            {"note" in s && s.note ? ` ${s.note}` : null}
           </li>
         ))}
       </ol>
       <ol className={css.steps}>
         {PROCESS.steps.map((s, i) => {
           const active = i === step;
+          const note = "note" in s ? s.note : undefined;
           return (
             <li
               key={s.title}
@@ -69,6 +73,17 @@ function Steps() {
                 >
                   {s.body}
                 </p>
+                {note && (
+                  <p
+                    className={cn(
+                      css.note,
+                      "mt-1.5 max-w-[34rem] border-l border-[var(--line-strong)] pl-3 text-[0.8rem] leading-[1.5] tracking-[-0.004em]",
+                      active ? "text-[var(--text-2)]" : "text-[var(--text-3)]",
+                    )}
+                  >
+                    {note}
+                  </p>
+                )}
               </div>
             </li>
           );

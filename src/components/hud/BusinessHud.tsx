@@ -13,17 +13,20 @@ import { TypedText } from "@/components/ui/TypedText";
 import { useDepartmentTransition } from "@/components/motion/Transition";
 import { useExperience } from "@/state/experience";
 import { cn } from "@/lib/cn";
+import { HUB_LABELS } from "./labels";
 import type { HudState } from "./useHudScript";
 
 /**
- * The Business — the owner's display, authored at 1280 x 760 virtual px (see VirtualDisplay).
+ * One Spot Hub — the owner's command center, authored at 1280 x 760 virtual px (see VirtualDisplay).
+ * A clear view of what is happening, what needs attention and what needs a decision. Not a control panel.
  *
- *   bar ─────────────────────────────────────────────────────────────
- *   to-do      │ revenue vs target                  │ CEO Agent
- *   today      │ four key metrics                   │ recommendation
- *   deadlines  │ seven department doors (+ 1 dock)  │ alerts · activity
+ *   bar ──────────────────────────────────────────────────────────────────────
+ *   waiting on you │ revenue vs target                  │ needs a decision (CEO Agent)
+ *   today          │ four key metrics                   │ needs attention
+ *   deadlines      │ seven department doors (+ 1 dock)  │ happening now
  *
  * Everything the visitor can act on is a real link; everything that moves is scripted and budgeted.
+ * Calm by rule: only warn-tone dots pulse, and the CEO Agent's spot breathes. Nothing else loops.
  */
 
 export const HUD_SIZE = { width: 1280, height: 760 } as const;
@@ -43,7 +46,7 @@ export function BusinessHud({ state, onPickRecommendation, interactive = true }:
       <div className="absolute inset-x-0 top-0 flex h-[48px] items-center justify-between border-b border-[var(--line)] px-5">
         <div className="flex items-center gap-3">
           <Mark size={16} className="text-[var(--text-0)]" />
-          <span className="t-label text-[var(--text-0)]">The Business</span>
+          <span className="t-label text-[var(--text-0)]">{HUB_LABELS.name}</span>
           <span className="h-3 w-px bg-[var(--line-strong)]" />
           <span className="text-[12px] text-[var(--text-1)]">{COMPANY.name}</span>
         </div>
@@ -55,7 +58,7 @@ export function BusinessHud({ state, onPickRecommendation, interactive = true }:
           <span>{COMPANY.workingDaysLeft} working days left</span>
         </div>
         <div className="flex items-center gap-4">
-          <StatusChip tone="ok">7 of 7 agents live</StatusChip>
+          <StatusChip tone="neutral">{HUB_LABELS.workforce(DEPARTMENTS.length)}</StatusChip>
           <span className="flex items-center gap-2">
             <span className="spot spot-breathe" />
             <span className="t-label text-[var(--text-0)]">{CEO.name} observing</span>
@@ -65,7 +68,7 @@ export function BusinessHud({ state, onPickRecommendation, interactive = true }:
 
       {/* left rail */}
       <Panel className="absolute left-5 top-[62px] h-[290px] w-[270px]">
-        <PanelHeader label="Owner to-do" right={<span className="t-label t-num">{TODOS.length - state.done.length} open</span>} />
+        <PanelHeader label={HUB_LABELS.waiting} right={<span className="t-label t-num">{HUB_LABELS.approvals(TODOS.length - state.done.length)}</span>} />
         <ul className="px-3.5">
           {TODOS.map((t) => {
             const done = state.done.includes(t.id);
@@ -149,7 +152,7 @@ export function BusinessHud({ state, onPickRecommendation, interactive = true }:
               <span className="text-[12px] text-[var(--text-2)]">of {formatNumber(REVENUE.target, "currency")} target</span>
             </div>
             <div className="mt-3 flex items-center gap-2 text-[11.5px]">
-              <Dot tone="accent" />
+              <Dot tone="neutral" />
               <span>
                 3 deals worth <span className="text-[var(--text-0)]">{formatNumber(REVENUE.pending, "currency")}</span> are waiting on one signature each. That is{" "}
                 {Math.round(((state.revenue + REVENUE.pending) / REVENUE.target) * 100)}%.
@@ -205,11 +208,11 @@ export function BusinessHud({ state, onPickRecommendation, interactive = true }:
         </ul>
       </nav>
 
-      {/* right rail: what the CEO Agent thinks you should do */}
+      {/* right rail: the three questions, top to bottom. Needs a decision / needs attention / happening now */}
       <RecommendationPanel index={state.recommendation} onPick={onPickRecommendation} interactive={interactive} />
 
       <Panel className="absolute left-[958px] top-[392px] h-[150px] w-[302px]">
-        <PanelHeader label="Alerts and bottlenecks" />
+        <PanelHeader label={HUB_LABELS.attention} />
         <ul className="px-3.5">
           {ALERTS.map((a) => (
             <li key={a.id} className="flex items-start gap-2.5 border-t border-[var(--line-faint)] py-[7px] first:border-t-0">
@@ -224,7 +227,7 @@ export function BusinessHud({ state, onPickRecommendation, interactive = true }:
       </Panel>
 
       <Panel className="absolute left-[958px] top-[556px] h-[184px] w-[302px] overflow-hidden">
-        <PanelHeader label="Agent activity" right={<Dot tone="ok" pulse />} />
+        <PanelHeader label={HUB_LABELS.happening} />
         <ul className="px-3.5" aria-live="off">
           {state.activity.map((a, i) => (
             <li
@@ -252,7 +255,7 @@ function RecommendationPanel({ index, onPick, interactive }: { index: number; on
   return (
     <Panel raised className="absolute left-[958px] top-[62px] h-[316px] w-[302px]" style={{ borderColor: "rgba(var(--spot-rgb), 0.28)" }}>
       <PanelHeader
-        label="CEO Agent / Recommendation"
+        label={HUB_LABELS.decision}
         right={
           <span className="t-label t-num">
             {String(index + 1).padStart(2, "0")} / {String(RECOMMENDATIONS.length).padStart(2, "0")}
@@ -260,9 +263,11 @@ function RecommendationPanel({ index, onPick, interactive }: { index: number; on
         }
       />
       <div className="flex h-[calc(100%-36px)] flex-col px-3.5 pb-3.5">
-        <StatusChip tone="accent" className="self-start">
-          {rec.tag}
-        </StatusChip>
+        {/* who is asking, and about what */}
+        <div className="flex items-center justify-between">
+          <StatusChip tone="accent">{rec.tag}</StatusChip>
+          <span className="t-label !text-[9px]">{CEO.name}</span>
+        </div>
         {/* keyed so each new recommendation is written fresh */}
         <p key={rec.id} className="mt-3 text-[12.5px] leading-[1.5] text-[var(--text-1)]">
           <TypedText text={rec.observation} speed={70} caret={false} />

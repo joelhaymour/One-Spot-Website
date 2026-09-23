@@ -4,7 +4,8 @@
  * Why a module: the list has two regimes that utilities cannot express cleanly. Under the desktop
  * breakpoint the drawing sits on top and only the active step is shown, so the six items share one
  * grid cell and cross-fade (no layout change between steps). On desktop all six are readable at once;
- * on short desktop viewports the inactive bodies are dropped so the list always fits the sticky frame.
+ * on short desktop viewports the inactive notes, then the inactive bodies, are dropped so the list
+ * always fits the sticky frame (the active step is never trimmed).
  */
 
 .steps {
@@ -29,6 +30,11 @@
   transition-delay: 140ms, 140ms, 0s;
 }
 
+/* the quieter second line under a step: the method behind it */
+.note {
+  transition: color 480ms var(--ease-out);
+}
+
 @media (min-width: 1024px) {
   .steps {
     display: flex;
@@ -45,8 +51,39 @@
   }
 }
 
-@media (min-width: 1024px) and (max-height: 719px) {
+/* Three notes plus six bodies do not fit a laptop viewport beside the drawing: inactive notes go first,
+   then inactive bodies. Trimmed text is hidden visually, never removed from the accessibility tree. */
+@media (min-width: 1024px) and (max-height: 919px) {
+  .item:not(.itemActive) .note {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+@media (min-width: 1024px) and (max-height: 899px) {
   .item:not(.itemActive) .body {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* The hours-returned metric: one caption line on wide layouts, two short ones on phones, where the
+   workforce label sits directly to its right. */
+.metricNarrow {
+  display: none;
+}
+@media (max-width: 639px) {
+  .metricWide {
     display: none;
+  }
+  .metricNarrow {
+    display: inline;
   }
 }

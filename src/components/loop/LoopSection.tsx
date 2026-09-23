@@ -16,20 +16,52 @@ import { cn } from "@/lib/cn";
 
 /**
  * The loop, once, in miniature: one agent, five verbs, one small job from start to finish.
- * After this the visitor can read any department, because every department runs the same loop.
+ * The job is universal and operational (a new work order) so any owner recognises it; the Hub shows
+ * the business, the digital workforce does the work inside it. After this the visitor can read any
+ * department, because every department runs the same loop.
  */
 
-const marketing = DEPARTMENT_BY_ID.marketing;
+const operations = DEPARTMENT_BY_ID.operations;
 
-// Same campaigns and figures as the Marketing console this miniature leads into.
-const CAMPAIGNS = [
-  { name: "New Customer Offer", cpl: "$35.00", trend: "−6%", warn: false },
-  { name: "Spring Promotion", cpl: "$58.10", trend: "+38%", warn: true },
-  { name: "Refer a Friend", cpl: "$24.26", trend: "−9%", warn: false },
-  { name: "Local Search", cpl: "$36.00", trend: "−3%", warn: false },
+/*
+ * Demonstration strings, written locally in the deck's voice. Candidates for copy.ts (LOOP.demo);
+ * the integrator decides whether to hoist them.
+ */
+
+/** The work-order table. The top row is the one that just arrived. */
+const ORDERS = [
+  { id: "WO-341", site: "Hartwell site · requested this week", status: "new", fresh: true },
+  { id: "WO-340", site: "Marsh Lane", status: "scheduled Thu", fresh: false },
+  { id: "WO-339", site: "Northgate depot", status: "in progress", fresh: false },
+  { id: "WO-338", site: "Alder Farm", status: "done · to invoice", fresh: false },
 ];
 
-const ACTIONS = ["New concept drafted", "4 creative briefs ready for approval", "Launch scheduled across 3 channels"];
+/** What the new row says as the job moves: new (observes), checking (thinks), scheduled (acts onward). */
+const FRESH_STATUS = ["new", "checking", "scheduled Wed"];
+
+/** What the agent checked before deciding: stock, crew, date. */
+const CHECKS = [
+  { what: "Stock 2210", value: "18" },
+  { what: "Team B", value: "free Wed" },
+  { what: "Requested", value: "this week" },
+];
+
+const REASONING = "Part 2210 in stock: 18. Team B free Wednesday. Customer asked for this week.";
+const LEARNED = "Part 2210 runs low every 6 weeks. Reorder point raised, order drafted.";
+
+const ACTIONS = ["Team B scheduled Wednesday", "Part 2210 reserved", "Customer confirmed. Job status updated"];
+
+/** Stock of part 2210, week by week: it runs out every six weeks. */
+const STOCK_LABEL = "Part 2210 · stock";
+const STOCK = [14, 11, 9, 6, 4, 0];
+const WEEKS = ["W1", "W2", "W3", "W4", "W5", "W6"];
+const REORDER = { was: 2, raised: 6, label: "Reorder" };
+const CHART = { width: 104, height: 40 };
+const STOCK_MAX = Math.max(...STOCK);
+/** y (px from the chart's top) of a stock level, on the same scale Bars draws. */
+const levelTop = (v: number) => CHART.height - (v / STOCK_MAX) * CHART.height;
+
+const REPORT = { label: "Report received / Hub", line: "WO-341 scheduled Wednesday. Nothing needs you." };
 
 /** Phones: five small steps and only the active beat's words, so agent + console + beat fit one screen. */
 function BeatsCompact() {
@@ -88,49 +120,81 @@ function Beats() {
   );
 }
 
+/**
+ * The Operations Agent's console, in miniature. One work order arrives, is checked, scheduled,
+ * turned into a lesson, and reported to the Hub. Every state derives from `step`, so it reverses.
+ */
 function MiniConsole({ step }: { step: number }) {
   const thinking = step >= 1;
   const acting = step >= 2;
   const learned = step >= 3;
   const reported = step >= 4;
+  const freshStatus = FRESH_STATUS[Math.min(step, FRESH_STATUS.length - 1)];
+  const freshTone = acting ? "ok" : thinking ? "accent" : "neutral";
+  const freshColor = acting ? "var(--ok)" : thinking ? "rgb(var(--accent-rgb))" : "var(--text-1)";
+  const reorderShift = levelTop(REORDER.was) - levelTop(REORDER.raised);
   return (
     <Panel raised className="w-full max-w-[440px] overflow-hidden text-[12px]" active={step === 0}>
       <PanelHeader
-        label="Marketing Agent / live"
+        label={`${operations.agentName} / live`}
         right={<StatusChip tone="accent">{BEATS[step].label}</StatusChip>}
       />
       <div className="relative px-3.5 pb-1">
         <ScanLine active={step === 0} />
-        <ul>
-          {CAMPAIGNS.map((c) => {
-            const flagged = thinking && c.warn;
+        <ul aria-label="Work orders">
+          {ORDERS.map((o) => {
+            const lit = o.fresh && thinking;
             return (
-              <li key={c.name} className="flex items-center justify-between border-t border-[var(--line-faint)] py-2 first:border-t-0">
-                <span className="flex items-center gap-2.5">
-                  <Dot tone={flagged ? (learned ? "ok" : "warn") : "neutral"} />
-                  <span className={cn("transition-colors duration-500", flagged ? "text-[var(--text-0)]" : "text-[var(--text-1)]")}>{c.name}</span>
-                </span>
-                <span className="t-num flex items-center gap-3 font-mono text-[11px]">
-                  <span className="text-[var(--text-1)]">{flagged && learned ? "$34.36" : c.cpl}</span>
-                  <span className="w-10 text-right" style={{ color: flagged ? (learned ? "var(--ok)" : "var(--warn)") : "var(--text-2)" }}>
-                    {flagged && learned ? "−41%" : c.trend}
+              <li key={o.id} className="border-t border-[var(--line-faint)] py-2 first:border-t-0">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="flex min-w-0 items-center gap-2.5">
+                    <Dot tone={o.fresh ? freshTone : "neutral"} />
+                    <span className="t-num shrink-0 font-mono text-[11px] text-[var(--text-1)]">{o.id}</span>
+                    <span className={cn("truncate transition-colors duration-500", lit ? "text-[var(--text-0)]" : "text-[var(--text-1)]")}>{o.site}</span>
                   </span>
-                </span>
+                  <span
+                    className="shrink-0 font-mono text-[9.5px] uppercase leading-none tracking-[0.08em] transition-colors duration-500"
+                    style={{ color: o.fresh ? freshColor : "var(--text-2)" }}
+                  >
+                    {o.fresh ? freshStatus : o.status}
+                  </span>
+                </div>
+                {o.fresh && (
+                  <ul className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 pl-[15px]" aria-label="Checked">
+                    {CHECKS.map((c, i) => (
+                      <li
+                        key={c.what}
+                        className="flex items-baseline gap-1.5 transition-opacity duration-500 ease-[var(--ease-out)]"
+                        style={{ opacity: thinking ? 1 : 0.18, transitionDelay: `${thinking ? i * 160 : 0}ms` }}
+                      >
+                        <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-[var(--text-2)]">{c.what}</span>
+                        <span className="t-num font-mono text-[10.5px] text-[var(--text-0)]">{c.value}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             );
           })}
         </ul>
       </div>
 
-      <div className="min-h-[58px] border-t border-[var(--line)] px-3.5 py-3">
-        <div className="t-label !text-[9.5px]">Reasoning</div>
-        <p className="mt-1.5 text-[12px] leading-snug text-[var(--text-0)]">
-          <TypedText text="Spring Promotion costs 38% more per lead. Same audience, same offer. Cause: creative fatigue." active={thinking} speed={60} />
-        </p>
+      {/* Reasoning while it thinks; what it kept once it has learned. Same slot, so nothing reflows. */}
+      <div className="min-h-[74px] border-t border-[var(--line)] px-3.5 py-3">
+        <div className="t-label !text-[9.5px]">{learned ? "Learned" : "Reasoning"}</div>
+        {/* both lines are typed once; stepping back never re-types what was already read */}
+        <div className="mt-1.5 grid text-[12px] leading-snug text-[var(--text-0)]">
+          <p className="[grid-area:1/1] transition-opacity duration-500" style={{ opacity: learned ? 0 : 1 }} aria-hidden={learned}>
+            <TypedText text={REASONING} active={thinking} speed={60} />
+          </p>
+          <p className="[grid-area:1/1] transition-opacity duration-500" style={{ opacity: learned ? 1 : 0 }} aria-hidden={!learned}>
+            <TypedText text={LEARNED} active={learned} speed={60} />
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-[1fr_132px] border-t border-[var(--line)]">
-        <ul className="px-3.5 py-3">
+        <ul className="px-3.5 py-3" aria-label="Actions">
           {ACTIONS.map((a, i) => (
             <li
               key={a}
@@ -145,13 +209,28 @@ function MiniConsole({ step }: { step: number }) {
           ))}
         </ul>
         <div className="border-l border-[var(--line)] px-3 py-3">
-          <div className="t-label !text-[9.5px]">Variations</div>
-          <Bars data={[44, 39, 72, 35]} width={104} height={40} grown={learned} highlightIndex={learned ? 2 : null} className="mt-2" />
+          <div className="t-label !text-[9.5px]">{STOCK_LABEL}</div>
+          <div className="relative mt-2" style={{ width: CHART.width, height: CHART.height }}>
+            <Bars data={STOCK} width={CHART.width} height={CHART.height} grown={learned} className="block" />
+            {/* The reorder point: sits where it was, then is raised once the agent has learned. */}
+            <div
+              aria-hidden
+              className="absolute inset-x-0 border-t border-dashed transition-[transform,border-color,color] duration-700 ease-[var(--ease-out)]"
+              style={{
+                top: levelTop(REORDER.raised),
+                transform: learned ? "none" : `translateY(${reorderShift.toFixed(2)}px)`,
+                transitionDelay: learned ? "900ms" : "0ms",
+                borderColor: learned ? "rgb(var(--accent-rgb))" : "rgba(255,255,255,0.28)",
+                color: learned ? "rgb(var(--accent-rgb))" : "var(--text-3)",
+              }}
+            >
+              <span className="absolute bottom-full right-0 pb-0.5 font-mono text-[8px] uppercase leading-none tracking-[0.08em]">{REORDER.label}</span>
+            </div>
+          </div>
           <div className="mt-1 flex justify-between font-mono text-[9px] text-[var(--text-2)]">
-            <span>A</span>
-            <span>B</span>
-            <span className={learned ? "text-[rgb(var(--accent-rgb))]" : undefined}>C</span>
-            <span>D</span>
+            {WEEKS.map((w) => (
+              <span key={w}>{w}</span>
+            ))}
           </div>
         </div>
       </div>
@@ -160,12 +239,10 @@ function MiniConsole({ step }: { step: number }) {
         className="flex items-center gap-3 border-t border-[var(--line)] px-3.5 py-3 transition-opacity duration-700"
         style={{ opacity: reported ? 1 : 0.18, ["--accent-rgb" as string]: "var(--spot-rgb)" }}
       >
-        <Mark size={16} className="text-[var(--text-0)]" />
+        <Mark size={16} className="shrink-0 text-[var(--text-0)]" />
         <span className="min-w-0">
-          <span className="t-label block !text-[9.5px] text-[var(--text-0)]">Report received / CEO Agent</span>
-          <span className="mt-1 block truncate text-[var(--text-1)]">
-            {marketing.report.headline}. {marketing.report.detail}
-          </span>
+          <span className="t-label block !text-[9.5px] text-[var(--text-0)]">{REPORT.label}</span>
+          <span className="mt-1 block text-[var(--text-1)]">{REPORT.line}</span>
         </span>
       </div>
     </Panel>
@@ -177,7 +254,7 @@ function Stage({ step }: { step: number }) {
   return (
     <div
       className="mx-auto grid h-full w-full max-w-[1320px] items-center gap-8 px-[var(--gutter)] py-[calc(var(--nav-h)+12px)] md:grid-cols-[minmax(0,1fr)_minmax(200px,0.8fr)_minmax(0,1.15fr)] max-md:grid-cols-[minmax(0,1fr)] max-md:grid-rows-[auto_auto_auto] max-md:content-center max-md:gap-3"
-      style={{ ["--accent" as string]: marketing.accent, ["--accent-rgb" as string]: marketing.accentRgb }}
+      style={{ ["--accent" as string]: operations.accent, ["--accent-rgb" as string]: operations.accentRgb }}
     >
       <div className="max-md:order-3">
         <div className="max-md:hidden">
@@ -188,7 +265,7 @@ function Stage({ step }: { step: number }) {
         </div>
       </div>
       <div className="h-[min(58svh,520px)] max-md:order-1 max-md:h-[17svh]">
-        <AgentSlot agent="marketing" mood={BEAT_MOOD[beat]} load={step === 2 ? 0.7 : 0} learnCount={step >= 3 ? 1 : 0} className="h-full w-full" />
+        <AgentSlot agent="operations" mood={BEAT_MOOD[beat]} load={step === 2 ? 0.7 : 0} learnCount={step >= 3 ? 1 : 0} className="h-full w-full" />
       </div>
       <div className="flex min-w-0 justify-center max-md:order-2 md:justify-end">
         <MiniConsole step={step} />
@@ -210,7 +287,7 @@ export function LoopSection({ index = "04" }: { index?: string }) {
 
       <div className="mx-auto max-w-[1320px] px-[var(--gutter)] pb-28 pt-10 md:pb-40">
         <Reveal>
-          <p className="t-label">Every department runs the same loop. Step inside one.</p>
+          <p className="t-label">{LOOP.doors}</p>
         </Reveal>
         <ul className="mt-8 grid gap-px overflow-hidden rounded-[14px] border border-[var(--line)] bg-[var(--line)] sm:grid-cols-2 lg:grid-cols-4">
           {DEPARTMENTS.map((d, i) => (
@@ -239,7 +316,7 @@ export function LoopSection({ index = "04" }: { index?: string }) {
             <Mark size={26} className="text-[var(--text-2)]" />
             <span>
               <span className="block text-[1.05rem] font-medium tracking-[-0.02em] text-[var(--text-0)]">Your departments</span>
-              <span className="mt-1.5 block text-[0.875rem] leading-snug text-[var(--text-2)]">These seven are an example. We design the agents around how your company is actually organised.</span>
+              <span className="mt-1.5 block text-[0.875rem] leading-snug text-[var(--text-2)]">{LOOP.doorsNote}</span>
             </span>
           </li>
         </ul>

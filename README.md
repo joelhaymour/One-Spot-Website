@@ -1,8 +1,9 @@
 # One Spot
 
-The website for One Spot: an interactive product film that shows what an AI-operated company looks like
-from the inside. A CEO Agent watches a live business display; every department is a door; behind each door
-an agent works a full shift (observes, thinks, acts, learns, reports).
+The website for One Spot, a custom business operating system: an interactive product film that shows a
+company run through one command center (the Hub) with a digital workforce doing the work inside it.
+Every department is a door; behind each door an agent works a full shift (observes, thinks, acts, learns,
+reports). The owner sees more and does less.
 
 Start with `docs/CREATIVE_PLAN.md`. It is the decision record for narrative, design language, motion and
 architecture. `docs/VISUAL_BIBLE.md` and `docs/HIGGSFIELD_SHOTS.md` cover generated footage.

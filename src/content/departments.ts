@@ -23,7 +23,7 @@ export const BEATS: { id: Beat; label: string; line: string }[] = [
   { id: "think", label: "Thinks", line: "It works out what is going on, and why." },
   { id: "act", label: "Acts", line: "It does the work, inside your tools." },
   { id: "learn", label: "Learns", line: "It keeps what worked." },
-  { id: "report", label: "Reports", line: "It tells the CEO Agent. The CEO Agent tells you." },
+  { id: "report", label: "Reports", line: "It tells the CEO Agent. Only what needs you reaches you." },
 ];
 
 /** How an agent carries itself. Drives the spot, the rings and the light it throws. */
@@ -138,7 +138,7 @@ export const DEPARTMENTS: Department[] = [
       deltaTone: "ok",
       spark: [52, 50, 51, 47, 48, 44, 45, 41, 42, 39, 40, 38],
       status: "warn",
-      activity: ["Paused an underperforming ad set", "Moved $1,200 to the winning variation", "Scheduled 14 posts for next week"],
+      activity: ["Scheduled 14 posts for next week", "Retired a tired campaign", "Drafted next month's calendar"],
       hover: "3 campaigns live · 1 needs attention",
     },
     story: [
@@ -218,7 +218,7 @@ export const DEPARTMENTS: Department[] = [
         id: "report",
         beat: "report",
         title: "It reports to the CEO Agent.",
-        body: "What changed, what it cost, what it earned. One line on The Business.",
+        body: "What changed, what it cost, what it earned. One line on the Hub.",
         focus: "E",
         log: "Report sent to CEO Agent.",
       },
@@ -305,7 +305,7 @@ export const DEPARTMENTS: Department[] = [
         beat: "report",
         time: "09:08",
         title: "It reports to the CEO Agent.",
-        body: "Pipeline, forecast, deals at risk. Already on The Business.",
+        body: "Pipeline, forecast, deals at risk. Already on the Hub.",
         focus: "E",
         log: "Report sent to CEO Agent.",
       },
@@ -689,7 +689,7 @@ export const DEPARTMENTS: Department[] = [
         id: "report",
         beat: "report",
         title: "It reports to the CEO Agent.",
-        body: "Your to-do list on The Business is already sorted.",
+        body: "Your to-do list on the Hub is already sorted.",
         focus: "E",
         log: "Report sent to CEO Agent.",
       },

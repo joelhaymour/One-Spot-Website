@@ -1,5 +1,6 @@
 "use client";
 
+import { BUSINESS } from "@/content/copy";
 import { BEATS, CEO, departmentHref, nextDepartment, type Department } from "@/content/departments";
 import { COMPANY } from "@/content/hud";
 import { Mark } from "@/components/agent/AgentSvg";
@@ -9,6 +10,13 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Eyebrow } from "@/components/ui/Section";
 import { pad2, stepTime } from "./story";
 import { useLeave } from "./useLeave";
+
+/**
+ * Local, not yet in copy.ts: the owner sees this one line and nothing else from the shift. The
+ * complement of the heading beside it ("Only what needs you reaches you"), not a repeat of it, and
+ * true on every department page (some reports do need the owner, some say "No action needed").
+ */
+const HUB_NOTE = "One line on the Hub. The rest of the shift never reached you.";
 
 /**
  * Where the shift ends up: one notification on the owner's display.
@@ -57,6 +65,7 @@ export function DepartmentOutro({ department }: { department: Department }) {
               <p className="t-body mt-2.5" style={{ textWrap: "pretty" }}>
                 {department.report.detail}
               </p>
+              <p className="mt-3 text-[0.8125rem] leading-[1.5] text-[var(--text-2)]">{HUB_NOTE}</p>
               <p className="t-label mt-5 flex items-center gap-2.5 border-t border-[var(--line-faint)] pt-4">
                 <span aria-hidden className="spot" />
                 From the {department.agentName}
@@ -67,7 +76,7 @@ export function DepartmentOutro({ department }: { department: Department }) {
 
         <Reveal delay={0.16} className="flex flex-wrap items-center gap-3 lg:col-start-1 lg:row-start-2 lg:self-start">
           <LinkButton href="/#business-doors" onClick={onLeave}>
-            Back to The Business
+            {BUSINESS.back}
           </LinkButton>
           <LinkButton href={departmentHref(next.id)} variant="ghost" arrow>
             Next: {next.agentName}

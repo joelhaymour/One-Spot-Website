@@ -49,7 +49,7 @@ export const TODOS: TodoItem[] = [
   { id: "deals", label: "Call three customers waiting on a signature", by: "Sales Agent prepared notes" },
   { id: "invoices", label: "Review 2 invoices on hold", by: "Finance Agent flagged" },
   { id: "slots", label: "Decide: open 12 more slots", by: "CEO Agent recommends yes" },
-  { id: "brief", label: "Approve the new campaign brief", by: "Marketing Agent drafted" },
+  { id: "brief", label: "Approve PO-0878 for part 2210", by: "Operations Agent drafted" },
   { id: "contract", label: "Sign renewed insurance certificate", by: "Administration Agent prepared" },
 ];
 
@@ -78,10 +78,10 @@ export interface Recommendation {
 export const RECOMMENDATIONS: Recommendation[] = [
   {
     id: "capacity",
-    tag: "Marketing / Operations",
+    tag: "Sales / Operations",
     dept: "operations",
-    observation: "Enquiries are up 46% in six days. The schedule is 88% booked for three weeks. Operations can open 12 more slots.",
-    action: "I recommend opening them before raising ad spend.",
+    observation: "New enquiries are up 46% in six days. The schedule is 88% booked for three weeks. Operations can open 12 more slots.",
+    action: "I recommend opening them before taking on more work.",
   },
   {
     id: "revenue",
@@ -107,9 +107,9 @@ export const RECOMMENDATIONS: Recommendation[] = [
   {
     id: "scaling",
     tag: "Capacity",
-    dept: "marketing",
-    observation: "The Marketing Agent's workload has tripled in 14 days. It reports it is becoming the bottleneck.",
-    action: "I recommend splitting it into three specialists: research, execution, reporting.",
+    dept: "operations",
+    observation: "The Operations Agent has been at 140% of capacity for three weeks. It reports it is becoming the bottleneck.",
+    action: "I recommend adding Research and Execution specialists. Nothing changes until you approve.",
   },
   {
     id: "knowledge",
@@ -135,7 +135,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
 ];
 
 export const ALERTS = [
-  { id: "cap", tone: "warn" as const, label: "Capacity at 88% and rising", detail: "Sales volume +22%, fulfilment unchanged" },
+  { id: "cap", tone: "warn" as const, label: "Capacity at 88% and rising", detail: "New enquiries +46%, fulfilment unchanged" },
   { id: "inv", tone: "warn" as const, label: "2 invoices on hold", detail: "One duplicate. One vendor changed bank details" },
   { id: "ok", tone: "ok" as const, label: "Payroll funded", detail: "Runs Thursday" },
 ];
@@ -162,7 +162,7 @@ export const HUD_SCRIPT: HudEvent[] = [
   { type: "revenue", add: 1_460, note: "Invoice 4502 paid" },
   { type: "activity", dept: "operations", line: "Moved 2 jobs to Wednesday. Conflict cleared." },
   { type: "metric", id: "pipeline", add: 36_000 },
-  { type: "activity", dept: "marketing", line: "Paused a tired ad. Moved $1,200 to the winner." },
+  { type: "activity", dept: "operations", line: "Reserved part 2210 for WO-341. Reorder drafted." },
   { type: "todo", id: "brief" },
   { type: "activity", dept: "knowledge", line: "Answered 38 internal questions." },
   { type: "recommend" },

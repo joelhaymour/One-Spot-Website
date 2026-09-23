@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { SCALING } from "@/content/copy";
 import { DEPARTMENT_BY_ID } from "@/content/departments";
 import { ScrollStory } from "@/components/motion/ScrollStory";
@@ -12,15 +12,23 @@ import { ScalingCaptions } from "./ScalingCaptions";
 import { WorkSurface } from "./WorkSurface";
 import { useQueueSim } from "./useQueueSim";
 
+/** Beat 4 is the decision; beat 5 the split. The owner reads for 450 ms before approving. */
+const DECISION_STEP = 3;
+const TEAM_STEP = 4;
+const APPROVE_PAUSE_MS = 450;
+
 /**
- * Autonomous scaling: one agent, one queue, then a team.
- * The visitor should get it without reading: work piles up, the agent says so, two specialists take
- * their place beside it, and the same cards sort themselves into a lane under each.
+ * Scaling the workforce: one agent, one queue, then a team.
+ * The visitor should get it without reading: work piles up, the agent says so, the CEO Agent recommends
+ * two specialists, the visitor approves, the specialists take their place beside the original, and the
+ * same cards sort themselves into a lane under each. The system recommends; it never grants itself
+ * headcount.
  */
 
-const marketing = DEPARTMENT_BY_ID.marketing;
+/** Operations: work orders, stock, crews and invoices. Work every company has, whatever it sells. */
+const operations = DEPARTMENT_BY_ID.operations;
 
-const accentVars = { "--accent": marketing.accent, "--accent-rgb": marketing.accentRgb } as CSSProperties;
+const accentVars = { "--accent": operations.accent, "--accent-rgb": operations.accentRgb } as CSSProperties;
 
 function Stage({ step }: { step: number }) {
   const root = useRef<HTMLDivElement>(null);
@@ -52,15 +60,39 @@ function Stage({ step }: { step: number }) {
 
   const snapshot = useQueueSim(step, visible, reduce || paused);
 
+  // The decision happens on the beat's own clock: the recommendation is typed, read, then approved.
+  // Reaching the beat from below starts it pending; stepping back from the split, it was already made.
+  // Reduced motion shows the beat decided (TypedText prints the whole line at once and never reports
+  // done); "Pause motion" does not, because the line still types and the approval must follow it.
+  const decision = step === DECISION_STEP;
+  const team = step >= TEAM_STEP;
+  const [seenStep, setSeenStep] = useState(step);
+  const [typed, setTyped] = useState(false);
+  const [approved, setApproved] = useState(step > DECISION_STEP);
+  if (seenStep !== step) {
+    setSeenStep(step);
+    setTyped(false);
+    setApproved(step < seenStep);
+  }
+  if (reduce && decision && !approved) setApproved(true);
+  useEffect(() => {
+    if (!typed || approved) return;
+    const id = window.setTimeout(() => setApproved(true), APPROVE_PAUSE_MS);
+    return () => window.clearTimeout(id);
+  }, [typed, approved]);
+  const granted = team || (decision && approved);
+  const confirmed = decision && approved && (typed || reduce);
+  const onTyped = useCallback(() => setTyped(true), []);
+
   return (
     <div
       ref={root}
       className="mx-auto grid h-full w-full max-w-[1320px] gap-x-12 gap-y-4 px-[var(--gutter)] pb-5 pt-[calc(var(--nav-h)+8px)] max-md:grid-rows-[minmax(0,1fr)_auto] md:grid-cols-[minmax(0,0.72fr)_minmax(0,1.7fr)] md:grid-rows-[minmax(0,1fr)] md:items-center md:pb-8 md:pt-[calc(var(--nav-h)+16px)]"
       style={accentVars}
     >
-      <ScalingCaptions className="max-md:order-2" />
+      <ScalingCaptions className="max-md:order-2" decision={{ show: decision, onTyped, confirmed }} />
       <div className="flex min-h-0 flex-col gap-3 max-md:order-1 md:h-full md:max-h-[860px] md:gap-4">
-        <ScalingAgents step={step} near={near} className="max-md:h-[23svh] max-md:min-h-[132px] max-md:shrink-0 md:min-h-0 md:flex-[0.8]" />
+        <ScalingAgents step={step} near={near} granted={granted} className="max-md:h-[23svh] max-md:min-h-[132px] max-md:shrink-0 md:min-h-0 md:flex-[0.8]" />
         <WorkSurface step={step} snapshot={snapshot} className="flex-1" />
       </div>
     </div>

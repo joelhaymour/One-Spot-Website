@@ -24,7 +24,8 @@ export function HeroSection() {
               </span>
             ))}
           </h1>
-          <p className="t-lead mt-7 max-w-[30rem]">{HERO.sub}</p>
+          <p className="t-lead mt-7 max-w-[32rem]">{HERO.sub}</p>
+          <p className="mt-6 text-[clamp(1.25rem,1.9vw,1.6rem)] font-medium tracking-[-0.03em] text-[var(--text-0)]">{HERO.promise}</p>
 
           <AnchorLink href="/#how" className="group mt-10 inline-flex items-center gap-3 text-[var(--text-1)] transition-colors duration-200 hover:text-[var(--text-0)]">
             <span className="h-px w-8 bg-[var(--line-strong)] transition-colors duration-200 group-hover:bg-[var(--text-2)]" />

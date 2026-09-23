@@ -7,8 +7,10 @@ import { BeadPool } from "./beads";
 import { createBacklight, createDockDisc, createFloor } from "./set";
 
 /**
- * The scaling scene, as plain three.js: one Marketing agent at centre, two docks waiting either side,
- * and the choreography for five beats. React only tells it which beat is active.
+ * The scaling scene, as plain three.js: one Operations agent at centre, two docks waiting either side,
+ * and the choreography for five beats. React tells it which beat is active and, in the fourth, when
+ * the visitor's approval is on screen: the system recommends its own expansion, it cannot grant
+ * itself headcount, so no arrival starts before that.
  *
  * Every beat is a short list of timed cues on the scene's own clock, which only runs while the canvas
  * is being drawn. Entering a beat first puts the scene in that beat's base state, so any beat can be
@@ -58,6 +60,10 @@ export class ScalingScene {
   private cursor = 0;
   /** Holds the beat's clock until both specialists have finished arriving. */
   private waitForTeam = false;
+  /** Holds the recommendation beat's clock until the visitor's approval has been shown. */
+  private waitForApproval = false;
+  /** Headcount granted by the visitor (or the split already happened). Set by the DOM, never by the scene. */
+  private approved = false;
   /** Just above the top of the frame: where the CEO Agent is. */
   private topY = 4.4;
   /** The visitor paused motion: agents that would be busy stand at rest instead. */
@@ -69,7 +75,7 @@ export class ScalingScene {
   private c = new THREE.Vector3();
 
   constructor() {
-    const dept = DEPARTMENT_BY_ID.marketing;
+    const dept = DEPARTMENT_BY_ID.operations;
     this.accent = dept.accent;
 
     this.original = new AgentRig({ id: dept.id, accent: dept.accent, dock: true, index: 0 });
@@ -129,6 +135,7 @@ export class ScalingScene {
     this.clock = 0;
     this.cursor = 0;
     this.waitForTeam = false;
+    this.waitForApproval = false;
     // Going backwards, anything in flight belongs to a beat that has not happened yet.
     if (step < previous) this.beads.clear();
 
@@ -159,17 +166,17 @@ export class ScalingScene {
       case 2: // it says so: amber while the words are typed, then the message goes up
         o.setLoad(1);
         this.mood(o, "alert");
-        at(2.4, () => {
+        at(2.6, () => {
           this.mood(o, "transmit");
           for (let k = 0; k < 3; k++) this.sendUp(k);
         });
-        at(4.5, () => this.mood(o, "alert"));
+        at(4.7, () => this.mood(o, "alert"));
         break;
 
-      case 3: // specialists arrive
+      case 3: // the system recommends, the visitor decides, then the specialists arrive
         o.setLoad(1);
         if (this.shown[0] && this.shown[1]) {
-          // stepping back from the split: the team stays, the work has not moved yet
+          // stepping back from the split: the decision stands, the team stays, the work has not moved yet
           this.mood(o, "act");
           for (const rig of this.specialists) {
             rig.setGaze(null);
@@ -178,14 +185,16 @@ export class ScalingScene {
           }
           break;
         }
+        // Looking up at the recommendation while it is read. The clock below starts at the approval.
         this.mood(o, "observe");
         o.setGaze(0, 0.9);
-        at(0.7, () => this.seed(0));
-        at(1.05, () => this.seed(1));
+        this.waitForApproval = true;
+        at(0.5, () => this.seed(0));
+        at(0.85, () => this.seed(1));
         // the original turns to meet each newcomer as its seed lands
-        at(1.7, () => o.setGaze(-0.9, -0.1));
-        at(2.5, () => o.setGaze(0.9, -0.1));
-        at(3.5, () => {
+        at(1.5, () => o.setGaze(-0.9, -0.1));
+        at(2.3, () => o.setGaze(0.9, -0.1));
+        at(3.3, () => {
           o.setGaze(null);
           this.mood(o, "act");
         });
@@ -228,6 +237,14 @@ export class ScalingScene {
     }
 
     this.cues = cues.sort((p, q) => p.at - q.at);
+  }
+
+  /**
+   * The DOM has shown the visitor's approval (or the split has happened). Lets the recommendation beat's
+   * clock run so the seeds come down. Revoking it never hides anyone: scrolling back before the beat does.
+   */
+  setApproved(approved: boolean) {
+    this.approved = approved;
   }
 
   /** Pause switch (WCAG 2.2.2): the restless "act" loop becomes "idle"; one-shot story moves still play. */
@@ -286,7 +303,8 @@ export class ScalingScene {
     const dt = clamp(dtRaw, 0, 1 / 20);
 
     if (this.waitForTeam && this.specialists[0].arrived && this.specialists[1].arrived) this.waitForTeam = false;
-    if (!this.waitForTeam) this.clock += dt;
+    if (this.waitForApproval && this.approved) this.waitForApproval = false;
+    if (!this.waitForTeam && !this.waitForApproval) this.clock += dt;
     while (this.cursor < this.cues.length && this.cues[this.cursor].at <= this.clock) this.cues[this.cursor++].run();
 
     this.original.update(t, dt, camera);

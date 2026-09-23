@@ -1,4 +1,4 @@
-import { PAUSES } from "@/content/copy";
+import { PAUSES, PAYOFF } from "@/content/copy";
 import { BeforeAfterSection } from "@/components/beforeafter/BeforeAfterSection";
 import { BusinessSection } from "@/components/business/BusinessSection";
 import { ContactSection } from "@/components/cta/ContactSection";
@@ -17,8 +17,9 @@ import { Statement } from "@/components/ui/Section";
  *   02 before/after  same software, different company
  *   03 scaling       it knows when it needs help
  *   04 agents        watch one do the job
- *   05 network       what marketing sees, operations knows
- *   06 the business  the display you can step into
+ *   05 network       the workforce works across departments
+ *   06 the hub       the display you can step into
+ *   payoff           see more, do less
  *   contact
  */
 export default function Home() {
@@ -36,7 +37,10 @@ export default function Home() {
       {/* The owner as the company's wiring: the thought the display answers. */}
       <Statement>{PAUSES.afterHero}</Statement>
       <BusinessSection index="06" />
-      <Statement>{PAUSES.beforeCta}</Statement>
+      {/* The end state: the owner moves from operator to governor. */}
+      <Statement id="payoff" kicker="The owner" support={PAYOFF.support}>
+        {PAYOFF.line}
+      </Statement>
       <ContactSection />
     </main>
   );

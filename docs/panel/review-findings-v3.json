@@ -1,0 +1,173 @@
+[
+ {
+  "lens": "regressions",
+  "findings": [
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "src/components/scaling/ScalingAgents.tsx",
+    "line": 58,
+    "title": "With \"Pause motion\" on, the approval line and the specialists overtake the still-typing recommendation",
+    "scenario": "A visitor presses the Pause motion button (store `paused` = true; it only sets html[data-paused] and a store flag, it does not stop GSAP or rAF) and scrolls into beat 4. `frozen = reduce || paused` makes the render-phase `if (frozen && decision && !approved) setApproved(true)` (line 71) grant headcount on the first frame of the beat, so `granted` is true immediately: the flat stand-ins fade in after 480 ms, the GL scene's `waitForApproval` clears and the seeds fly at +0.5 s, and `confirmed = decision && approved && (typed || frozen)` (line 82) shows \"Approved by you. Two specialists arriving.\" at once. Meanwhile `TypedText` is rAF-driven and ignores `paused`, so the CEO Agent's recommendation (\"Workload has exceeded capacity... Recommend adding Research and Execution specialists.\", ~100 chars at 60 cps + 0.4 s delay \u2248 2.1 s) is still being typed underneath it. The visitor sees the approval and the arrivals before the recommendation has been made, the exact inversion this beat exists to rule out (\"The confirmation line follows the recommendation, never overtakes it\"). The same happens if the visitor toggles Pause mid-typing. Under reduced motion the short-circuit is correct because TypedText shows the whole line instantly and never calls onDone; under Pause it is not needed (onDone still fires) and is wrong.",
+    "fix": "Base the short-circuit on reduced motion only: `const frozen = reduce;` (keep `paused` for the queue stills in ScalingSection). With that, paused visitors still get the approval 450 ms after the line finishes typing via the existing `typed` timer, and `confirmed` no longer lights before `typed`."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "src/components/hud/labels.ts",
+    "line": 14,
+    "title": "\"Waiting on you\" counter labels every to-do as an approval",
+    "scenario": "BusinessHud.tsx:71 renders `HUB_LABELS.approvals(TODOS.length - state.done.length)`, so the Hub's left rail reads \"Waiting on you \u00b7 5 approvals\" over a list whose items are \"Call three customers waiting on a signature\", \"Review 2 invoices on hold\", \"Decide: open 12 more slots\", \"Approve the new campaign brief\" and \"Sign renewed insurance certificate\". Only one of the five is an approval; as the script completes `contract` and `brief` the counter says \"3 approvals\" while the remaining rows are a call, a review and a decision. The number contradicts the rows directly beneath it in the section the release positions as the owner's governance view (approvals / exceptions / decisions).",
+    "fix": "Either count only the rows that are approvals, or use a neutral noun: `approvals: (n) => `${n} ${n === 1 ? \"item\" : \"items\"}`` (or `${n} waiting`), which is also what v2 said (\"N open\")."
+   }
+  ],
+  "summary": "Runtime-regression lens over `git diff v2` (uncommitted v3). One real runtime defect and one data-driven label mismatch; everything else in the lens traced clean.\n\nCONFIRMED: ScalingAgents.tsx treats `paused` like reduced motion (`frozen = reduce || paused`), but TypedText is rAF-driven and keeps typing under Pause motion, so the approval line, the flat stand-ins and the GL seeds all land while the CEO Agent's recommendation is still being written (the inversion beat 4 exists to prevent). Fix is one token: `const frozen = reduce;`. Second, the Hub's \"Waiting on you\" counter says \"N approvals\" over a list that is mostly calls/reviews/signatures.\n\nVERIFIED CLEAN (no finding):\n- Scaling approval gate: `approved = step < seenStep` re-arms on every forward entry and keeps the grant when stepping back from beat 5; TypedText's effect re-runs on `active` false->true and calls `onDone` again, so re-entering beat 4 cannot deadlock; the frozen render-phase setState converges after React's re-render; fast flicks 2->4/2->5 land on `team` so `granted` is true without the card; the GL scene's `shown`/`waitForApproval` mirrors the DOM (`setApproved(false)` is sent when leaving beat 4 backwards, `hideSpecialists` only below step 3, \"decision stands\" branch when both shown). Specialists never precede the approval line: flat stand-ins wait 480 ms, GL seeds 0.5 s after `approved`.\n- CompanyMap: the `formed` latch is reversible in every ordering I traced (kill during delay keeps the last consistent t/formed pair; kill mid-tween re-tweens from the partial t; `reduced` bypasses it); layout tween, count-up, pulse loop, both IntersectionObservers and the ResizeObserver are all cleaned up; Pause motion does not pause GSAP (MotionToggle only sets a store flag + html[data-paused], which pauses CSS animations, not transitions), so step 6 reaches its final state while paused and the pulse correctly stays off; SSR markup is deterministic (hand-authored positions, `useReducedMotion`/`useOnScreen` false on the server); mapData's module-init order is safe (hoisted function declarations). `hooks.ts` is unchanged and `diagram.module.css` is purely additive (two chip classes), so ToolsDiagram and HeroOverview keep every export they import. The new `metricWide/metricNarrow` tspans rely on display:none tspans not advancing the line, which browsers honour.\n- LoopSection: every state derives from `step`; the REASONING/LEARNED TypedText re-types on text or active change and resets when inactive; `BEATS`/`LOOP.beats` both have 5 entries for `steps={5}`; the reorder-line transform moves the right way (was=2 sits lower, raised=6 higher).\n- HeroOverview: only static labels added; `.software` sits in the untransformed `.floor` group and the `--agent-h`/`--agent-half` vars are on the enclosing `.stage`, so the CSS placement resolves as written.\n- HUD: `labels.ts` is a plain module; MobileBusiness is only imported by the client BusinessSection; `done` only ever receives TODO ids (`contract`, `brief`) and resets per lap, so the counter cannot go negative; `#business-doors` (BusinessSection.tsx:237) and its focus helper are untouched.\n- Section/page/Nav: `Statement` takes `id`/`support`; `#payoff` is picked up by `main > section[id]` and simply yields no active nav item between The Hub and contact (same as `#contact` itself), which is sane.\n- Network relay from \"sales\": timeline.ts, flat.ts, NetworkSvg, RelayOverlays, RelayCaptions, gl/network/choreography+cast all resolve parties by id (`departmentIndex`, `agentSlot`, `originOf`); the BOOKED load cue tests `id === \"operations\"`; chip alignment for sales (index 1 of 7) is \"start\" toward the frame centre. No index-0 or marketing assumption remains in code. Two stale comments only: page.tsx line 20 (\"what marketing sees, operations knows\") and network.module.css line 97 (\"a chip over Marketing\"). Worth an eyeball, not a finding: the sales chip anchors at ~19% of the wide frame and can grow to 30%, closer to the CEO Agent than the old marketing chip (~12%); by projection math it should stop just short of the CEO's body, but that depends on font metrics I could not render here.\n- The personalised post-shadowing One Spot reveal does not appear anywhere in the changed files."
+ },
+ {
+  "lens": "message-fidelity",
+  "findings": [
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "src/content/hud.ts",
+    "line": 165,
+    "title": "Marketing-led examples still play live on the homepage Hub",
+    "scenario": "A visitor watching the Hub (section 06) sees the 'Happening now' feed print 'Marketing Agent \u2014 Paused a tired ad. Moved $1,200 to the winner.' (HUD_SCRIPT, line 165) and the 'Waiting on you' rail list 'Approve the new campaign brief \u2014 Marketing Agent drafted' (TODOS, line 52). The Marketing door tile on the same display shows 'Paused an underperforming ad set' at rest and '3 campaigns live \u00b7 1 needs attention' on hover, and the phone door list repeats that hover line (src/content/departments.ts:141-142). The release rule is that homepage examples are universal/operational and never marketing (ads, ad spend, campaigns, creative); these are the only examples of that kind left on the page and they sit in the most-watched panel.",
+    "fix": "Swap the two Hub events for operational ones, e.g. TODOS 'brief' \u2192 { label: 'Approve PO-0878 for part 2210', by: 'Operations Agent drafted' } and HUD_SCRIPT line 165 \u2192 { type: 'activity', dept: 'operations', line: 'Reserved part 2210 for WO-341. Reorder drafted.' } (or a finance/administration line). Optionally soften the Marketing tile's activity[0]/hover in departments.ts to non-ad wording (e.g. 'Scheduled 14 posts for next week' first, hover '3 campaigns live') so no ad-spend example remains on the homepage."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "src/components/loop/LoopSection.tsx",
+    "line": 49,
+    "title": "Loop demo and the Operations door tell contradictory facts about part 2210 and Crew/Team B",
+    "scenario": "Section 04 shows the Operations Agent reasoning 'Part 2210 in stock: 4. Crew B free Wednesday.' and learning 'Part 2210 runs out every 6 weeks. Reorder point raised.' (lines 44-52). A visitor who then clicks the Operations door (LOOP.doors invites exactly this) sees the same agent's console report 'Team B has 11 free hours Wednesday' and 'Stock for item 2210 runs out in 6 days. PO drafted.' (src/content/departments.ts:518, 534) with the inventory table showing item 2210 'Filter cartridges' at 18 on hand, 6 days (src/components/department/screens/operations/data.ts STOCK). Same part number, different stock (4 vs 18), different horizon (6 weeks vs 6 days), and 'Crew B' vs 'Team B' for the same crew, on two consecutive screens.",
+    "fix": "Align the loop locals to the department story: CHECKS 'Stock 2210' value '18', 'Team B' / 'free Wed'; REASONING 'Part 2210 in stock: 18. Team B free Wednesday. Customer asked for this week.'; LEARNED 'Part 2210 runs out in 6 days. Reorder drafted, point raised.'; ACTIONS 'Team B scheduled Wednesday'. Alternatively keep the loop numbers and use a different part id (e.g. 2216) so the two scenes are not about the same item."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "src/components/motion/Transition.tsx",
+    "line": 89,
+    "title": "Return-to-Hub transition cover still reads 'The Business'",
+    "scenario": "On every desktop click of 'Back to the Hub' (DepartmentOutro) or the breadcrumb, useDepartmentTransition().leave() sets the full-screen cover label to the hard-coded string 'The Business' and fades it to full opacity for ~0.4 s before the home route mounts. The visitor just read a button that says 'Back to the Hub' and the nav item 'The Hub', then sees 'The Business' on the cover: the retired name is the last thing shown before the Hub appears.",
+    "fix": "Replace the literal with the copy-deck value: import { BUSINESS } from '@/content/copy' (or HUB_LABELS from '@/components/hud/labels') and set labelEl.textContent = BUSINESS.short (or HUB_LABELS.name). Also update the stale comment on line 86 ('\"Back to The Business\" means the doors')."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "src/components/business/BusinessSection.tsx",
+    "line": 229,
+    "title": "Hub story region is announced as 'The Business' to assistive tech",
+    "scenario": "The ScrollStory that wraps the whole section 06 stage carries aria-label=\"The Business: your whole company on one display\". A screen-reader visitor navigating regions hears 'The Business' for the section whose nav item, eyebrow, breadcrumb and back-button all say 'The Hub' / 'One Spot Hub', while the inner VirtualDisplay on line 206 was already renamed to 'One Spot Hub: a live view of one company'.",
+    "fix": "Change the aria-label to use the new name, e.g. `${HUB_LABELS.name}: your whole company on one display` (import HUB_LABELS from '@/components/hud/labels'), and fix the comment on line 235 ('Back to The Business')."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "src/content/hud.ts",
+    "line": 111,
+    "title": "Scaling event is dated 'three weeks' in section 03 and '14 days' on the Hub",
+    "scenario": "Section 03 has the Operations Agent say 'Workload at 140% of capacity for three weeks' and the CEO Agent's card 'Workload has exceeded capacity for three weeks' (src/content/copy.ts:97, 102). The Hub's 'Capacity' recommendation (#5) describes the same event as 'The Operations Agent's workload has tripled in 14 days.' A visitor who reads both scenes sees the one recurring workforce-scaling example with two different durations.",
+    "fix": "Make the Hub observation match the scene it summarises: 'The Operations Agent has been at 140% of capacity for three weeks. It reports it is becoming the bottleneck.' (or change both copy.ts lines to 'for two weeks' if 14 days is the intended figure)."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "src/content/hud.ts",
+    "line": 138,
+    "title": "Hub alert gives a second growth figure (+22%) for the +46% enquiry spike",
+    "scenario": "On the Hub, the 'Needs attention' panel shows 'Capacity at 88% and rising \u2014 Sales volume +22%, fulfilment unchanged' directly beside the 'Needs a decision' card that reads 'New enquiries are up 46% in six days. The schedule is 88% booked\u2026', the KEY_METRICS tile 'New enquiries +46%' and the relay in section 05 ('New enquiries up 46% in six days'). The same demand/capacity event is explained with 46% everywhere except this one alert, where an owner reading the display sees an unexplained 22%.",
+    "fix": "Reword the alert detail to the shared figure and vocabulary, e.g. detail: 'New enquiries +46%, fulfilment unchanged'."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "src/components/department/DepartmentIntro.tsx",
+    "line": 44,
+    "title": "Department page breadcrumb parents the department under 'CEO Agent' instead of the Hub",
+    "scenario": "The department page renders two breadcrumbs: the nav bar's says 'The Hub / Operations' (Nav.tsx uses BUSINESS.short) while the in-page header breadcrumb says 'CEO Agent \u2192 Operations Agent', with 'CEO Agent' as the link back to /#business-doors. Under the v3 hierarchy (One Spot > Hub > agents) the parent of a department is the Hub; presenting the CEO Agent as the top-level node re-centres the page on agents and disagrees with the crumb 20px above it.",
+    "fix": "Use the Hub as the first crumb: import { BUSINESS } from '@/content/copy' and render {BUSINESS.short} (or HUB_LABELS.name) in place of {CEO.name} on line 44, keeping the href to /#business-doors."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "src/components/hud/labels.ts",
+    "line": 14,
+    "title": "'Waiting on you' counter calls every open item an approval",
+    "scenario": "The Hub's left rail header reads 'Waiting on you \u00b7 5 approvals' (HUB_LABELS.approvals(TODOS.length - done)), but the five items are 'Call three customers waiting on a signature', 'Review 2 invoices on hold', 'Decide: open 12 more slots', 'Approve the new campaign brief' and 'Sign renewed insurance certificate'. Only one or two are approvals; the rest are calls, reviews, decisions and signatures, so the count contradicts the list it labels and the new 'what needs attention / needs a decision' framing.",
+    "fix": "Count neutrally: approvals: (n) => `${n} ${n === 1 ? 'item' : 'items'}` (or `${n} open`, matching the v2 wording), and rename the helper to `open`."
+   }
+  ],
+  "summary": "Read-only review of the v3 diff against v2 under the message/hierarchy/copy-fidelity lens. The core correction lands: SITE/HERO/BUSINESS/LOOP/NETWORK/SCALING/PROCESS/BEFORE_AFTER/PAYOFF/CTA strings in src/content/copy.ts match the release brief verbatim; the hero card, Hub recommendation #1 and the network relay all describe the 46% / 88% / 12-slot event with Sales (not Marketing) as the speaker; the scaling scene and Hub 'Capacity' item agree on the Operations Agent and Research + Execution specialists, and the only approval language is 'Approved by you'; the six-step CompanyMap readouts derive both the step-03 and step-05 counts from the same FRICTION array (8 points = 2 agents \u00b7 2 automations \u00b7 2 integrations \u00b7 1 redesign \u00b7 1 human); layout/opengraph/manifest/sitemap, not-found, error, the department outro (HUB_NOTE, 'Back to the Hub') and README/CREATIVE_PLAN are aligned; no 'HUD', 'AI operating layer', 'we build AI agents', singular-voice or personalised-reveal text exists anywhere visitor-facing. Eight verified findings remain: (1) marketing-led examples still play in the homepage Hub feed and to-do rail (hud.ts:52, :165; Marketing door tile); (2) the loop demo and the Operations department page contradict each other on part 2210 stock/horizon and 'Crew B' vs 'Team B'; (3) the return-to-Hub transition cover is hard-coded to 'The Business' (Transition.tsx:89); (4) the Hub ScrollStory aria-label still says 'The Business'; (5) the scaling event is 'three weeks' in section 03 but '14 days' on the Hub; (6) a Hub alert gives +22% for the +46% enquiry spike; (7) the department page's in-page breadcrumb parents the department under 'CEO Agent' rather than the Hub; (8) the 'Waiting on you' counter labels every item an approval. Non-visitor-facing residue worth a sweep: code comments still say the relay starts at Marketing (src/app/page.tsx:20, src/components/network/NetworkSection.tsx:6). Note: HeroOverview.tsx and CompanyMap.tsx changed on disk mid-review (another editor); the visitor-facing strings I checked in them were unchanged, and the content files cited above were re-verified by line after the change."
+ },
+ {
+  "lens": "responsive-a11y-motion",
+  "findings": [
+   {
+    "severity": "high",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/scaling/ScalingAgents.tsx",
+    "line": 143,
+    "title": "Scaling: the recommendation card sits on top of the agent for the whole of beat 4",
+    "scenario": "The card is `absolute inset-x-2 top-0 z-20` inside the ScalingAgents box, and with header + 2-line recommendation + chips row + confirmation line it is ~140px tall on md (px-3.5/py-3, 13px text, h-7 chips) and ~111px on phones. The agent's head starts at ~19% of that box (SVG stand-in: h-[76%] bottom-aligned with pb-[5%]; GL: camera target 1.15 / fov 24 puts the head at ~22%). At 1280x640 the box is ~235px (md:flex-[0.8] of a 528px column) so the 0.94-alpha glass covers ~53% of the agent (head, spot, ring); at 1440x900 still ~35%. On a 375x667 phone the box is 23svh = 153px (ScalingSection.tsx:66) and the card covers ~111px of it, i.e. ~70% of the agent, so the visitor never sees the agent look up at the recommendation or the specialists arrive after approval (that arrival now happens inside beat 4, behind the card). v2's 28px pill cleared the head; the v3 card did not get room reserved.",
+    "fix": "Reserve the card's height instead of overlaying it: render the recommendation card (and the beat-5 pill) in a fixed-height slot placed above `ScalingAgents` in the ScalingSection column (line 66), or on md give the lanes/GL box a `top` offset equal to the card height; on phones drop the chips row (`max-md:hidden`, they are aria-hidden decoration) so the slot stays small."
+   },
+   {
+    "severity": "high",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/process/process.module.css",
+    "line": 62,
+    "title": "Process steps no longer fit the sticky frame on 1024px+ viewports 720\u2013~850px tall; step 01 slides under the nav, step 06 is clipped",
+    "scenario": "v3 doubled the step bodies (92\u2013162 chars vs v2's 75\u201390) and added an always-visible active note, but the only height mitigations are hiding inactive notes \u2264919px and inactive bodies \u2264719px. In the 720\u2013919px band every body is shown. At 1024x768 (iPad landscape, the smallest lg viewport) the steps column is ~307px wide \u2192 ~17\u201320 body lines \u2192 the list is ~890\u2013950px against a content box of 768-72-32 = 664px; at 1280x720 it is ~800\u2013850px vs 616px. The Stage is `lg:content-center` inside ScrollStory's `sticky h-[100svh] overflow-clip`, so the overflow is centred: the first step's number/title move up under the fixed nav (Nav.tsx: fixed, bg rgba(4,5,6,0.94), 64px) and the sixth step's body/note are clipped at the bottom for the whole time the story is pinned. v2's shorter bodies fit at these sizes.",
+    "fix": "Extend the inactive-body trim so it covers the same band as the notes: change line 62 to `@media (min-width: 1024px) and (max-height: 899px)` (or merge it into the 919px rule), keeping the active step untrimmed; optionally also cap `.body` at `max-w-[34rem]` with 2 lines via line-clamp for inactive items."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/process/process.module.css",
+    "line": 55,
+    "title": "Trimmed notes/bodies use display:none, so on most laptops screen readers get only the active step's note",
+    "scenario": "`.item:not(.itemActive) .note { display: none }` applies on every 1024px+ viewport up to 919px tall (1440x900, 1366x768, 1280x800), and the complete text equivalent in ProcessSection.tsx:29 is `sr-only lg:hidden`, so it is not available there. A screen-reader user on a 1440x900 laptop therefore hears the classification note (step 3), the smallest-solution note (step 5) and the intelligence note (step 6) only when that step happens to be the active one; below 720px tall the inactive bodies vanish from the tree as well. The notes are the new method content this release adds.",
+    "fix": "Hide trimmed notes/bodies visually rather than with display:none (position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap) in the two media rules at lines 55\u201366, so the text stays in the accessibility tree while taking no space."
+   },
+   {
+    "severity": "medium",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/hero/overview.module.css",
+    "line": 141,
+    "title": "Hero: the stem hairline is painted through the one-line \"Digital workforce\" label on frames under 480px",
+    "scenario": "Below a 480px frame (every phone, and short laptops where the frame is capped at ~395px at 1280x640 / 1366x650) `.workforceOne` replaces the two-line label with one line centred on x = HUB[0], directly under the agent, and relies on a void-coloured SVG stroke \"to keep the hairline from running through the letters\". But the stem is a DOM element (`.stem`, line 210) with `z-index: 2`, painted above the non-positioned SVG, so the SVG halo cannot knock it out: the 1px line runs vertically through the middle of the label (the W of WORKFORCE) whenever `stemOn` is true, i.e. from the rise phase on, on every loop pass after the first, and permanently in the reduced-motion / paused / off-screen final still.",
+    "fix": "Move the one-line label beside the stem instead of across it: in HeroOverview.tsx:262 use `textAnchor=\"end\"` and change the `.workforceOne` transform to `translate(calc(var(--u) * -5px), calc(var(--u) * 15px))`. At 335\u2013479px frames its box (x \u2248 164\u2013369 user units, y \u2248 287\u2013302) stays clear of the Email (y \u2264 270) and Spreadsheets (y \u2265 337) tile labels."
+   },
+   {
+    "severity": "medium",
+    "confidence": "likely",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/scaling/ScalingAgents.tsx",
+    "line": 71,
+    "title": "Scaling with \"Pause motion\" on: the approval line and the specialists land before the recommendation is typed",
+    "scenario": "`frozen = reduce || paused`; line 71 approves instantly when frozen and line 82 shows the confirmation when `typed || frozen`. TypedText only checks prefers-reduced-motion, not the site's `paused` store, so with the motion toggle on it still types the 100-char recommendation over ~2s while \"Approved by you. Two specialists arriving.\" is already visible and `granted` (line 80) has told the scene / the SVG stand-ins to bring the specialists in. The governance beat's point (recommend, read, then approve) is inverted for exactly the visitors who asked for calmer motion; the hero handles the same case by rendering static text when `final`.",
+    "fix": "Use `reduce` instead of `frozen` in the instant-approval branch (line 71) and in `confirmed` (line 82), so paused visitors still get typed \u2192 450ms \u2192 approved; or make TypedText render the full string when `useExperience(s => s.paused)` is true, which fixes every card at once."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/loop/LoopSection.tsx",
+    "line": 186,
+    "title": "Loop console re-types the Reasoning line when the visitor scrolls back from Learns to Acts",
+    "scenario": "The same TypedText swaps its `text` between LEARNED and REASONING. TypedText's effect keys on `text` and its cleanup resets `count` to 0, so stepping back from step 3 to step 2 replays a ~1.3s typing animation (with caret) of the reasoning the visitor already read, as if the agent were thinking it again; v2 kept the line static across those steps. Reduced motion is unaffected (full string), so this is a motion-on polish regression only.",
+    "fix": "Mount both lines in one grid cell and cross-fade them (`grid` with both `<p>`s in `[grid-area:1/1]`, opacity by `learned`), typing REASONING once with `active={thinking}` and LEARNED with `active={learned}`; the slot already has min-h-[74px] so nothing reflows."
+   },
+   {
+    "severity": "low",
+    "confidence": "certain",
+    "file": "/Users/joelhaymour/Projects/one-spot/src/components/process/CompanyMap.tsx",
+    "line": 262,
+    "title": "\"Needs you\" chips overhang the line they arrive on at small phone sizes",
+    "scenario": "The line is \u00b1210 user units of the 720-unit viewBox while the three chips are laid out in screen px inside a `scale(var(--u))` group (58+64+58 + 2\u00d78 = 196px). On a 360x640 phone the frame is 38svh\u00d71.2 \u2248 292px, so the line renders ~170px wide and the chips extend ~13px past each end (~17px on 320-wide phones); in step 6 the three items visibly sit wider than the line meant to carry them, with the left chip starting before the \"Needs you\" label.",
+    "fix": "Draw the line inside the scaled group in screen px, e.g. `<line x1={-(NEEDS_YOU_TOTAL / 2 + 24)} x2={NEEDS_YOU_TOTAL / 2 + 24} \u2026>` where NEEDS_YOU_TOTAL is the chip row width already computed for NEEDS_YOU_CHIPS, and place the \"Needs you\" text at that same x."
+   }
+  ],
+  "summary": "Read-only review of the v3 diff against v2 through the responsive / accessibility / motion-budget lens. Seven verified findings: (1) the new Scaling recommendation card overlays ~53% of the agent on a 1280x640 desktop and ~70% on a 375x667 phone for all of beat 4; (2) the doubled Process step bodies plus the active note overflow the sticky frame on 1024px+ viewports 720\u2013~850px tall (1024x768, 1280x720), pushing step 01 under the fixed nav and clipping step 06; (3) the display:none trimming of notes (\u2264919px) and bodies (\u2264719px) removes that text from the accessibility tree on most laptops while the sr-only equivalent is lg:hidden; (4) the hero's one-line \"Digital workforce\" label (<480px frames, i.e. phones and short laptops) is centred on the DOM stem, which has z-index 2 and paints through it despite the SVG halo; (5) with the site's Pause-motion toggle the Scaling approval line and specialists arrive before the recommendation finishes typing, because TypedText ignores `paused`; (6) the Loop console re-types the Reasoning line when scrolling back from Learns to Acts; (7) the CompanyMap \"Needs you\" chips overhang their line on 360px-and-narrower phones. Checked and found sound: the four hero labels at 340\u2013760px frame widths (software caption, hub name/role incl. the <400px stacked variant, two-line workforce label at \u2265480px) stay \u22659.5px and clear of every tile label per the layout arithmetic; the hero with the promise line fits 1280x640 (right column lands at ~640px) and 1366x650; the calmer HUD labels (\"Waiting on you \u00b7 N approvals\", \"Needs a decision\" + tag chip + CEO Agent) fit their 270/302px panels at the virtual size and the MobileBusiness header fits 320px; the Before/After payoff enters cleanly after the story's tail and before the next Statement; the payoff Statement with support fits phone widths; the MiniConsole has no horizontal overflow at 375px (site column truncates, 104px chart fits its 132px column) and its height is roughly unchanged from v2; the step-6 dimmed map keeps ~7:1 label contrast under reduced motion; Scaling chips are aria-hidden and reduced-motion still-frames resolve correctly; the only new continuous animation (step-6 pulse) is gated on onScreen, paused and reduced motion. The personalised reveal does not appear in the diff."
+ }
+]

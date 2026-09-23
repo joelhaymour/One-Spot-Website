@@ -130,3 +130,19 @@
     opacity: 0;
   }
 }
+
+/*
+ * A tiny mono chip (a classification, or an item that needs the owner). It lives inside a group scaled by
+ * --u, so it is authored in screen pixels and the text is NOT multiplied by --u again.
+ */
+.chipText {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  fill: var(--text-1);
+}
+
+.chipTextStrong {
+  fill: var(--text-0);
+}

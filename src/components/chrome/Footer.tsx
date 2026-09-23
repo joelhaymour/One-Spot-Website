@@ -17,6 +17,7 @@ export function Footer() {
             <span className="text-[0.9375rem] font-medium tracking-[-0.02em]">{SITE.name}</span>
           </Link>
           <p className="t-body">{SITE.footerTagline}</p>
+          <p className="t-label text-[var(--text-2)]">{SITE.footerLine}</p>
         </div>
 
         <nav aria-label="Footer">

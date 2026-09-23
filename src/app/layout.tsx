@@ -5,7 +5,7 @@ import { MotionToggle } from "@/components/chrome/MotionToggle";
 import { Nav } from "@/components/chrome/Nav";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { TransitionLayer } from "@/components/motion/Transition";
-import { SITE } from "@/content/copy";
+import { HERO, SITE } from "@/content/copy";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   title: { default: SITE.title, template: `%s — ${SITE.name}` },
   description: SITE.description,
   openGraph: {
-    title: "One Spot — Your whole business. One spot.",
-    description: "AI agents that work across the people and software you already have. They watch. They act. They report to you.",
+    title: `${SITE.name} — ${HERO.headline.join(" ")}`,
+    description: SITE.description,
     type: "website",
     siteName: SITE.name,
     url: "./",

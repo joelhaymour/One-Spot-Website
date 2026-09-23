@@ -3,6 +3,7 @@
 import { SCALING } from "@/content/copy";
 import { useStory } from "@/components/motion/ScrollStory";
 import { cn } from "@/lib/cn";
+import { DecisionCard } from "./DecisionCard";
 
 /**
  * The five beats as an ordered list: the scene's text equivalent, and its navigation.
@@ -10,7 +11,15 @@ import { cn } from "@/lib/cn";
  * every beat in one grid cell below the stage and show only the active one; the cell keeps the height
  * of the tallest caption so the stage above never resizes between beats.
  */
-export function ScalingCaptions({ className }: { className?: string }) {
+interface DecisionProps {
+  show: boolean;
+  onTyped: () => void;
+  confirmed: boolean;
+}
+
+const DECISION_STEP = 3;
+
+export function ScalingCaptions({ className, decision }: { className?: string; decision?: DecisionProps }) {
   const { step, steps, goTo } = useStory();
   return (
     <div className={className}>
@@ -87,6 +96,10 @@ export function ScalingCaptions({ className }: { className?: string }) {
                   </span>
                 </span>
               </button>
+              {/* beat 4: the recommendation comes to the reader, beside the words, covering nothing */}
+              {decision && i === DECISION_STEP && (
+                <DecisionCard show={active && decision.show} onTyped={decision.onTyped} confirmed={decision.confirmed} className="mb-4 mt-1 md:mb-6 md:ml-11" />
+              )}
             </li>
           );
         })}

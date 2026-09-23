@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { BUSINESS } from "@/content/copy";
-import { DEPARTMENTS, departmentHref } from "@/content/departments";
+import { CEO, DEPARTMENTS, departmentHref } from "@/content/departments";
 import { RECOMMENDATIONS } from "@/content/hud";
 import { AgentSvg } from "@/components/agent/AgentSvg";
 import { Arrow } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Section";
 import { StatusChip } from "@/components/ui/Panel";
+import { HUB_LABELS } from "./labels";
 
 /**
  * Phones: the display above is atmosphere (its type is too small to read at 360 px), so the two things
@@ -28,7 +29,7 @@ export function MobileBusiness({ heading = true }: { heading?: boolean }) {
 
       <div className="panel-raised mt-8 p-4">
         <div className="flex items-center justify-between">
-          <span className="t-label text-[var(--text-0)]">CEO Agent / Recommendation</span>
+          <span className="t-label text-[var(--text-0)]">{`${HUB_LABELS.decision} · ${CEO.name}`}</span>
           <span className="spot spot-breathe" />
         </div>
         <StatusChip tone="accent" className="mt-4">

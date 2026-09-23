@@ -4,7 +4,7 @@ import { SCALING } from "@/content/copy";
  * The scaling scene's numbers, in one place, so the DOM queue, the metrics and the 3D agents tell
  * the same story.
  *
- * The model: one agent clears 26 tasks an hour flat out. A steady day brings 12 an hour (47% load).
+ * The model: one agent clears 26 work items an hour flat out. A steady day brings 12 an hour (47% load).
  * Then the work triples to 36 an hour: 36 / 26 = 140% of capacity, which is the figure the agent
  * reports. Three agents clear all 36 at 47% load each: throughput is three times the steady day.
  */
@@ -31,17 +31,21 @@ export interface QueueSnapshot {
   done: number;
 }
 
-/** Interleaved so every lane receives the same share and neighbouring cards differ in type. */
+/**
+ * Operational work, interleaved so every lane receives the same share and neighbouring cards differ
+ * in type: the same three skills any operations desk runs, whatever the company sells.
+ */
 const TASKS: { lane: LaneIndex; text: string }[] = [
-  { lane: 0, text: "Audience research" },
-  { lane: 1, text: "Draft 3 headlines" },
-  { lane: 2, text: "Weekly report" },
-  { lane: 1, text: "Schedule posts" },
-  { lane: 0, text: "Competitor scan" },
-  { lane: 2, text: "Spend summary" },
-  { lane: 0, text: "Keyword review" },
-  { lane: 2, text: "Channel results" },
-  { lane: 1, text: "Update ad copy" },
+  { lane: 0, text: "Check stock for WO-341" },
+  { lane: 1, text: "Schedule Team B" },
+  { lane: 2, text: "Daily job status" },
+  { lane: 1, text: "Reserve part 2210" },
+  { lane: 0, text: "Vendor lead times" },
+  { lane: 2, text: "Weekly capacity" },
+  { lane: 1, text: "Update job status" },
+  { lane: 0, text: "Team availability Wed" },
+  { lane: 2, text: "Receivables summary" },
+  { lane: 1, text: "Invoice WO-338" },
 ];
 
 export const taskAt = (seq: number) => TASKS[seq % TASKS.length];
@@ -108,7 +112,8 @@ export const UI = {
   queue: "Queue",
   lanes: "Lanes",
   waiting: "waiting",
-  approved: "CEO Agent approved 2 specialists",
+  /** Header of the recommendation card: what the card is asking of the visitor. */
+  decision: "Needs a decision",
   metrics: { load: "Load", depth: "In queue", wait: "Avg wait", throughput: "Per hour" },
   each: "each",
   tripled: "3x",

@@ -122,7 +122,7 @@ function Breadcrumb({ department, className, onNavigate }: { department: Departm
       <ol className="flex items-center gap-2.5 text-[0.8125rem] tracking-[-0.005em]">
         <li>
           <AnchorLink href={BUSINESS_HREF} onClick={onNavigate} className="text-[var(--text-1)] transition-colors duration-200 hover:text-[var(--text-0)]">
-            {BUSINESS.eyebrow}
+            {BUSINESS.short}
           </AnchorLink>
         </li>
         <li aria-hidden className="text-[var(--text-3)]">

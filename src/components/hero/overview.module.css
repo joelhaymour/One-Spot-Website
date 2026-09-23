@@ -118,6 +118,66 @@
   }
 }
 
+/* ------------------------------------------------------------------ */
+/* The hierarchy labels. Static (in the server HTML), placed in CSS px */
+/* through the diagram scale (--u), so they hold 9.5px at phone widths. */
+/* Positions were checked against every tile and label from 340px to  */
+/* 760px frame widths; see the fit notes in HeroOverview.tsx.          */
+/* ------------------------------------------------------------------ */
+
+/* the floor caption: top-left corner, a margin rule and two lines, receding with the floor */
+.software {
+  transform: translate(calc(var(--u) * 14px), calc(var(--u) * 22px));
+}
+.bracket {
+  stroke: var(--line-strong);
+  transform: translate(calc(var(--u) * -6px), calc(var(--u) * -7px)) scaleY(calc(var(--u) * 19.5));
+}
+
+/* the workforce label: on the floor, off the agent's left foot, right-aligned to the body */
+.workforce {
+  transform: translate(calc(var(--agent-half) * var(--agent-h) * var(--u) * -1 - var(--u) * 6px), calc(var(--u) * 11.5px));
+}
+.workforceOne {
+  display: none;
+  /* ends just left of the stem (a DOM hairline that paints above this SVG), under the agent's foot */
+  transform: translate(calc(var(--u) * -5px), calc(var(--u) * 18px));
+}
+@container overview-frame (max-width: 479px) {
+  .workforce {
+    display: none;
+  }
+  .workforceOne {
+    display: inline;
+  }
+}
+
+/*
+ * The hub: the name, and its role beneath. Right of the ring, the tools hem the hub in at exactly
+ * its height, so under 400px of frame the role breaks into two short lines and the name rises.
+ */
+.hubName {
+  --dy: -5.5px;
+}
+.hubRole {
+  --dy: 6.5px;
+}
+.hubRoleStack {
+  --dy: 2px;
+  display: none;
+}
+@container overview-frame (max-width: 399px) {
+  .hubName {
+    --dy: -10px;
+  }
+  .hubRole {
+    display: none;
+  }
+  .hubRoleStack {
+    display: inline;
+  }
+}
+
 /* The hub's glow doubles as the beads land, and lets go when the loop resets. */
 .glowUp {
   opacity: 0;

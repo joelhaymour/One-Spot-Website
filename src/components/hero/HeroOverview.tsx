@@ -15,11 +15,18 @@ import { cn } from "@/lib/cn";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { useExperience } from "@/state/experience";
 import css from "./overview.module.css";
-import { AGENT_FOOT_Y, AGENT_RING_FRONT, CARD_TOP_Y, HUB, HUB_GLOW_R, HUB_R, ORBIT, STEM_END_Y, TOOLS, VIEW, translate } from "./overviewLayout";
+import { AGENT_BODY_W, AGENT_FOOT_Y, AGENT_RING_FRONT, CARD_TOP_Y, HUB, HUB_GLOW_R, HUB_R, ORBIT, STEM_END_Y, TOOLS, VIEW, translate } from "./overviewLayout";
 
 /**
  * The connected business, in nine seconds, without reading: the software you already have feeds one
  * hub, the hub feeds the CEO Agent, the CEO Agent hands you one recommendation.
+ *
+ * Four static labels make it read as the hierarchy the site follows (HERO.layers): the floor of
+ * tools is the company's software; the hub is One Spot, the command center; the agent standing on
+ * the same floor is the digital workforce; the card is addressed to the owner. They sit in the
+ * server HTML, sized in CSS px through the diagram scale, in the gaps the tiles leave at phone
+ * widths: the top-left corner, off the agent's left foot, and right of the hub (where under 400px
+ * of frame the role splits into two short lines; see overview.module.css).
  *
  *   rest     the tools stand on the floor (server HTML)
  *   enter    threads draw on from each tool to the hub, staggered
@@ -80,8 +87,20 @@ const STAGE_VARS = {
   "--foot": AGENT_FOOT_Y,
   "--stem": STEM_END_Y - AGENT_FOOT_Y,
   "--ring-front": AGENT_RING_FRONT,
+  "--agent-half": AGENT_BODY_W / 2,
   "--card-top": VIEW.h - CARD_TOP_Y,
 } as CSSProperties;
+
+/** A label as stacked lines: broken before `word` when it is there, otherwise left whole. */
+const stack = (text: string, word: string): readonly string[] => {
+  const at = text.indexOf(` ${word}`);
+  return at < 0 ? [text] : [text.slice(0, at), text.slice(at + 1)];
+};
+const SOFTWARE_LINES = stack(HERO.layers.software, "and");
+/** Right of the hub's ring; each line's --dy comes from its class (overview.module.css). */
+const HUB_LABEL = { transform: `translate(calc(var(--k) * ${HUB_R}px + var(--u) * 9px), calc(var(--u) * var(--dy)))` } as CSSProperties;
+const HUB_ROLE_LINES = HERO.layers.hub.split(" ");
+const WORKFORCE_LINES = HERO.layers.workforce.split(" ");
 
 export function HeroOverview({ className }: { className?: string }) {
   const id = useId();
@@ -192,6 +211,18 @@ export function HeroOverview({ className }: { className?: string }) {
                   </text>
                 </g>
               ))}
+
+              {/* the layer caption: the eight tiles are the company and the software it already has */}
+              <g className={css.software}>
+                <line x1="0" y1="0" x2="0" y2="1" strokeWidth="1" vectorEffect="non-scaling-stroke" className={css.bracket} />
+                <text className={cn(diagram.label, diagram.labelSmall)}>
+                  {SOFTWARE_LINES.map((line, i) => (
+                    <tspan key={line} x="0" dy={i ? "1.316em" : undefined}>
+                      {line}
+                    </tspan>
+                  ))}
+                </text>
+              </g>
             </g>
 
             {/* the hub: the mark, slightly larger than a tile, with a soft glow that rises as it is fed */}
@@ -202,8 +233,34 @@ export function HeroOverview({ className }: { className?: string }) {
                 <circle r={HUB_R} fill="var(--void)" stroke="var(--text-0)" strokeWidth="1.4" vectorEffect="non-scaling-stroke" />
                 <circle r="6.4" fill="var(--spot)" />
               </g>
-              <text className={cn(diagram.label, diagram.labelStrong)} style={{ transform: `translate(calc(var(--k) * ${HUB_R}px + var(--u) * 9px), calc(var(--u) * 3.5px))` }}>
-                One Spot
+              {/* the name, and beneath it what the hub is: the command center inside One Spot */}
+              <text className={cn(diagram.label, diagram.labelStrong, css.hubName)} style={HUB_LABEL}>
+                {HERO.layers.spot}
+              </text>
+              <text className={cn(diagram.label, diagram.labelSmall, css.hubRole)} style={HUB_LABEL}>
+                {HERO.layers.hub}
+              </text>
+              <text className={cn(diagram.label, diagram.labelSmall, css.hubRoleStack)} style={HUB_LABEL}>
+                {HUB_ROLE_LINES.map((line, i) => (
+                  <tspan key={line} x="0" dy={i ? "1.263em" : undefined}>
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+            </g>
+
+            {/* the workforce: the CEO Agent stands on the same floor; its label sits off its left foot */}
+            <g transform={translate([HUB[0], AGENT_FOOT_Y])}>
+              <text className={cn(diagram.label, diagram.labelSmall, css.workforce)} textAnchor="end">
+                {WORKFORCE_LINES.map((line, i) => (
+                  <tspan key={line} x="0" dy={i ? "1.21em" : undefined}>
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+              {/* narrow frames: the tile labels hem the foot in, so the label drops under it on one line */}
+              <text className={cn(diagram.label, diagram.labelSmall, css.workforceOne)} textAnchor="end">
+                {HERO.layers.workforce}
               </text>
             </g>
           </svg>
@@ -221,11 +278,11 @@ export function HeroOverview({ className }: { className?: string }) {
 
           {/* the recommendation. A picture of a decision, not a control: nothing here takes focus. */}
           <div className={css.cardHost}>
-            <div role="group" aria-label={`To you, from the ${CEO.name}`} className={cn("glass rounded-[14px] p-4", css.card)}>
+            <div role="group" aria-label={`To the owner, from the ${CEO.name}`} className={cn("glass rounded-[14px] p-4", css.card)}>
               <div className="flex items-center justify-between gap-4">
                 <span className="flex items-center gap-2.5">
                   <span className="spot" />
-                  <span className="t-label !text-[var(--text-0)]">To you</span>
+                  <span className="t-label !text-[var(--text-0)]">{HERO.layers.owner}</span>
                 </span>
                 <span className="t-label">{CEO.name}</span>
               </div>

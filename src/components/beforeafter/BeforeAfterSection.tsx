@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { BEFORE_AFTER } from "@/content/copy";
 import { ScrollStory, useStory } from "@/components/motion/ScrollStory";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
+import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/Section";
 import { cn } from "@/lib/cn";
 import { ToolsDiagram } from "./ToolsDiagram";
@@ -103,6 +104,13 @@ export function BeforeAfterSection({ index = "02" }: { index?: string }) {
       <ScrollStory steps={3} stepLength={0.9} tail={0.5} aria-label="The same eight tools, before and after">
         {({ step }) => <Stage step={step} />}
       </ScrollStory>
+
+      {/* The line that explains the product in one breath. It follows the transformation, not the heading. */}
+      <div className="mx-auto max-w-[1320px] px-[var(--gutter)] pb-10 pt-6 md:pb-16">
+        <Reveal>
+          <p className="max-w-[40rem] text-[clamp(1.25rem,2.1vw,1.85rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[var(--text-0)]">{BEFORE_AFTER.payoff}</p>
+        </Reveal>
+      </div>
     </section>
   );
 }

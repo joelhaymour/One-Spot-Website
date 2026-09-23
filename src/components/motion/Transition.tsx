@@ -3,6 +3,7 @@
 import { startTransition, useCallback, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { gsap, EASE } from "@/lib/gsap";
+import { BUSINESS } from "@/content/copy";
 import { DEPARTMENT_BY_ID, departmentHref, type DepartmentId } from "@/content/departments";
 import { useExperience } from "@/state/experience";
 import { useLenis } from "./SmoothScroll";
@@ -74,7 +75,7 @@ export function useDepartmentTransition() {
     const state = useExperience.getState();
     if (state.phase !== "idle") return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // "Back to The Business" means the doors. Restore the saved position only if it was taken at a
+    // "Back to the Hub" means the doors. Restore the saved position only if it was taken at a
     // door; otherwise (deep links, entries from the footer or the loop grid) land on the doors anchor.
     const onDisplay = state.homeScrollY !== null && state.homeFromDisplay;
     if (!onDisplay) state.setHomeScrollY(null);
@@ -86,7 +87,7 @@ export function useDepartmentTransition() {
     state.setPhase("leaving");
     lenis?.stop();
     coverEl.style.setProperty("--cover-rgb", "244, 247, 255");
-    if (labelEl) labelEl.textContent = "The Business";
+    if (labelEl) labelEl.textContent = BUSINESS.short;
     gsap.killTweensOf([coverEl, labelEl]);
     gsap.set(coverEl, { visibility: "visible", opacity: 0, x: 0, y: 0, scaleX: 1, scaleY: 1 });
     gsap.set(labelEl, { opacity: 0 });

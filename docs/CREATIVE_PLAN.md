@@ -22,6 +22,19 @@ Five full-screen typographic pauses separate the scenes. Nothing moves during th
 
 ## 2. Structure
 
+> **v3 (2026-09-22): positioning correction.** One Spot is the custom business operating system, not an
+> AI-agent service. Hierarchy: One Spot (system) > One Spot Hub (central command center) > Agents (digital
+> workforce, the execution layer inside One Spot) > Intelligence (what the operating history becomes) >
+> Owner (governor: approvals, exceptions, decisions). Promise: "See more. Do less." The homepage is the
+> simple sales presentation (learn the business -> map -> connect the software -> automate the right work ->
+> organise it through One Spot -> only what needs you comes back); examples are universal and operational
+> (work orders, inventory, scheduling, invoicing, receivables, customer questions), never marketing. The
+> six-step method is: learn, map the operation, find the friction (classified: redesign / connect /
+> automate / agent / human), build your One Spot, put the system to work (smallest solution that works),
+> see more, do less. The system can recommend its own expansion; it cannot grant itself headcount.
+> Not public: the personalised One Spot reveal after shadowing a business stays inside the sales process.
+
+
 > **v2 (2026-09-21):** the homepage was re-sequenced so the film ends on the display the visitor can
 > step into. Order: hero (copy + a short overview animation: tools -> hub -> CEO Agent -> owner) ->
 > 01 How we work -> 02 Before / After -> 03 Autonomous scaling -> 04 Agents at work -> 05 Agent network ->

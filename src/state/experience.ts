@@ -33,7 +33,7 @@ interface ExperienceState {
   /** Scroll offset to restore when stepping back out of a department into the HUD. */
   homeScrollY: number | null;
   setHomeScrollY: (y: number | null) => void;
-  /** True when that offset was taken at one of the display's doors (so "Back to The Business" restores it). */
+  /** True when that offset was taken at one of the display's doors (so "Back to the Hub" restores it). */
   homeFromDisplay: boolean;
   setHomeFromDisplay: (v: boolean) => void;
 

@@ -50,9 +50,22 @@ export function SectionHeading({ eyebrow, index, title, lead, align = "left", cl
  * A full-screen pause. One sentence, nothing moving.
  * The film breathes here before the next scene.
  */
-export function Statement({ children, kicker, className }: { children: ReactNode; kicker?: string; className?: string }) {
+export function Statement({
+  children,
+  kicker,
+  support,
+  id,
+  className,
+}: {
+  children: ReactNode;
+  kicker?: string;
+  /** One quieter line under the statement, for the rare pause that needs a second sentence. */
+  support?: ReactNode;
+  id?: string;
+  className?: string;
+}) {
   return (
-    <section className={cn("relative flex min-h-[92svh] items-center justify-center px-[var(--gutter)] py-32", className)}>
+    <section id={id} className={cn("relative flex min-h-[92svh] items-center justify-center px-[var(--gutter)] py-32", className)}>
       <div className="mx-auto flex max-w-[62rem] flex-col items-center gap-8 text-center">
         {kicker && (
           <Reveal>
@@ -62,6 +75,11 @@ export function Statement({ children, kicker, className }: { children: ReactNode
         <Reveal delay={0.1} y={26}>
           <p className="t-statement">{children}</p>
         </Reveal>
+        {support && (
+          <Reveal delay={0.24}>
+            <p className="t-lead max-w-[34rem]">{support}</p>
+          </Reveal>
+        )}
       </div>
     </section>
   );

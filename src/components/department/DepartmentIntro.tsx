@@ -1,8 +1,9 @@
 "use client";
 
+import { BUSINESS } from "@/content/copy";
 import { useEffect, useRef, type MouseEvent } from "react";
 import Link from "next/link";
-import { CEO, type Department } from "@/content/departments";
+import { type Department } from "@/content/departments";
 import { useLenis } from "@/components/motion/SmoothScroll";
 import { useLeave } from "./useLeave";
 
@@ -41,7 +42,7 @@ export function DepartmentIntro({ department }: { department: Department }) {
           <ol className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <li>
               <Link href="/#business-doors" onClick={onLeave} className={QUIET_LINK}>
-                {CEO.name}
+                {BUSINESS.short}
               </Link>
             </li>
             <li aria-hidden className="t-label">
