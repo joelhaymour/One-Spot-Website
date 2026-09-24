@@ -1,61 +1,59 @@
-import Link from "next/link";
-import { HERO, NAV, SITE } from "@/content/copy";
-import { DEPARTMENTS, departmentHref } from "@/content/departments";
-import { Mark } from "@/components/agent/AgentSvg";
-import { AnchorLink } from "./anchor";
+import { FOOTER, NAV, NAV_CTA, SITE } from "@/content/site";
+import { Mark } from "@/components/ui/Mark";
+import { AnchorLink } from "@/components/ui/Button";
 
-const linkClass = "text-[0.875rem] tracking-[-0.006em] text-[var(--text-1)] transition-colors duration-200 hover:text-[var(--text-0)]";
+// Build-time constant, identical on server and client. Optional.
+const EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
 
-/** Quiet close. Extra bottom padding keeps the fixed motion control off the last line. */
 export function Footer() {
   return (
-    <footer className="relative border-t border-[var(--line)] bg-[var(--bg-0)] px-[var(--gutter)] pb-24 pt-16 md:pt-20">
-      <div className="mx-auto grid w-full max-w-[1320px] gap-x-12 gap-y-12 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)]">
-        <div className="flex max-w-[24rem] flex-col gap-5">
-          <Link href="/" aria-label={`${SITE.name}, home`} className="flex items-center gap-2.5 self-start text-[var(--text-0)]">
-            <Mark size={22} />
-            <span className="text-[0.9375rem] font-medium tracking-[-0.02em]">{SITE.name}</span>
-          </Link>
-          <p className="t-body">{SITE.footerTagline}</p>
-          <p className="t-label text-[var(--text-2)]">{SITE.footerLine}</p>
+    <footer className="relative overflow-hidden border-t border-[var(--line)] bg-[var(--paper)]">
+      <div className="wrap grid gap-12 pb-10 pt-20 md:grid-cols-[1.4fr_1fr_1fr] md:gap-8">
+        <div className="max-w-[26rem]">
+          <p className="t-h3">{SITE.tagline.split(", ")[0]}, <em>{SITE.tagline.split(", ")[1]}</em></p>
+          <p className="t-body mt-5">{FOOTER.line}</p>
         </div>
-
         <nav aria-label="Footer">
-          <h2 className="t-label mb-5">Site</h2>
-          <ul className="flex flex-col gap-3">
+          <p className="t-small mb-4 font-medium text-[var(--ink)]">On this page</p>
+          <ul className="grid gap-2.5">
             {NAV.map((item) => (
               <li key={item.href}>
-                <AnchorLink href={item.href} className={linkClass}>
+                <AnchorLink href={item.href} className="text-[0.95rem] text-[var(--ink-2)] transition-colors hover:text-[var(--ink)]">
                   {item.label}
                 </AnchorLink>
               </li>
             ))}
+          </ul>
+        </nav>
+        <div>
+          <p className="t-small mb-4 font-medium text-[var(--ink)]">Get in touch</p>
+          <ul className="grid gap-2.5">
             <li>
-              <AnchorLink href="/#contact" className={linkClass}>
-                {SITE.action}
+              <AnchorLink href={NAV_CTA.href} className="text-[0.95rem] text-[var(--ink-2)] transition-colors hover:text-[var(--ink)]">
+                Start with a conversation
               </AnchorLink>
             </li>
-          </ul>
-        </nav>
-
-        <nav aria-label="Departments">
-          <h2 className="t-label mb-5">Departments</h2>
-          <ul className="flex flex-col gap-3">
-            {DEPARTMENTS.map((department) => (
-              <li key={department.id}>
-                <Link href={departmentHref(department.id)} className={linkClass}>
-                  {department.name}
-                </Link>
+            {EMAIL && (
+              <li>
+                <a href={`mailto:${EMAIL}`} className="text-[0.95rem] text-[var(--ink-2)] transition-colors hover:text-[var(--ink)]">
+                  {EMAIL}
+                </a>
               </li>
-            ))}
+            )}
           </ul>
-        </nav>
+        </div>
       </div>
 
-      <div className="mx-auto mt-16 flex w-full max-w-[1320px] items-center justify-between gap-6 border-t border-[var(--line-faint)] pt-6">
-        {/* No year: a date computed at render would differ between the static HTML and a later hydrate. */}
-        <p className="t-label">&copy; {SITE.name}</p>
-        <p className="t-label hidden sm:block">{HERO.eyebrow}</p>
+      {/* The oversized wordmark: the page signs off with the name. */}
+      <div aria-hidden className="wrap select-none">
+        <div className="flex items-end gap-[2.5vw] border-t border-[var(--line)] pb-[4.2vw] pt-8 text-[var(--ink)] xl:pb-[60px]">
+          <Mark size={120} className="h-[12vw] max-h-[168px] w-[12vw] max-w-[168px] shrink-0 translate-y-[-1.2vw]" />
+          <span className="font-[family-name:var(--font-serif)] text-[clamp(4.5rem,19vw,17.5rem)] leading-[0.78] tracking-[-0.035em]">One Spot</span>
+        </div>
+      </div>
+      <div className="wrap flex flex-wrap items-center justify-between gap-4 py-8 text-[0.85rem] text-[var(--ink-3)]">
+        <p>© {new Date().getFullYear()} {SITE.name}. All rights reserved.</p>
+        <p>Made for businesses with more tools than time.</p>
       </div>
     </footer>
   );

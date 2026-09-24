@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap, EASE } from "@/lib/gsap";
-import { SITE } from "@/content/copy";
-import { Mark } from "@/components/agent/AgentSvg";
+import { gsap } from "@/lib/gsap";
+import { setIntroDone } from "@/lib/intro";
+import { Mark } from "@/components/ui/Mark";
 import { useLenis } from "@/components/motion/SmoothScroll";
-import { useExperience } from "@/state/experience";
 
 /**
  * The opening logo sequence.
  *
  *   cover (in the server HTML, shown by the boot script before first paint)
- *   -> the mark grows in at the centre (a CSS animation, so it starts at first paint, before hydration;
- *      the script joins in once its 500 ms are over, timed from first paint)
+ *   -> the mark grows in at the centre (a CSS animation, so it starts at first paint, before hydration)
  *   -> the mark slides left as the wordmark arrives; the pair holds as one lockup
  *   -> the lockup travels to the nav's logo (a FLIP onto its measured rect) while the cover fades
  *   -> the nav logo takes over in place; the page is interactive
@@ -24,22 +22,15 @@ import { useExperience } from "@/state/experience";
 
 /** The cover lockup is the nav lockup, this many times larger. Mirrors --intro-scale in globals.css. */
 const SCALE = 2.4;
-/** The mark's CSS entrance (globals.css): its keyframes name and how long it runs. The slide starts when it is over. */
 const MARK_IN = "intro-mark-in";
 const MARK_IN_MS = 850;
 /** Hard ceiling on the sequence, ms. Past it the finish state is forced, whatever happened. */
 const FAILSAFE = 7000;
-/** Keys that scroll the document: swallowed while the cover is up, so nothing moves under it. */
-const SCROLL_KEYS = new Set([" ", "PageUp", "PageDown", "Home", "End", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
+const SCROLL_KEYS = new Set([" ", "PageUp", "PageDown", "Home", "End", "ArrowUp", "ArrowDown"]);
 
 type Lenis = NonNullable<ReturnType<typeof useLenis>>;
 
-/**
- * Milliseconds until the mark's CSS entrance is over. It began when the layer was first rendered, which may
- * be well before this script ran: the animation's own start time says exactly when, with first paint as
- * the fallback. A timer from that moment is deterministic where an animation event is not (background
- * tabs and headless renderers can hold the event back).
- */
+/** Milliseconds until the mark's CSS entrance is over, timed from when it actually began. */
 function markRemaining(mark: HTMLElement): number {
   try {
     const anim = mark.getAnimations().find((a) => "animationName" in a && (a as CSSAnimation).animationName === MARK_IN);
@@ -51,7 +42,6 @@ function markRemaining(mark: HTMLElement): number {
   }
 }
 
-/** Mounted once in the root layout. Runs on the first mount only, which is once per page load. */
 export function Intro() {
   const layerRef = useRef<HTMLDivElement>(null);
   const coverRef = useRef<HTMLDivElement>(null);
@@ -59,8 +49,6 @@ export function Intro() {
   const markRef = useRef<HTMLSpanElement>(null);
   const wordRef = useRef<HTMLSpanElement>(null);
 
-  // Lenis may arrive after the sequence has started (its owner's effect runs after ours) or after it
-  // has ended. `locked` says whether the sequence still wants scrolling held.
   const lenis = useLenis();
   const lenisRef = useRef<Lenis | null>(null);
   const locked = useRef(false);
@@ -76,10 +64,8 @@ export function Intro() {
     const lockup = lockupRef.current;
     const mark = markRef.current;
     const word = wordRef.current;
-    const { setIntroDone } = useExperience.getState();
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // Not armed (reduced motion, or the boot failsafe already fired): nothing to play.
     if (reduce || root.dataset.intro !== "on" || !layer || !cover || !lockup || !mark || !word) {
       delete root.dataset.intro;
       setIntroDone();
@@ -95,26 +81,20 @@ export function Intro() {
     locked.current = true;
     lenisRef.current?.stop();
 
-    // Nothing under the cover may take focus while it is up: a Tab (from the page or the address bar)
-    // would land on invisible controls, and Enter on one would move the page under the cover.
+    // Nothing under the cover may take focus while it is up.
     const shielded = Array.from(document.body.children).filter(
       (el): el is HTMLElement => el instanceof HTMLElement && el !== layer && !el.hasAttribute("inert"),
     );
     shielded.forEach((el) => {
       el.inert = true;
     });
-    if (document.activeElement instanceof HTMLElement && document.activeElement !== document.body) document.activeElement.blur();
 
-    // Touch devices have no Lenis to stop, and once Lenis is running again (handoff) it must not hear
-    // the wheel either: swallow scrolling input at the cover for as long as it is up.
     const block = (event: Event) => {
       event.preventDefault();
       event.stopPropagation();
     };
     const blockKeys = (event: KeyboardEvent) => {
-      if (!SCROLL_KEYS.has(event.key)) return;
-      if (event.target instanceof HTMLElement && event.target.matches("input, textarea, select, [contenteditable]")) return;
-      event.preventDefault();
+      if (SCROLL_KEYS.has(event.key)) event.preventDefault();
     };
     layer.addEventListener("wheel", block, { passive: false });
     layer.addEventListener("touchmove", block, { passive: false });
@@ -131,8 +111,6 @@ export function Intro() {
       lenisRef.current?.start();
     };
 
-    // The end state, from any path: the nav logo shows where the lockup landed and the cover is gone
-    // (html without data-intro hides the layer entirely, see globals.css).
     const finish = () => {
       if (done) return;
       done = true;
@@ -146,8 +124,6 @@ export function Intro() {
       layer.style.pointerEvents = "none";
     };
 
-    // Geometry in the lockup's own, unscaled pixels. The lockup sits at the layer's centre, so its
-    // x/y are offsets from that point; a target rect converts by subtracting the centre.
     const centre = () => {
       const b = layer.getBoundingClientRect();
       return { cx: b.width / 2, cy: b.height / 2, vh: b.height };
@@ -155,8 +131,6 @@ export function Intro() {
 
     const handoff = () => {
       if (!alive || done) return;
-      // Scrolling comes back before the measure. Where the scrollbar has width, its return reflows
-      // the page, and that now happens under the still-opaque cover, not as a jolt at the end.
       locked.current = false;
       lenisRef.current?.start();
 
@@ -166,7 +140,6 @@ export function Intro() {
       let target: DOMRect | null = null;
       try {
         const rect = document.querySelector<HTMLElement>("header [data-logo]")?.getBoundingClientRect();
-        // A deep link can load with the bar hidden or slid away: then there is nothing to land on.
         if (rect && rect.width > 0 && rect.top >= 0 && rect.bottom <= vh) target = rect;
       } catch {
         target = null;
@@ -174,13 +147,12 @@ export function Intro() {
 
       timeline = gsap.timeline({ onComplete: finish });
       if (target) {
-        // FLIP: same DOM as the nav lockup, origin top left, so the landing is a scale and a move.
-        timeline.to(lockup, { x: target.left - cx, y: target.top - cy, scale: target.width / w, duration: 1.25, ease: "power2.inOut" }, 0);
+        timeline.to(lockup, { x: target.left - cx, y: target.top - cy, scale: target.width / w, duration: 1.2, ease: "power2.inOut" }, 0);
       } else {
-        timeline.to(lockup, { opacity: 0, duration: 0.7, ease: EASE.settle }, 0.2);
+        timeline.to(lockup, { opacity: 0, duration: 0.7, ease: "power2.out" }, 0.2);
       }
-      // The page under the cover is released as the cover starts to go, so it enters while the logo travels.
-      timeline.call(setIntroDone, [], 0.25);
+      // The page is released as the cover starts to go, so the hero enters while the logo travels.
+      timeline.call(setIntroDone, [], 0.3);
       timeline.to(cover, { opacity: 0, duration: 1.0, ease: "power2.inOut" }, 0.25);
     };
 
@@ -189,25 +161,23 @@ export function Intro() {
       const r = lockup.getBoundingClientRect();
       const w = r.width / SCALE;
       const h = r.height / SCALE;
-      // The mark's entrance scales it about its own centre, so that centre is exact at any moment.
       const m = mark.getBoundingClientRect();
       const mx = (m.left + m.width / 2 - r.left) / SCALE;
       const my = (m.top + m.height / 2 - r.top) / SCALE;
 
-      // Exactly where the CSS starting transform put it (mark centred), now under GSAP's control.
       gsap.set(lockup, { x: -mx * SCALE, y: -my * SCALE, scale: SCALE, transformOrigin: "0 0" });
       gsap.set(word, { opacity: 0, x: 10 });
 
       timeline = gsap.timeline();
       timeline.to(lockup, { x: -(w / 2) * SCALE, y: -(h / 2) * SCALE, duration: 0.8, ease: "power2.inOut" }, 0);
       timeline.to(word, { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" }, 0.15);
-      timeline.call(handoff, [], "+=0.7");
+      timeline.call(handoff, [], "+=0.55");
     };
 
     const start = () => {
       if (!alive || done) return;
       failsafe = window.setTimeout(finish, FAILSAFE);
-      timer = window.setTimeout(slide, markRemaining(mark) + 180);
+      timer = window.setTimeout(slide, markRemaining(mark) + 160);
     };
 
     // A tab opened in the background has no frames to animate with. Wait, and play when it is looked at.
@@ -237,18 +207,16 @@ export function Intro() {
     };
   }, []);
 
-  // Identical on server and client; html[data-intro="on"] alone makes it show.
   return (
     <div ref={layerRef} aria-hidden className="intro fixed inset-0 z-[100]">
-      <div ref={coverRef} className="absolute inset-0 bg-[var(--void)]" />
-      {/* The nav's lockup, exactly (see Nav.tsx), so the hand-off is a transform and nothing else. */}
-      <div ref={lockupRef} className="intro-lockup flex items-center gap-2.5 whitespace-nowrap text-[var(--text-0)]">
+      <div ref={coverRef} className="absolute inset-0 bg-[var(--paper)]" />
+      {/* The nav's lockup, exactly (ui/Mark Lockup), so the hand-off is a transform and nothing else. */}
+      <div ref={lockupRef} className="intro-lockup flex items-center gap-2.5 whitespace-nowrap text-[var(--ink)]">
         <span ref={markRef} className="intro-mark">
-          <span className="intro-glow" />
-          <Mark size={22} className="relative block" />
+          <Mark size={26} />
         </span>
-        <span ref={wordRef} className="intro-word text-[0.9375rem] font-medium tracking-[-0.02em]">
-          {SITE.name}
+        <span ref={wordRef} className="intro-word text-[1.0625rem] font-semibold leading-[26px] tracking-[-0.03em]">
+          One Spot
         </span>
       </div>
     </div>

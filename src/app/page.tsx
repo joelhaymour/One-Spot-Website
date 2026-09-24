@@ -1,43 +1,42 @@
-import { PAUSES, PAYOFF } from "@/content/copy";
-import { BusinessSection } from "@/components/business/BusinessSection";
-import { ContactSection } from "@/components/cta/ContactSection";
-import { FlowsSection } from "@/components/flows/FlowsSection";
-import { HeroSection } from "@/components/hero/HeroSection";
-import { LoopSection } from "@/components/loop/LoopSection";
-import { ProcessSection } from "@/components/process/ProcessSection";
-import { ScalingSection } from "@/components/scaling/ScalingSection";
-import { Statement } from "@/components/ui/Section";
+import { Agents } from "@/components/sections/Agents";
+import { Contact } from "@/components/sections/Contact";
+import { Examples } from "@/components/sections/Examples";
+import { Faq } from "@/components/sections/Faq";
+import { Hero } from "@/components/sections/Hero";
+import { Industries } from "@/components/sections/Industries";
+import { Principles } from "@/components/sections/Principles";
+import { Problem } from "@/components/sections/Problem";
+import { Process } from "@/components/sections/Process";
+import { WhatWeDo } from "@/components/sections/WhatWeDo";
 
 /**
- * The film, in order. Full-screen typographic pauses sit beside the scenes they introduce.
+ * The page, in order. It follows how an owner would come to trust us: see the calm version of their
+ * Monday, recognise the problem, learn the four jobs, see how we work, watch it happen in a business
+ * like theirs, meet the agents, then talk.
  *
- *   hero            the eight tools, before and after (its cue carries the visitor into 01)
- *   01 how we work   it starts with your business
- *   02 the hub       see more, then do less: dashboard, then to do
- *   03 scaling       it knows when it needs help
- *   04 agents        watch one do the job
- *   05 in action     three things that happen in every business, routed by One Spot
- *   payoff           see more, do less
- *   contact
+ *   hero         a busy Monday, sorted as you scroll
+ *   01 why       the handoff problem
+ *   02 what      connect, organize, automate, see clearly
+ *   03 process   listen, map, plan, build, stay
+ *   04 examples  one moment in four businesses, before and after
+ *   05 agents    a team member who's great at one job (with a decision to make)
+ *   06 working   five promises, and who we work with
+ *   07 faq
+ *   08 contact
  */
 export default function Home() {
   return (
     <main id="content">
-      <HeroSection />
-      <ProcessSection index="01" />
-      {/* The owner as the company's wiring: the thought the display answers. */}
-      <Statement>{PAUSES.beforeHub}</Statement>
-      <BusinessSection index="02" />
-      <Statement>{PAUSES.beforeScaling}</Statement>
-      <ScalingSection index="03" />
-      <Statement>{PAUSES.beforeAgents}</Statement>
-      <LoopSection index="04" />
-      <FlowsSection index="05" />
-      {/* The end state: the owner moves from operator to governor. */}
-      <Statement id="payoff" kicker="The owner" support={PAYOFF.support}>
-        {PAYOFF.line}
-      </Statement>
-      <ContactSection />
+      <Hero />
+      <Problem />
+      <WhatWeDo />
+      <Process />
+      <Examples />
+      <Agents />
+      <Principles />
+      <Industries />
+      <Faq />
+      <Contact />
     </main>
   );
 }

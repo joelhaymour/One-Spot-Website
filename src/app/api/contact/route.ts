@@ -1,4 +1,4 @@
-import { MAX_BODY_BYTES, readContact, validateContact, type ContactResponse, type ContactValues } from "@/components/cta/validate";
+import { MAX_BODY_BYTES, readContact, validateContact, type ContactResponse, type ContactValues } from "@/components/sections/validate";
 
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_PER_WINDOW = 5;
@@ -76,7 +76,7 @@ async function sendWithResend(values: ContactValues, apiKey: string, to: string)
       from: process.env.CONTACT_FROM_EMAIL || "One Spot <onboarding@resend.dev>",
       to: [to],
       reply_to: values.email,
-      subject: `Map my company: ${oneLine(values.name)}, ${oneLine(values.company)}`.slice(0, 160),
+      subject: `New enquiry: ${oneLine(values.name)}, ${oneLine(values.company)}`.slice(0, 160),
       text: [
         `Name: ${oneLine(values.name)}`,
         `Email: ${values.email}`,

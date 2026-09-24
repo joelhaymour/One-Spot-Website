@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { detectTier } from "@/lib/capabilities";
-import { useExperience } from "@/state/experience";
 
 // Lenis is an external system, so it lives in a tiny external store rather than React state.
 let current: Lenis | null = null;
@@ -29,43 +26,33 @@ export const useLenis = () =>
     () => null,
   );
 
+export const getLenis = () => current;
+
 /**
- * Owns scrolling for the whole experience.
- * - Lenis is driven by the GSAP ticker so ScrollTrigger and smooth scroll share one clock.
- * - Touch devices and reduced-motion visitors keep native scrolling; sticky stories still work.
- * - On route change we reset (or restore, when returning to the HUD) and re-measure triggers.
+ * Owns scrolling. Lenis runs on the GSAP ticker so ScrollTrigger and smooth scroll share one clock.
+ * Touch devices and reduced-motion visitors keep native scrolling; every sticky scene still works.
  */
 export function SmoothScroll({ children }: { children: ReactNode }) {
-  const lenis = useLenis();
-  const pathname = usePathname();
-  const lastPath = useRef(pathname);
-  const setTier = useExperience((s) => s.setTier);
-
   useEffect(() => {
-    const tier = detectTier();
-    setTier(tier);
     // Tells the boot script in the root layout that the app is alive (see layout.tsx).
     (window as Window & { __osReady?: boolean }).__osReady = true;
-
-    // ScrollTrigger re-applies its own cached restoration mode after every refresh, so set it through
-    // ScrollTrigger rather than on history directly.
     ScrollTrigger.clearScrollMemory("manual");
 
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const coarse = window.matchMedia("(pointer: coarse)").matches;
-    if (tier === "static" || coarse) return;
+    if (reduce || coarse) return;
 
     const instance = new Lenis({
       autoRaf: false,
-      lerp: 0.11,
-      wheelMultiplier: 0.9,
+      lerp: 0.1,
+      wheelMultiplier: 0.95,
       smoothWheel: true,
       syncTouch: false,
-      stopInertiaOnNavigate: true,
     });
     instance.on("scroll", ScrollTrigger.update);
 
     const tick = (time: number) => instance.raf(time * 1000);
-    // prioritized: Lenis moves the page before any tween or WebGL frame reads it
+    // prioritized: Lenis moves the page before any tween reads it
     gsap.ticker.add(tick, false, true);
     gsap.ticker.lagSmoothing(0);
     publish(instance);
@@ -75,52 +62,30 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       instance.destroy();
       publish(null);
     };
-  }, [setTier]);
-
-  // Remember where the visitor was on the homepage whenever they walk into a department by any door
-  // (the display, the loop grid, the footer, the phone list), so Back returns them to that spot.
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      if (window.location.pathname !== "/" || e.defaultPrevented) return;
-      const link = (e.target as Element | null)?.closest?.('a[href^="/departments/"]');
-      if (!link) return;
-      const s = useExperience.getState();
-      s.setHomeScrollY(window.scrollY);
-      // Both the display's doors and the phone door list live inside the Business chapter; the footer and
-      // the loop grid do not.
-      s.setHomeFromDisplay(!!link.closest("#business"));
-    };
-    document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
   }, []);
 
-  useEffect(() => {
-    // Only a real route change may move the page. Lenis arriving a tick after mount is not one.
-    if (lastPath.current === pathname) return;
-    lastPath.current = pathname;
-
-    const { homeScrollY, setHomeScrollY } = useExperience.getState();
-    const home = pathname === "/";
-    if (home) setHomeScrollY(null);
-
-    // Wait one frame so the new route's sticky stories have laid out before we jump and re-measure.
-    const id = requestAnimationFrame(() => {
-      let target = 0;
-      if (home && homeScrollY !== null) target = homeScrollY;
-      else if (window.location.hash.length > 1) {
-        const el = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
-        if (el) target = el.getBoundingClientRect().top + window.scrollY;
-      }
-      if (lenis) {
-        // Lenis clamps every target to a cached page height, and that cache still holds the previous
-        // route's height on the new route's first frame. Re-measure before jumping deep into the page.
-        lenis.resize();
-        lenis.scrollTo(target, { immediate: true, force: true });
-      } else window.scrollTo(0, target);
-      ScrollTrigger.refresh();
-    });
-    return () => cancelAnimationFrame(id);
-  }, [pathname, lenis]);
-
   return <>{children}</>;
+}
+
+// power3.inOut
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+/** Scroll to an in-page section and hand it focus, as a native fragment link would. */
+export function scrollToId(id: string) {
+  const el = id === "top" ? document.body : document.getElementById(id);
+  if (!el) return;
+  const top = id === "top" ? 0 : Math.max(0, Math.round(el.getBoundingClientRect().top + window.scrollY));
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const lenis = getLenis();
+  if (lenis) lenis.scrollTo(top, { immediate: reduce, force: true, duration: 1.4, easing: easeInOut });
+  else window.scrollTo({ top, behavior: reduce ? "instant" : "smooth" });
+
+  if (id !== "top") {
+    if (!el.hasAttribute("tabindex")) {
+      el.setAttribute("tabindex", "-1");
+      el.style.outline = "none";
+    }
+    el.focus({ preventScroll: true });
+  }
+  window.history.replaceState(null, "", id === "top" ? window.location.pathname : `#${id}`);
 }

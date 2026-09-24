@@ -2,90 +2,99 @@
 
 /* ------------------------------------------------------------------ */
 /* One Spot design tokens                                              */
-/* Near-black graphite surfaces, controlled white type, one accent     */
-/* per department. Everything else is restraint.                       */
+/* Warm paper, ink, and one blue spot. A consultancy's desk, not a     */
+/* control room: calm surfaces, editorial type, color used for meaning */
+/* (done, routed, needs you) and almost nowhere else.                  */
 /* ------------------------------------------------------------------ */
 
 :root {
-  /* surfaces */
-  --void: #040506;
-  --bg-0: #07080a;
-  --bg-1: #0b0d10;
-  --bg-2: #101317;
-  --bg-3: #161a1f;
-  --bg-4: #1d2228;
+  /* paper */
+  --paper: #f5f2ec;
+  --paper-2: #eeeae2;
+  --paper-3: #e5e0d6;
+  --card: #fffdf9;
+
+  /* ink */
+  --ink: #15171b;
+  --ink-2: #4a4f57;
+  --ink-3: #7f848c;
+  --ink-4: #b2b4b8;
 
   /* lines */
-  --line-faint: rgba(255, 255, 255, 0.05);
-  --line: rgba(255, 255, 255, 0.085);
-  --line-strong: rgba(255, 255, 255, 0.16);
+  --line-soft: rgba(21, 23, 27, 0.06);
+  --line: rgba(21, 23, 27, 0.1);
+  --line-strong: rgba(21, 23, 27, 0.18);
 
-  /* type */
-  --text-0: #f3f5f8;
-  --text-1: #b4bac4;
-  --text-2: #7a828e;
-  --text-3: #4a515c;
+  /* the spot */
+  --spot: #2d4ae0;
+  --spot-rgb: 45, 74, 224;
+  --spot-deep: #2037b4;
+  --spot-soft: #e4e8fb;
+  --spot-light: #93a4ff;
 
-  /* the spot: CEO agent light + brand mark */
-  --spot: #f4f7ff;
-  --spot-rgb: 244, 247, 255;
+  /* meaning */
+  --done: #2b7a57;
+  --done-soft: #dfeee5;
+  --wait: #a86d14;
+  --wait-soft: #f5e8d0;
 
-  /* status */
-  --ok: #46d6a4;
-  --warn: #ffb347;
-  --crit: #ff6f61;
-
-  /* department accents (muted-luminous, used sparingly) */
-  --acc-marketing: #e887d5;
-  --acc-finance: #7eddad;
-  --acc-sales: #cddc6a;
-  --acc-service: #61d8e5;
-  --acc-operations: #61a0ff;
-  --acc-knowledge: #a585ff;
-  --acc-administration: #d6c9b3;
-
-  /* the live accent; sections/pages override this */
-  --accent: var(--spot);
-  --accent-rgb: var(--spot-rgb);
+  /* night sections */
+  --night: #111317;
+  --night-2: #191c21;
+  --night-3: #23272d;
+  --night-line: rgba(255, 255, 255, 0.09);
+  --night-text: #f4f2ed;
+  --night-text-2: #a8acb3;
+  --night-text-3: #6e737b;
 
   /* motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
-  --dur-micro: 180ms;
-  --dur-ui: 480ms;
-  --dur-scene: 1100ms;
 
   /* layout */
-  --gutter: clamp(20px, 4vw, 56px);
-  --nav-h: 64px;
+  --gutter: clamp(20px, 4.4vw, 64px);
+  --nav-h: 72px;
+  --maxw: 1280px;
+
+  /* shadows */
+  --shadow-card: 0 1px 1px rgba(21, 23, 27, 0.04), 0 8px 24px -12px rgba(21, 23, 27, 0.12);
+  --shadow-lift: 0 2px 4px rgba(21, 23, 27, 0.04), 0 24px 48px -20px rgba(21, 23, 27, 0.22);
+  --shadow-float: 0 2px 6px rgba(21, 23, 27, 0.05), 0 30px 60px -24px rgba(21, 23, 27, 0.28);
 }
 
 @theme inline {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
 
-  --color-void: var(--void);
-  --color-bg-0: var(--bg-0);
-  --color-bg-1: var(--bg-1);
-  --color-bg-2: var(--bg-2);
-  --color-bg-3: var(--bg-3);
-  --color-bg-4: var(--bg-4);
-  --color-line-faint: var(--line-faint);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-paper-3: var(--paper-3);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
   --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
   --color-line-strong: var(--line-strong);
-  --color-text-0: var(--text-0);
-  --color-text-1: var(--text-1);
-  --color-text-2: var(--text-2);
-  --color-text-3: var(--text-3);
   --color-spot: var(--spot);
-  --color-ok: var(--ok);
-  --color-warn: var(--warn);
-  --color-crit: var(--crit);
-  --color-accent: var(--accent);
+  --color-spot-deep: var(--spot-deep);
+  --color-spot-soft: var(--spot-soft);
+  --color-spot-light: var(--spot-light);
+  --color-done: var(--done);
+  --color-done-soft: var(--done-soft);
+  --color-wait: var(--wait);
+  --color-wait-soft: var(--wait-soft);
+  --color-night: var(--night);
+  --color-night-2: var(--night-2);
+  --color-night-3: var(--night-3);
+  --color-night-line: var(--night-line);
+  --color-night-text: var(--night-text);
+  --color-night-text-2: var(--night-text-2);
+  --color-night-text-3: var(--night-text-3);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-cine: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* ------------------------------------------------------------------ */
@@ -93,13 +102,10 @@
 /* ------------------------------------------------------------------ */
 
 html {
-  background: var(--void);
-  color-scheme: dark;
+  background: var(--paper);
+  color-scheme: light;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  scrollbar-color: #23282f transparent;
-  /* Stopping Lenis (the intro, the department covers) clips the root. Where scrollbars take space, that
-     would widen the viewport and shift everything centred in it; a reserved gutter keeps the width fixed. */
   scrollbar-gutter: stable;
 }
 
@@ -115,10 +121,10 @@ html.lenis body {
 }
 
 body {
-  background: var(--void);
-  color: var(--text-0);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-sans);
-  font-feature-settings: "ss01", "cv11";
+  font-size: 16px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -126,253 +132,481 @@ body {
 }
 
 ::selection {
-  background: rgba(var(--accent-rgb), 0.22);
-  color: var(--text-0);
+  background: rgba(var(--spot-rgb), 0.18);
+  color: var(--ink);
 }
 
 :focus-visible {
-  outline: 1.5px solid rgba(var(--accent-rgb), 0.9);
+  outline: 2px solid var(--spot);
   outline-offset: 3px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 button {
   cursor: pointer;
 }
 
-/* Component classes live in a cascade layer so Tailwind utilities (absolute, text-*, etc.) can always
-   override them. Unlayered rules would beat every utility. */
 @layer components {
-/* ------------------------------------------------------------------ */
-/* Type system                                                         */
-/* ------------------------------------------------------------------ */
+  /* ---------------------------------------------------------------- */
+  /* Type                                                             */
+  /* ---------------------------------------------------------------- */
 
-.t-display {
-  font-size: clamp(2.5rem, 5.6vw, 5.25rem);
-  line-height: 0.98;
-  letter-spacing: -0.042em;
-  font-weight: 500;
-  text-wrap: balance;
-}
-
-.t-statement {
-  font-size: clamp(2rem, 4.4vw, 4rem);
-  line-height: 1.04;
-  letter-spacing: -0.038em;
-  font-weight: 500;
-  text-wrap: balance;
-}
-
-.t-title {
-  font-size: clamp(1.75rem, 3.1vw, 2.75rem);
-  line-height: 1.06;
-  letter-spacing: -0.032em;
-  font-weight: 500;
-  text-wrap: balance;
-}
-
-.t-lead {
-  font-size: clamp(1.02rem, 1.25vw, 1.2rem);
-  line-height: 1.5;
-  letter-spacing: -0.012em;
-  color: var(--text-1);
-  text-wrap: pretty;
-}
-
-.t-body {
-  font-size: 0.95rem;
-  line-height: 1.55;
-  letter-spacing: -0.006em;
-  color: var(--text-1);
-}
-
-/* mono telemetry label: the HUD's voice */
-.t-label {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  line-height: 1;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--text-2);
-}
-
-.t-num {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum", "ss01";
-}
-
-/* ------------------------------------------------------------------ */
-/* Surfaces                                                            */
-/* ------------------------------------------------------------------ */
-
-/* hairline panel: the basic unit of every HUD and workstation */
-.panel {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.026), rgba(255, 255, 255, 0.008));
-  border: 1px solid var(--line);
-  border-radius: 12px;
-}
-
-.panel-raised {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
-  border: 1px solid var(--line-strong);
-  border-radius: 12px;
-  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
-}
-
-/* very subtle glass, used for floating chips above scenes */
-.glass {
-  background: linear-gradient(180deg, rgba(24, 28, 34, 0.94), rgba(12, 14, 18, 0.94));
-  border: 1px solid var(--line-strong);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 20px 50px -24px rgba(0, 0, 0, 0.9);
-}
-
-/* the single point of light. brand mark, status light, agent eye. */
-.spot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: rgb(var(--accent-rgb));
-  box-shadow:
-    0 0 0 3px rgba(var(--accent-rgb), 0.12),
-    0 0 14px 2px rgba(var(--accent-rgb), 0.55);
-}
-
-.spot-breathe {
-  animation: spot-breathe 3.2s var(--ease-in-out) infinite;
-}
-
-@keyframes spot-breathe {
-  0%,
-  100% {
-    opacity: 0.72;
-    transform: scale(0.92);
+  .t-hero {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(3.4rem, 9.2vw, 8.75rem);
+    line-height: 0.92;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
   }
-  50% {
-    opacity: 1;
-    transform: scale(1.06);
+
+  .t-h2 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 5.6vw, 5.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.024em;
+    text-wrap: balance;
+  }
+
+  .t-h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    line-height: 1.04;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+  }
+
+  /* serif emphasis: the second line of most headlines leans and takes the spot */
+  .t-hero em,
+  .t-h2 em,
+  .t-h3 em {
+    font-style: italic;
+    color: var(--spot);
+  }
+  .on-night .t-h2 em,
+  .on-night .t-h3 em {
+    color: var(--spot-light);
+  }
+
+  .t-title {
+    font-size: clamp(1.15rem, 1.5vw, 1.35rem);
+    line-height: 1.25;
+    letter-spacing: -0.018em;
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  .t-lead {
+    font-size: clamp(1.075rem, 1.4vw, 1.3rem);
+    line-height: 1.5;
+    letter-spacing: -0.012em;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .t-body {
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: -0.006em;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .t-small {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: -0.004em;
+    color: var(--ink-3);
+  }
+
+  .t-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.75rem;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .t-eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--spot);
+    box-shadow: 0 0 0 3px rgba(var(--spot-rgb), 0.14);
+  }
+  .on-night .t-eyebrow {
+    color: var(--night-text-2);
+  }
+  .on-night .t-eyebrow::before {
+    background: var(--spot-light);
+    box-shadow: 0 0 0 3px rgba(147, 164, 255, 0.16);
+  }
+
+  .t-num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Layout                                                           */
+  /* ---------------------------------------------------------------- */
+
+  .wrap {
+    width: 100%;
+    max-width: calc(var(--maxw) + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .section {
+    position: relative;
+    padding-block: clamp(96px, 13vw, 184px);
+  }
+
+  .on-night {
+    background: var(--night);
+    color: var(--night-text);
+  }
+  .on-night .t-lead,
+  .on-night .t-body {
+    color: var(--night-text-2);
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Buttons                                                          */
+  /* ---------------------------------------------------------------- */
+
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    height: 3.25rem;
+    padding-inline: 1.5rem;
+    border-radius: 999px;
+    font-size: 0.975rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition:
+      background-color 260ms var(--ease-out),
+      color 260ms var(--ease-out),
+      border-color 260ms var(--ease-out),
+      transform 260ms var(--ease-out),
+      box-shadow 260ms var(--ease-out);
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn-sm {
+    height: 2.625rem;
+    padding-inline: 1.15rem;
+    font-size: 0.9rem;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 10px 24px -12px rgba(21, 23, 27, 0.5);
+  }
+  .btn-primary:hover {
+    background: var(--spot);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 14px 30px -12px rgba(var(--spot-rgb), 0.6);
+  }
+  .btn-ghost {
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    background: rgba(255, 253, 249, 0.5);
+  }
+  .btn-ghost:hover {
+    border-color: var(--ink);
+    background: var(--card);
+  }
+  .on-night .btn-primary,
+  .btn-light {
+    background: var(--night-text);
+    color: var(--ink);
+  }
+  .on-night .btn-primary:hover,
+  .btn-light:hover {
+    background: var(--spot-light);
+    color: var(--ink);
+  }
+  .btn .btn-arrow {
+    transition: transform 320ms var(--ease-out);
+  }
+  .btn:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+  .btn:hover .btn-arrow-down {
+    transform: translateY(2px);
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Surfaces                                                         */
+  /* ---------------------------------------------------------------- */
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* the planning-table dot grid behind the hero */
+  .dot-grid {
+    background-image: radial-gradient(rgba(21, 23, 27, 0.13) 1px, transparent 1.2px);
+    background-size: 28px 28px;
+    background-position: center;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Hero: the Monday board                                           */
+  /* ---------------------------------------------------------------- */
+
+  .chip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    padding: 0.7rem 0.95rem 0.7rem 0.7rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 700ms var(--ease-out);
+  }
+  .hero-loose .chip {
+    box-shadow: var(--shadow-float);
+  }
+  .chip-icon {
+    position: relative;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 10px;
+    background: var(--paper-2);
+    color: var(--ink-2);
+    overflow: hidden;
+  }
+  .chip-tint {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .chip-icon svg {
+    position: relative;
+  }
+  .chip-lines {
+    display: grid;
+    min-width: 0;
+  }
+  .chip-lines > * {
+    grid-area: 1 / 1;
+  }
+  .chip-title {
+    font-size: 0.875rem;
+    line-height: 1.3;
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chip-sub {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    letter-spacing: -0.004em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Split headline reveal                                            */
+  /* ---------------------------------------------------------------- */
+
+  .split-line {
+    display: block;
+  }
+  .split-word {
+    display: inline-block;
+    overflow: clip;
+    overflow-clip-margin: 0.2em;
+    /* room for descenders and italic overhang inside the mask */
+    padding: 0.06em 0.08em 0.14em;
+    margin: -0.06em -0.08em -0.14em;
+    vertical-align: top;
+  }
+  .split-word > span {
+    display: inline-block;
+    will-change: transform;
   }
 }
 
-/* film grain + vignette sit above the void, below content */
-.grain::after {
-  content: "";
+/* ------------------------------------------------------------------ */
+/* Motion: progressive by design                                       */
+/* Copy is visible in the server HTML and without JS. Only once the    */
+/* boot script has confirmed JS + motion do unrevealed things start    */
+/* hidden. data-shown is set by the reveal observer.                   */
+/* ------------------------------------------------------------------ */
+
+html[data-motion="on"] [data-reveal]:not([data-shown]) {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 22px), 0);
+}
+[data-reveal] {
+  transition:
+    opacity 1000ms var(--ease-out),
+    transform 1000ms var(--ease-out);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+html[data-motion="on"] [data-split]:not([data-shown]) .split-word > span {
+  transform: translate3d(0, 108%, 0);
+}
+[data-split] .split-word > span {
+  transition: transform 1100ms var(--ease-out);
+  transition-delay: calc(var(--split-delay, 0s) + var(--i, 0) * 55ms);
+}
+
+/* the scroll-filled statement: each word lights as the reader reaches it */
+html[data-motion="on"] .fill-word {
+  opacity: 0.16;
+}
+
+/* ------------------------------------------------------------------ */
+/* Hero track                                                          */
+/* Without motion the hero is two stacked blocks: the pitch, then the  */
+/* sorted board. With motion it becomes a sticky scroll scene where    */
+/* the loose chips sort themselves into the board.                     */
+/* ------------------------------------------------------------------ */
+
+.hero-copy {
+  position: relative;
+  z-index: 3;
+}
+.hero-board {
+  position: relative;
+  z-index: 2;
+}
+
+html[data-motion="on"] .hero-track {
+  height: 280vh;
+}
+html[data-motion="on"] .hero-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+html[data-motion="on"] .hero-copy {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  /* plain alpha, no blend mode: a blended full-viewport fixed layer costs an offscreen pass per frame */
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+html[data-motion="on"] .hero-board {
+  position: absolute;
+  inset: 0;
+}
+/* until the scene has measured, the chips wait off stage (the intro cover is up meanwhile) */
+html[data-motion="on"] .hero-stage:not([data-ready]) .chip-mover {
+  visibility: hidden;
+}
+html[data-motion="on"] .board-head,
+html[data-motion="on"] .lane-head {
+  opacity: 0;
+}
+html[data-motion="on"] .chip-status,
+html[data-motion="on"] .chip-tint {
+  opacity: 0;
+}
+html:not([data-motion="on"]) .chip-raw {
+  opacity: 0;
+}
+html:not([data-motion="on"]) .hero-cue {
+  display: none;
 }
 
-}
-
-/* thin scanning line used when an agent "observes" a panel */
-@keyframes scan-y {
-  from {
-    transform: translateY(-10%);
-    opacity: 0;
-  }
-  12% {
-    opacity: 1;
-  }
-  88% {
-    opacity: 1;
-  }
-  to {
-    transform: translateY(110%);
-    opacity: 0;
-  }
-}
-
-@keyframes caret-blink {
+@keyframes chip-drift {
   0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
   100% {
-    opacity: 0;
+    transform: translate3d(0, -5px, 0) rotate(-0.4deg);
+  }
+  50% {
+    transform: translate3d(0, 5px, 0) rotate(0.4deg);
   }
 }
+.hero-loose .chip-drift {
+  animation: chip-drift 7s ease-in-out 4 both;
+  animation-delay: var(--drift-delay, 0s);
+}
 
-@keyframes rise-in {
+@keyframes cue-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+.cue-bob {
+  animation: cue-bob 2.4s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------ */
+/* Examples: rows arrive in order whenever the story or its version     */
+/* changes (the list is re-keyed, so this replays)                       */
+/* ------------------------------------------------------------------ */
+
+@keyframes story-row-in {
   from {
     opacity: 0;
-    transform: translate3d(0, 10px, 0);
+    transform: translate3d(0, 14px, 0);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
-
-.rise-in {
-  animation: rise-in 600ms var(--ease-out) both;
+@keyframes story-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+html[data-motion="on"] .story-row {
+  animation: story-row-in 700ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 90ms + 60ms);
+}
+html[data-motion="on"] .story-fade {
+  animation: story-fade-in 600ms var(--ease-out) both;
 }
 
 /* ------------------------------------------------------------------ */
-/* The Hub's desktop pose, in CSS, so the server-rendered frame is the  */
-/* frame the visitor keeps: nothing moves, so nothing can jump           */
+/* Marquee (scroll-linked, never auto-playing)                          */
 /* ------------------------------------------------------------------ */
 
-@media (min-width: 768px) {
-  .stage-hub {
-    /* the band under the 64px nav: the heading row, with the CEO Agent docked in its middle */
-    --hub-zone: clamp(112px, 17svh, 176px);
-    /* the display: as wide as the viewport allows, never taller than what is left under the band (26px spare) */
-    --hub-width: min(94vw, 1560px, calc((100svh - 90px - var(--hub-zone)) * 1.6842));
-  }
-  .stage-heading {
-    top: 72px;
-    width: var(--hub-width);
-    height: calc(var(--hub-zone) - 8px);
-  }
-  .stage-agent {
-    top: 50px;
-    height: calc(var(--hub-zone) + 34px);
-    width: calc((var(--hub-zone) + 34px) * 0.95);
-  }
-  .stage-display {
-    top: calc(64px + var(--hub-zone));
-    width: var(--hub-width);
-  }
-}
-
-/* A WebGL floor must never end in a rectangle: feather the canvas into the void on three sides. */
-.gl-feather {
-  -webkit-mask-image: radial-gradient(ellipse 62% 80% at 50% 38%, #000 58%, transparent 100%);
-  mask-image: radial-gradient(ellipse 62% 80% at 50% 38%, #000 58%, transparent 100%);
-}
-
-html[data-paused="true"] *,
-html[data-paused="true"] *::before,
-html[data-paused="true"] *::after {
-  animation-play-state: paused !important;
-}
-/* ...but an entrance that starts while paused would freeze on its first, invisible frame. Skip it instead. */
-html[data-paused="true"] .rise-in {
-  animation: none !important;
-}
-
-/* Editorial reveals are progressive: copy is visible in the server HTML and without JS. Only once the
-   inline boot script has confirmed JS + motion does unrevealed copy start hidden. */
-html[data-motion="on"] [data-reveal]:not([data-shown]) {
-  opacity: 0;
-  transform: translate3d(0, var(--reveal-y, 18px), 0);
-}
-[data-reveal] {
-  transition: opacity 1100ms var(--ease-out), transform 1100ms var(--ease-out);
-  transition-delay: var(--reveal-delay, 0s);
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 }
 
 /* ------------------------------------------------------------------ */
 /* Opening logo sequence (chrome/Intro)                                */
-/* The cover is in the server HTML and exists only under                */
-/* html[data-intro="on"], which the boot script sets before first paint */
-/* and the script removes when the lockup has landed on the nav logo.  */
-/* Without it (reduced motion, no JS, a boot that never finished, the   */
-/* sequence over) the layer is not displayed and cannot take input.     */
+/* Exists only under html[data-intro="on"], which the boot script sets  */
+/* before first paint and the script removes when the lockup has landed */
 /* ------------------------------------------------------------------ */
 
 .intro {
@@ -385,7 +619,6 @@ html[data-intro="on"] .intro {
   touch-action: none;
   overscroll-behavior: none;
 }
-/* the nav's own lockup waits under the travelling one: never two logos on screen */
 html[data-intro="on"] [data-logo] {
   visibility: hidden;
 }
@@ -397,24 +630,17 @@ html[data-intro="on"] [data-logo] {
   left: 50%;
   top: 50%;
   transform-origin: 0 0;
-  /* the mark's centre on the viewport's centre before the script can measure (22px mark, 22.5px line) */
-  transform: translate(calc(-11px * var(--intro-scale)), calc(-11.25px * var(--intro-scale))) scale(var(--intro-scale));
+  /* the mark's centre on the viewport's centre before the script can measure (26px mark, 26px line) */
+  transform: translate(calc(-13px * var(--intro-scale)), calc(-13px * var(--intro-scale))) scale(var(--intro-scale));
   will-change: transform;
-  /* the lockup is scaled 2.4x and then flown to 1x: keep it on its own layer so text does not re-rasterise mid-flight */
   backface-visibility: hidden;
-  transform-style: preserve-3d;
 }
 .intro-mark {
   position: relative;
   display: block;
-  width: 22px;
-  height: 22px;
-  /* starts at first paint, before any script: the loading screen is never a blank one */
+  width: 26px;
+  height: 26px;
   animation: intro-mark-in 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-/* an entrance that starts while paused would freeze on its first, invisible frame; the mark is simply there */
-html[data-paused="true"] .intro-mark {
-  animation: none !important;
 }
 @keyframes intro-mark-in {
   from {
@@ -425,19 +651,6 @@ html[data-paused="true"] .intro-mark {
     opacity: 1;
     transform: none;
   }
-}
-/* the spot's glow, centred under the mark's own spot; the lockup's scale carries it */
-.intro-glow {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 5px;
-  height: 5px;
-  margin: -2.5px 0 0 -2.5px;
-  border-radius: 999px;
-  box-shadow:
-    0 0 0 3px rgba(var(--spot-rgb), 0.12),
-    0 0 14px 2px rgba(var(--spot-rgb), 0.55);
 }
 .intro-word {
   opacity: 0;

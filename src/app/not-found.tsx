@@ -1,24 +1,23 @@
 import type { Metadata } from "next";
-import { SITE } from "@/content/copy";
-import { Mark } from "@/components/agent/AgentSvg";
-import { LinkButton } from "@/components/ui/Button";
+import Link from "next/link";
+import { Mark } from "@/components/ui/Mark";
 
 export const metadata: Metadata = { title: "Page not found" };
 
 export default function NotFound() {
   return (
-    <main id="content" className="relative flex min-h-svh items-center px-[var(--gutter)] py-[calc(var(--nav-h)_+_48px)]">
-      <div className="mx-auto flex w-full max-w-[62rem] flex-col items-start gap-8">
-        <p className="flex items-center gap-3 text-[var(--text-0)]">
-          <Mark size={20} />
-          <span className="t-label t-num text-[var(--text-1)]">404 · {SITE.name}</span>
-        </p>
-        <h1 className="t-statement max-w-[18ch]">This page isn&rsquo;t part of the business.</h1>
-        <p className="t-lead max-w-[34rem]">Nothing is filed at this address. Everything else is where you left it.</p>
-        <LinkButton href="/" arrow className="mt-2">
-          Back to {SITE.name}
-        </LinkButton>
-      </div>
+    <main id="content" className="wrap flex min-h-svh flex-col items-start justify-center gap-7 py-[calc(var(--nav-h)+48px)]">
+      <p className="flex items-center gap-3 text-[var(--ink)]">
+        <Mark size={22} />
+        <span className="t-small t-num">404</span>
+      </p>
+      <h1 className="t-h2 max-w-[16ch]">
+        This page isn&rsquo;t <em>in one spot.</em>
+      </h1>
+      <p className="t-lead max-w-[32rem]">Nothing lives at this address. Everything else is right where you left it.</p>
+      <Link href="/" className="btn btn-primary mt-2">
+        Back to the homepage
+      </Link>
     </main>
   );
 }

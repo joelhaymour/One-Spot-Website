@@ -1,12 +1,12 @@
 # One Spot
 
-The website for One Spot, a custom business operating system: an interactive product film that shows a
-company run through one command center (the Hub) with a digital workforce doing the work inside it.
-Every department is a door; behind each door an agent works a full shift (observes, thinks, acts, learns,
-reports). The owner sees more and does less.
+The website for One Spot, an agentic consulting company for small and mid-sized businesses. We get to know
+how a company really works, then connect the tools it already uses, organize how information moves between
+departments, take repetitive work off the team, and give the owner one clear view of the business.
 
-Start with `docs/CREATIVE_PLAN.md`. It is the decision record for narrative, design language, motion and
-architecture. `docs/VISUAL_BIBLE.md` and `docs/HIGGSFIELD_SHOTS.md` cover generated footage.
+The site is written for owners who are not technical. It shows a real business working with One Spot
+(Harbor Home Services, a fictional plumbing and heating company owned by Dana) rather than explaining
+technology. It should read like a trusted consultancy, not a software product.
 
 ## Run
 
@@ -18,51 +18,58 @@ npm run lint
 npm run build
 ```
 
-`/lab` is an internal bench for the agent family (every agent, every mood). It is excluded from robots.
-
 ## Stack
 
-Next.js 16 (App Router, static) · React 19.2 · TypeScript · Tailwind 4 · GSAP + ScrollTrigger (the single clock)
-· Lenis (fine pointers only) · three.js through @react-three/fiber (no drei) · zustand.
+Next.js 16 (App Router, static) · React 19.2 · TypeScript · Tailwind 4 · GSAP + ScrollTrigger · Lenis (fine
+pointers only). Type is Instrument Serif (display) and Geist (text), both through `next/font`.
 
-Versions are pinned exactly. @react-three/fiber 9 caps React below 19.3 while Next vendors a 19.3 canary; it
-works, and an error boundary drops the site to SVG agents if the 3D layer ever throws. Re-test `/lab` and the
-homepage after any dependency bump.
+## The page, in order
 
-## How it is put together
+| Section | Component | What it does |
+|---|---|---|
+| Hero | `sections/Hero.tsx` | A busy owner's desk. Ten loose pieces of work float around the pitch; scrolling sorts them into three lanes (handled, sent to the right person, waiting on your OK) |
+| 01 Sound familiar? | `sections/Problem.tsx` | The handoff problem, lit word by word as you scroll, and four things owners say |
+| 02 What we do | `sections/WhatWeDo.tsx`, `scenes/*` | Connect, organize, automate, see clearly. A sticky stage plays one small illustration per step |
+| 03 How we work | `sections/Process.tsx` | Listen, map, plan, build, stay. A rail draws down the steps as you scroll |
+| 04 Examples | `sections/Examples.tsx` | One ordinary moment in four kinds of business, before and after |
+| 05 Agents | `sections/Agents.tsx`, `AgentDemo.tsx` | "A team member who's great at one job", with a decision the visitor makes as the owner |
+| 06 Working with us | `sections/Principles.tsx`, `Industries.tsx` | Five promises, and who we work with (a scroll-linked band) |
+| 07 FAQ | `sections/Faq.tsx` | The questions owners actually ask |
+| 08 Contact | `sections/Contact.tsx`, `ContactForm.tsx` | "Let's talk about your business. Not about AI." |
+
+## Where things live
 
 | Path | What lives there |
 |---|---|
-| `src/content/` | All copy and data: `copy.ts` (deck), `flows.ts` (the three routed scenarios), `departments.ts` (agents, stories, console regions), `hud.ts` (the fictional company + liveness script), `media.ts` (optional footage slots) |
-| `src/components/motion/` | `SmoothScroll` (Lenis on the GSAP ticker), `ScrollStory` (sticky scroll-film engine), `Transition` (stepping through the display) |
-| `src/components/display/VirtualDisplay.tsx` | The "computer": content authored at 1280 x 760 virtual px, scaled to fit, with a camera |
-| `src/components/hero/` | The opening frame: copy plus `HeroTools`, the eight tools before and after (auto-playing, time-based) |
-| `src/components/hud/`, `business/` | The Business display with its two tabs (Dashboard, then To Do: see more, then do less) and the seven doors (chapter 02, right after How we work) |
-| `src/components/department/` | Department route shell, console frame, and the seven console screens |
-| `src/components/flows/` | In action: the after ring with three routed scenarios (chapter 05) |
-| `src/components/scaling/`, `process/`, `cta/`, `chrome/` | Homepage scenes and site chrome |
-| `src/components/agent/` | `AgentSlot` (SVG first, WebGL after), `AgentSvg`, `Mark` (the logo) |
-| `src/gl/` | The only code allowed to import three.js. `agent/rig.ts` is the DATUM agent; `stage/GLStage.tsx` is the in-flow canvas |
+| `src/content/site.ts` | Every word on the page, plus the numbers inside the illustrations |
+| `src/content/stories.ts` | The four before and after stories in Examples |
+| `src/app/globals.css` | Design tokens (paper, ink, the blue spot, done / routed / needs-you colors), type classes, the hero track and the reveal system |
+| `src/components/motion/` | `SmoothScroll` (Lenis on the GSAP ticker), `Reveals` (one observer for every scroll reveal), `Split` (word-by-word headlines), `ScrollFill` |
+| `src/components/chrome/` | The opening logo sequence, nav, footer |
+| `src/app/api/contact/route.ts` | The enquiry endpoint (same-origin only, rate limited, honeypot) |
 
-Rules that keep it fast and correct:
+## Rules that keep it calm and correct
 
-- **No GSAP pins.** Scroll scenes are CSS-sticky tracks with server-rendered height (`ScrollStory`), so Back
-  restores scroll and iOS never jitters. Scroll selects a discrete step; everything inside a step is time-based.
-- **three.js never loads on first paint.** DOM code reaches WebGL only through `next/dynamic(..., { ssr: false })`
-  and only on the `full` / `lite` tiers (`src/lib/capabilities.ts`). Reduced-motion, save-data and no-WebGL
-  visitors get SVG agents and final states, and never download the 3D chunk.
-- **One clock.** GSAP's ticker drives Lenis, then tweens, then each visible canvas (`frameloop="never"`).
-- **Real text in the DOM.** Every caption, step and recommendation is server-rendered HTML; canvases are
-  `aria-hidden` with DOM equivalents. A Pause motion control stops all ambient animation.
-- Component classes in `globals.css` live in `@layer components` so Tailwind utilities can override them.
+- **Progressive motion.** Copy is real text in the server HTML. A boot script in `layout.tsx` sets
+  `html[data-motion="on"]` only when JS runs and the visitor allows motion; only then do reveals start hidden.
+  Without it (reduced motion, no JS) every section renders in its final state, including the sorted board.
+- **No GSAP pins.** Scroll scenes are CSS-sticky tracks. The hero chips are FLIP-style: the sorted board is
+  the natural layout, and scroll transforms each chip from a loose spot back to its own slot.
+- **Scroll picks, time plays.** In What we do, scroll selects the step; each illustration then runs on its
+  own timeline, and replays when it becomes active again.
+- **Nothing auto-plays forever.** The industries band moves only with the scroll; the hero chips drift for a
+  few cycles and stop.
+- **Illustrations are decoration.** They are `aria-hidden`; the step text beside them carries the meaning.
 
 ## Environment
 
 See `.env.example`. The contact form needs either `RESEND_API_KEY` + `CONTACT_TO_EMAIL`, or
-`CONTACT_WEBHOOK_URL`. Without either it logs in development and returns 503 in production (so enquiries are
-never silently dropped). Set `NEXT_PUBLIC_SITE_URL` for sitemap, robots and Open Graph URLs.
+`CONTACT_WEBHOOK_URL`. Without either it logs in development and returns 503 in production, so an enquiry is
+never silently dropped. Set `NEXT_PUBLIC_SITE_URL` for sitemap, robots and Open Graph URLs, and optionally
+`NEXT_PUBLIC_CONTACT_EMAIL` to show an address in the footer.
 
-## Generated footage
+## History
 
-Every cinematic slot is optional and ships empty. To add a clip: follow `docs/HIGGSFIELD_SHOTS.md`, put the
-encoded files in `public/media/`, and fill in the slot in `src/content/media.ts`.
+`docs/` holds the decision record for v1 to v5, when the site was an interactive product film for a "custom
+business operating system" (three.js agents, the Hub, department consoles). v6 replaced that direction with
+the consulting positioning above; the earlier code is on `main` before v6 and in git history.
