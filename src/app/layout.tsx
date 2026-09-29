@@ -1,15 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Instrument_Serif } from "next/font/google";
-import { Footer } from "@/components/chrome/Footer";
-import { Intro } from "@/components/chrome/Intro";
-import { Nav } from "@/components/chrome/Nav";
-import { Reveals } from "@/components/motion/Reveals";
-import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { SITE } from "@/content/site";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
+import "./everyday.css";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   weight: "400",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f5f2ec",
+  themeColor: "#faf9f5",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,
@@ -42,31 +42,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${instrumentSerif.variable} antialiased`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${instrumentSerif.variable} antialiased`}
+      suppressHydrationWarning
+    >
       <body className="min-h-svh">
-        {/* Runs before first paint. Arms the reveal starting states and the opening logo cover only when
-            JS and motion are both available, and disarms both if the app never boots, so copy can never
-            be stranded invisible and no visitor can be stranded behind the cover. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "try{var d=document.documentElement;if(matchMedia('(prefers-reduced-motion: no-preference)').matches){d.dataset.motion='on';if(!location.hash)d.dataset.intro='on';setTimeout(function(){if(!window.__osReady){delete d.dataset.motion;delete d.dataset.intro}},4000)}}catch(e){}",
-          }}
-        />
-        {/* First in the body: the cover's markup travels in the first bytes, so the page cannot paint before it. */}
-        <Intro />
-        <SmoothScroll>
-          <a
-            href="#content"
-            className="fixed left-4 top-4 z-[60] -translate-y-24 rounded-full bg-[var(--ink)] px-4 py-2 text-sm text-[var(--paper)] focus:translate-y-0"
-          >
-            Skip to content
-          </a>
-          <Nav />
-          {children}
-          <Footer />
-          <Reveals />
-        </SmoothScroll>
+        <a href="#content" className="ed-skip">
+          Skip to content
+        </a>
+        {children}
       </body>
     </html>
   );

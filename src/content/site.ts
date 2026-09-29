@@ -8,9 +8,9 @@
 
 export const SITE = {
   name: "One Spot",
-  title: "One Spot — Your business, easier to run",
+  title: "One Spot — Better websites. Less busywork.",
   description:
-    "One Spot is an agentic consulting company for small and mid-sized businesses. We learn how your company works, connect the tools you already use, take repetitive work off your team's plate, and give you one clear view of everything.",
+    "Better websites, connected tools, and practical AI assistants for small and mid-sized businesses. One Spot makes your business easier to find and easier to run.",
   tagline: "Your business, easier to run.",
 } as const;
 
