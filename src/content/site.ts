@@ -18,6 +18,7 @@ export const NAV = [
   { label: "What we do", href: "#what" },
   { label: "How we work", href: "#process" },
   { label: "Examples", href: "#examples" },
+  { label: "Websites", href: "#websites" },
   { label: "FAQ", href: "#faq" },
 ] as const;
 
@@ -238,6 +239,55 @@ export const EXAMPLES = {
   before: "Before",
   after: "With One Spot",
   switchPrompt: "Now see it with One Spot",
+} as const;
+
+/* ------------------------------------------------------------------ */
+/* 05 · Websites                                                       */
+/* The store in the mockups (Seaside Swim Co.) is fictional. The        */
+/* features are the ones we build for real online stores.               */
+/* ------------------------------------------------------------------ */
+
+export const WEBSITES = {
+  eyebrow: "Websites & online stores",
+  headline: ["Your website,", "organized to sell."],
+  lead: "Your website is part of how the business runs. We rebuild it so customers find what they want in a click or two, know what will fit, and see the things that go with it, on the platform you already use.",
+  compare: {
+    label: "Drag to compare the store before and after",
+    before: "Before",
+    after: "After",
+    caption: "An illustrative online store, before and after a One Spot redesign.",
+  },
+  cart: {
+    eyebrow: "Try it",
+    title: "Your bag",
+    threshold: 150,
+    items: [
+      { name: "Coral tie top", detail: "Size M", price: 44 },
+      { name: "Seafoam one-piece", detail: "Size S", price: 74 },
+    ],
+    setTitle: "Complete the set",
+    set: { name: "Coral tie bottom", detail: "Size M, matched to your top", price: 38 },
+    addOnsTitle: "Easy add-ons",
+    addOns: [
+      { name: "Straw sun hat", detail: "One size", price: 28 },
+      { name: "Canvas beach tote", detail: "One size", price: 36 },
+    ],
+    add: "Add",
+    added: "Added",
+    away: "away from free shipping",
+    unlocked: "Free shipping unlocked",
+    reset: "Start over",
+    note: "What a shopper sees in the cart: how close they are to free shipping, and the pieces that go with what they chose.",
+  },
+  features: [
+    { icon: "list", title: "Menus that make sense", body: "Dozens of scattered collections become a handful of clear choices." },
+    { icon: "check", title: "Sizes, sorted", body: "One size scale, and filters that only show what's in stock." },
+    { icon: "person", title: "Fit before they buy", body: "A simple runs small, true to size, runs big guide on every product." },
+    { icon: "copies", title: "Complete the set", body: "The cart suggests the piece that goes with it, already in their size." },
+    { icon: "cart", title: "A nudge to free shipping", body: "Shoppers see how close they are, with a few easy add-ons to get there." },
+    { icon: "mail", title: "A welcome offer that behaves", body: "A first-order discount that only works for new subscribers, once." },
+  ],
+  platform: "We build on the platform you already use, like Shopify, so your team can keep editing it themselves.",
 } as const;
 
 /* ------------------------------------------------------------------ */

@@ -6,6 +6,7 @@ import { Industries } from "@/components/sections/Industries";
 import { Principles } from "@/components/sections/Principles";
 import { Problem } from "@/components/sections/Problem";
 import { Process } from "@/components/sections/Process";
+import { Websites } from "@/components/sections/Websites";
 import { WhatWeDo } from "@/components/sections/WhatWeDo";
 
 /**
@@ -18,6 +19,7 @@ import { WhatWeDo } from "@/components/sections/WhatWeDo";
  *   02 what      connect, organize, automate, see clearly
  *   03 process   listen, map, plan, build, stay
  *   04 examples  one moment in four businesses, before and after
+ *   05 websites  the storefront, before and after, and a bag that sells
  *   06 working   five promises, and who we work with
  *   07 faq
  *   08 contact
@@ -30,6 +32,7 @@ export default function Home() {
       <WhatWeDo />
       <Process />
       <Examples />
+      <Websites />
       <Principles />
       <Industries />
       <Faq />
