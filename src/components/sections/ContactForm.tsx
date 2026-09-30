@@ -40,7 +40,7 @@ const FIELD_SPECS: FieldSpec[] = [
 
 // 16px on phones so iOS does not zoom the page when a field takes focus.
 const controlClass =
-  "block w-full rounded-2xl border bg-[rgba(255,255,255,0.04)] px-4 text-[1rem] tracking-[-0.006em] text-[var(--night-text)] caret-[var(--spot-light)] placeholder:text-[var(--night-text-3)] transition-[border-color,background-color] duration-300 hover:border-[rgba(255,255,255,0.2)] focus:border-[var(--spot-light)] focus:bg-[rgba(255,255,255,0.06)] focus:outline-none read-only:opacity-60 autofill:shadow-[inset_0_0_0_100px_var(--night-2)] autofill:[-webkit-text-fill-color:var(--night-text)]";
+  "block w-full rounded-2xl border bg-[var(--paper)] px-4 text-[1rem] tracking-[-0.006em] text-[var(--ink)] caret-[var(--spot)] placeholder:text-[var(--ink-4)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-[var(--ink-4)] focus:border-[var(--spot)] focus:bg-[var(--card)] focus:shadow-[0_0_0_4px_rgba(45,74,224,0.12)] focus:outline-none read-only:opacity-60 autofill:shadow-[inset_0_0_0_100px_var(--card)] autofill:[-webkit-text-fill-color:var(--ink)]";
 
 interface FieldProps extends FieldSpec {
   id: string;
@@ -66,11 +66,11 @@ function Field({ id, field, multiline, type = "text", autoComplete, inputMode, c
     "aria-describedby": error ? errorId : undefined,
     onBlur: () => onBlur(field),
   };
-  const tone = error ? "border-[#E8B65C]" : "border-[var(--night-line)]";
+  const tone = error ? "border-[var(--wait)]" : "border-[var(--line-strong)]";
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="mb-2 block text-[0.85rem] font-medium text-[var(--night-text-2)]">
+      <label htmlFor={id} className="mb-2 block text-[0.85rem] font-medium text-[var(--ink-2)]">
         {CONTACT.fields[field]}
       </label>
       {multiline ? (
@@ -79,7 +79,7 @@ function Field({ id, field, multiline, type = "text", autoComplete, inputMode, c
         <input {...shared} type={type} inputMode={inputMode} onChange={(event) => onChange(field, event.target.value)} className={cn(controlClass, tone, "h-[3.25rem]")} />
       )}
       {error && (
-        <p id={errorId} className="mt-2 text-[0.82rem] leading-[1.4] text-[#E8B65C]">
+        <p id={errorId} className="mt-2 text-[0.82rem] leading-[1.4] text-[var(--wait)]">
           {error}
         </p>
       )}
@@ -164,7 +164,7 @@ export function ContactForm() {
   if (status === "success") {
     return (
       <div className="story-fade flex min-h-[26rem] flex-col justify-center gap-5">
-        <span className="grid h-12 w-12 place-items-center rounded-full bg-[#7EDDAD] text-[var(--night)]">
+        <span className="grid h-12 w-12 place-items-center rounded-full bg-[var(--done)] text-white">
           <Icon name="check" size={22} strokeWidth={2.4} />
         </span>
         <h3 ref={receivedRef} tabIndex={-1} aria-describedby={`${uid}-received`} className="t-h3 outline-none">
@@ -199,11 +199,11 @@ export function ContactForm() {
       </div>
 
       <div className="flex flex-col gap-4 pt-2 sm:col-span-2 sm:flex-row sm:items-center sm:gap-6">
-        <button type="submit" aria-disabled={pending} className="btn btn-light min-w-[11rem] shrink-0 aria-disabled:pointer-events-none aria-disabled:opacity-60">
+        <button type="submit" aria-disabled={pending} className="btn btn-primary min-w-[11rem] shrink-0 aria-disabled:pointer-events-none aria-disabled:opacity-60">
           {pending ? CONTACT.sending : CONTACT.submit}
           {!pending && <Icon name="arrow" size={17} strokeWidth={1.8} className="btn-arrow" />}
         </button>
-        <div aria-live="polite" className="min-w-0 text-[0.85rem] leading-[1.45] text-[#E8B65C]">
+        <div aria-live="polite" className="min-w-0 text-[0.85rem] leading-[1.45] text-[var(--wait)]">
           {status === "error" && (
             <p>
               {busy ? "Too many messages from this connection. Please try again in a few minutes." : CONTACT.error}
@@ -211,7 +211,7 @@ export function ContactForm() {
                 <>
                   {" "}
                   Or email us at{" "}
-                  <a href={`mailto:${DIRECT_EMAIL}`} className="text-[var(--night-text)] underline underline-offset-4">
+                  <a href={`mailto:${DIRECT_EMAIL}`} className="text-[var(--ink)] underline underline-offset-4">
                     {DIRECT_EMAIL}
                   </a>
                   .

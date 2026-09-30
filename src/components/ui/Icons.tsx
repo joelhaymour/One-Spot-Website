@@ -33,6 +33,8 @@ export type IconName =
   | "list"
   | "cart"
   | "wallet"
+  | "hardhat"
+  | "car"
   | "menu"
   | "close";
 
@@ -174,6 +176,19 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3" />
       <rect x="4" y="8" width="16.5" height="11.5" rx="2.5" />
       <path d="M16 14h.01" strokeWidth="2.4" />
+    </>
+  ),
+  hardhat: (
+    <>
+      <path d="M4 16.5a8 8 0 0 1 16 0" />
+      <path d="M10 8.8V6.5h4v2.3M3 16.5h18v2.5H3z" />
+    </>
+  ),
+  car: (
+    <>
+      <path d="M5 16.5V12l1.8-4.6A2 2 0 0 1 8.7 6h6.6a2 2 0 0 1 1.9 1.4L19 12v4.5" />
+      <path d="M3.5 12h17v4.5h-17zM7 16.5V19M17 16.5V19" />
+      <path d="M7.5 14.2h.01M16.5 14.2h.01" strokeWidth="2.2" />
     </>
   ),
   menu: <path d="M4 8h16M4 16h16" />,

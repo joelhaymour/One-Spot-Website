@@ -10,7 +10,14 @@ import { Mark } from "@/components/ui/Mark";
 
 type Mode = "before" | "after";
 
-const INDUSTRY_ICON: Record<string, IconName> = { home: "phone", clinic: "calendar", wholesale: "box", services: "file" };
+const INDUSTRY_ICON: Record<string, IconName> = {
+  home: "phone",
+  construction: "hardhat",
+  dealership: "car",
+  clinic: "calendar",
+  wholesale: "box",
+  services: "file",
+};
 
 function Actor({ actor }: { actor: StoryActor }) {
   const base = "relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-full";

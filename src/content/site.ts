@@ -18,7 +18,6 @@ export const NAV = [
   { label: "What we do", href: "#what" },
   { label: "How we work", href: "#process" },
   { label: "Examples", href: "#examples" },
-  { label: "Agents", href: "#agents" },
   { label: "FAQ", href: "#faq" },
 ] as const;
 
@@ -242,51 +241,6 @@ export const EXAMPLES = {
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* 05 · Agents                                                         */
-/* ------------------------------------------------------------------ */
-
-export const AGENTS = {
-  eyebrow: "Agents, in plain English",
-  headline: ["An agent is a team member", "who's great at one job."],
-  lead: "We build agents around the way your business already works. Each one has a clear job, clear rules, and a person it answers to, just like anyone else on your team.",
-  traits: [
-    { icon: "rules", title: "It follows your rules", body: "You decide how things are done. It does them the same way, every time." },
-    { icon: "ask", title: "It asks before big decisions", body: "Refunds, discounts, anything unusual: it checks with a person first." },
-    { icon: "tools", title: "It works inside your tools", body: "Your team doesn't learn a new system. The work just gets done." },
-    { icon: "log", title: "It shows its work", body: "Every action is written down, so you can always see what happened and why." },
-  ],
-  demo: {
-    eyebrow: "Try it. You're the owner.",
-    agent: "Collections agent",
-    time: "Tue 9:12am",
-    message:
-      "Jensen Co.'s invoice #1042 ($2,380) is 14 days late. They usually pay within a week, so I'd start with a friendly reminder. Here's what I'd send:",
-    drafts: {
-      friendly:
-        "Hi Tom, hope the week's off to a good start. Just a quick nudge on invoice #1042 for $2,380. Here's the link to pay online. Thanks!",
-      firmer:
-        "Hi Tom, invoice #1042 for $2,380 is now two weeks past due. Could you arrange payment by Friday, or let us know if something's holding it up?",
-    },
-    actions: { send: "Send it", firmer: "Make it firmer", call: "I'll call them" },
-    replies: {
-      send: "Sent at 9:14am. I'll check again Friday and let you know either way.",
-      call: "Got it. I've put “Call Tom at Jensen Co.” on your list for today, with the invoice attached.",
-    },
-    firmerNote: "Here's a firmer version. Nothing goes out until you say so.",
-    reset: "Start over",
-  },
-  rosterTitle: "A few agents we often build",
-  roster: [
-    { name: "Front desk", hue: "#61D8E5", does: "Answers calls and messages, and books appointments.", asks: "When a request is unusual." },
-    { name: "Scheduler", hue: "#7FA6FF", does: "Keeps the calendar full and the crews routed.", asks: "When two jobs clash." },
-    { name: "Collections", hue: "#7EDDAD", does: "Sends reminders and records payments as they land.", asks: "Before anything firmer than a nudge." },
-    { name: "Stockroom", hue: "#D6C9B3", does: "Watches stock levels and drafts reorders.", asks: "Before spending money." },
-    { name: "Onboarding", hue: "#CDDC6A", does: "Welcomes new clients and gathers the paperwork.", asks: "When something's still missing." },
-    { name: "Reporter", hue: "#A585FF", does: "Writes your Monday summary in plain English.", asks: "Nothing to approve. It only reports." },
-  ],
-} as const;
-
-/* ------------------------------------------------------------------ */
 /* 06 · Principles and who we work with                                */
 /* ------------------------------------------------------------------ */
 
@@ -311,6 +265,8 @@ export const INDUSTRIES = {
     "Accounting firms",
     "Property management",
     "Builders & trades",
+    "Car dealerships",
+    "Auto body & glass",
     "Clinics",
     "Agencies",
     "Landscaping",
