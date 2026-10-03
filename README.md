@@ -35,17 +35,15 @@ Visitors see operational problems, handoffs, automated work, approvals, and owne
 
 ## Main experience
 
-The page moves through:
+The page follows the same journey every client takes in the One Spot HUD, told with animation rather than explanation:
 
-1. **Hero** — a busy owner's work gets organized as the visitor scrolls
-2. **The problem** — common operational friction and missed handoffs
-3. **What One Spot does** — connect, organize, automate, and surface decisions
-4. **How it works** — listen, map, plan, build, and improve
-5. **Business examples** — before-and-after operational scenarios
-6. **Agents** — interactive example of a specialized digital worker
-7. **Working together** — principles and industries
-8. **FAQ**
-9. **Contact**
+1. **Hero**: the promise, and one company file filling in step by step
+2. **How we work**: six steps, each with its own animation (look, listen, map, find, show, build)
+3. **Examples**: one moment in six businesses, before and after
+4. **Websites**: an online store before and after, and a cart that sells
+5. **Working with us**: what stays in the owner's hands
+6. **FAQ**
+7. **Contact**: "Tell us where it feels manual"
 
 ## Project structure
 
@@ -53,9 +51,11 @@ The page moves through:
 src/
 ├── app/
 ├── components/
+│   ├── hero/
 │   ├── motion/
 │   ├── scenes/
-│   └── sections/
+│   ├── sections/
+│   └── websites/
 └── content/
     ├── site.ts
     └── stories.ts

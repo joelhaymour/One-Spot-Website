@@ -63,7 +63,7 @@ export function CartDemo() {
       </div>
 
       <div className="mt-5 flex items-baseline justify-between">
-        <p className="font-[family-name:var(--font-serif)] text-[1.9rem] leading-none tracking-[-0.015em]">{cart.title}</p>
+        <p className="text-[1.6rem] font-[650] leading-none tracking-[-0.035em]">{cart.title}</p>
         <p className="t-num text-[1rem] font-medium">{money(subtotal)}</p>
       </div>
 

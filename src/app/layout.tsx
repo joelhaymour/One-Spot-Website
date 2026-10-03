@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Instrument_Serif } from "next/font/google";
+import { Inter, Instrument_Serif } from "next/font/google";
 import { Footer } from "@/components/chrome/Footer";
 import { Intro } from "@/components/chrome/Intro";
 import { Nav } from "@/components/chrome/Nav";
@@ -9,7 +9,9 @@ import { SITE } from "@/content/site";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
+// Inter carries the page, as it does in the One Spot HUD. Instrument Serif survives only as the fictional
+// store's own type in the Websites mockups.
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap", axes: ["opsz"] });
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   weight: "400",
@@ -42,7 +44,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${instrumentSerif.variable} antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable} antialiased`} suppressHydrationWarning>
       <body className="min-h-svh">
         {/* Runs before first paint. Arms the reveal starting states and the opening logo cover only when
             JS and motion are both available, and disarms both if the app never boots, so copy can never

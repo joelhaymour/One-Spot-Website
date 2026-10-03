@@ -37,15 +37,9 @@
   --done-soft: #dfeee5;
   --wait: #a86d14;
   --wait-soft: #f5e8d0;
+  --risk: #b4412f;
+  --risk-soft: #f6e1db;
 
-  /* night sections */
-  --night: #111317;
-  --night-2: #191c21;
-  --night-3: #23272d;
-  --night-line: rgba(255, 255, 255, 0.09);
-  --night-text: #f4f2ed;
-  --night-text-2: #a8acb3;
-  --night-text-3: #6e737b;
 
   /* motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -64,7 +58,7 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
 
   --color-paper: var(--paper);
@@ -86,13 +80,8 @@
   --color-done-soft: var(--done-soft);
   --color-wait: var(--wait);
   --color-wait-soft: var(--wait-soft);
-  --color-night: var(--night);
-  --color-night-2: var(--night-2);
-  --color-night-3: var(--night-3);
-  --color-night-line: var(--night-line);
-  --color-night-text: var(--night-text);
-  --color-night-text-2: var(--night-text-2);
-  --color-night-text-3: var(--night-text-3);
+  --color-risk: var(--risk);
+  --color-risk-soft: var(--risk-soft);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -151,43 +140,39 @@ button {
   /* Type                                                             */
   /* ---------------------------------------------------------------- */
 
+  /* The HUD's type: Inter, set heavy and tight. Emphasis is the spot, never italic. */
   .t-hero {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: clamp(3.4rem, 9.2vw, 8.75rem);
-    line-height: 0.92;
-    letter-spacing: -0.028em;
+    font-family: var(--font-sans);
+    font-weight: 650;
+    font-size: clamp(2.6rem, 5.6vw, 5.4rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
     text-wrap: balance;
   }
 
   .t-h2 {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: clamp(2.6rem, 5.6vw, 5.25rem);
-    line-height: 0.98;
-    letter-spacing: -0.024em;
+    font-family: var(--font-sans);
+    font-weight: 650;
+    font-size: clamp(2.2rem, 4.2vw, 3.9rem);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
     text-wrap: balance;
   }
 
   .t-h3 {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: clamp(1.9rem, 3vw, 2.6rem);
-    line-height: 1.04;
-    letter-spacing: -0.018em;
+    font-family: var(--font-sans);
+    font-weight: 620;
+    font-size: clamp(1.55rem, 2.2vw, 2.05rem);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
 
-  /* serif emphasis: the second line of most headlines leans and takes the spot */
   .t-hero em,
   .t-h2 em,
   .t-h3 em {
-    font-style: italic;
+    font-style: normal;
     color: var(--spot);
-  }
-  .on-night .t-h2 em,
-  .on-night .t-h3 em {
-    color: var(--spot-light);
   }
 
   .t-title {
@@ -240,13 +225,6 @@ button {
     background: var(--spot);
     box-shadow: 0 0 0 3px rgba(var(--spot-rgb), 0.14);
   }
-  .on-night .t-eyebrow {
-    color: var(--night-text-2);
-  }
-  .on-night .t-eyebrow::before {
-    background: var(--spot-light);
-    box-shadow: 0 0 0 3px rgba(147, 164, 255, 0.16);
-  }
 
   .t-num {
     font-variant-numeric: tabular-nums;
@@ -268,14 +246,6 @@ button {
     padding-block: clamp(96px, 13vw, 184px);
   }
 
-  .on-night {
-    background: var(--night);
-    color: var(--night-text);
-  }
-  .on-night .t-lead,
-  .on-night .t-body {
-    color: var(--night-text-2);
-  }
 
   /* ---------------------------------------------------------------- */
   /* Buttons                                                          */
@@ -327,16 +297,6 @@ button {
     border-color: var(--ink);
     background: var(--card);
   }
-  .on-night .btn-primary,
-  .btn-light {
-    background: var(--night-text);
-    color: var(--ink);
-  }
-  .on-night .btn-primary:hover,
-  .btn-light:hover {
-    background: var(--spot-light);
-    color: var(--ink);
-  }
   .btn .btn-arrow {
     transition: transform 320ms var(--ease-out);
   }
@@ -358,77 +318,47 @@ button {
     box-shadow: var(--shadow-card);
   }
 
+  /* status pills, as in the HUD: color carries meaning (spot = us, done, wait, risk) */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    height: 1.5rem;
+    padding-inline: 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 550;
+    white-space: nowrap;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    background: var(--card);
+  }
+  .pill-spot {
+    background: var(--spot-soft);
+    color: var(--spot);
+    border-color: transparent;
+  }
+  .pill-done {
+    background: var(--done-soft);
+    color: var(--done);
+    border-color: transparent;
+  }
+  .pill-wait {
+    background: var(--wait-soft);
+    color: var(--wait);
+    border-color: transparent;
+  }
+  .pill-risk {
+    background: var(--risk-soft);
+    color: var(--risk);
+    border-color: transparent;
+  }
+
   /* the planning-table dot grid behind the hero */
   .dot-grid {
     background-image: radial-gradient(rgba(21, 23, 27, 0.13) 1px, transparent 1.2px);
     background-size: 28px 28px;
     background-position: center;
-  }
-
-  /* ---------------------------------------------------------------- */
-  /* Hero: the Monday board                                           */
-  /* ---------------------------------------------------------------- */
-
-  .chip {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    width: 100%;
-    padding: 0.7rem 0.95rem 0.7rem 0.7rem;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    box-shadow: var(--shadow-card);
-    transition: box-shadow 700ms var(--ease-out);
-  }
-  .hero-loose .chip {
-    box-shadow: var(--shadow-float);
-  }
-  .chip-icon {
-    position: relative;
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 10px;
-    background: var(--paper-2);
-    color: var(--ink-2);
-    overflow: hidden;
-  }
-  .chip-tint {
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-  }
-  .chip-icon svg {
-    position: relative;
-  }
-  .chip-lines {
-    display: grid;
-    min-width: 0;
-  }
-  .chip-lines > * {
-    grid-area: 1 / 1;
-  }
-  .chip-title {
-    font-size: 0.875rem;
-    line-height: 1.3;
-    font-weight: 500;
-    letter-spacing: -0.012em;
-    color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .chip-sub {
-    font-size: 0.8rem;
-    line-height: 1.35;
-    letter-spacing: -0.004em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   /* ---------------------------------------------------------------- */
@@ -479,91 +409,6 @@ html[data-motion="on"] [data-split]:not([data-shown]) .split-word > span {
   transition-delay: calc(var(--split-delay, 0s) + var(--i, 0) * 55ms);
 }
 
-/* the scroll-filled statement: each word lights as the reader reaches it */
-html[data-motion="on"] .fill-word {
-  opacity: 0.16;
-}
-
-/* ------------------------------------------------------------------ */
-/* Hero track                                                          */
-/* Without motion the hero is two stacked blocks: the pitch, then the  */
-/* sorted board. With motion it becomes a sticky scroll scene where    */
-/* the loose chips sort themselves into the board.                     */
-/* ------------------------------------------------------------------ */
-
-.hero-copy {
-  position: relative;
-  z-index: 3;
-}
-.hero-board {
-  position: relative;
-  z-index: 2;
-}
-
-html[data-motion="on"] .hero-track {
-  height: 280vh;
-}
-html[data-motion="on"] .hero-stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
-}
-html[data-motion="on"] .hero-copy {
-  position: absolute;
-  inset: 0;
-}
-html[data-motion="on"] .hero-board {
-  position: absolute;
-  inset: 0;
-}
-/* until the scene has measured, the chips wait off stage (the intro cover is up meanwhile) */
-html[data-motion="on"] .hero-stage:not([data-ready]) .chip-mover {
-  visibility: hidden;
-}
-html[data-motion="on"] .board-head,
-html[data-motion="on"] .lane-head {
-  opacity: 0;
-}
-html[data-motion="on"] .chip-status,
-html[data-motion="on"] .chip-tint {
-  opacity: 0;
-}
-html:not([data-motion="on"]) .chip-raw {
-  opacity: 0;
-}
-html:not([data-motion="on"]) .hero-cue {
-  display: none;
-}
-
-@keyframes chip-drift {
-  0%,
-  100% {
-    transform: translate3d(0, -5px, 0) rotate(-0.4deg);
-  }
-  50% {
-    transform: translate3d(0, 5px, 0) rotate(0.4deg);
-  }
-}
-.hero-loose .chip-drift {
-  animation: chip-drift 7s ease-in-out 4 both;
-  animation-delay: var(--drift-delay, 0s);
-}
-
-@keyframes cue-bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
-}
-.cue-bob {
-  animation: cue-bob 2.4s ease-in-out infinite;
-}
-
 /* ------------------------------------------------------------------ */
 /* Examples: rows arrive in order whenever the story or its version     */
 /* changes (the list is re-keyed, so this replays)                       */
@@ -596,11 +441,31 @@ html[data-motion="on"] .story-fade {
 }
 
 /* ------------------------------------------------------------------ */
-/* Marquee (scroll-linked, never auto-playing)                          */
+/* The current step filling, striped like the HUD's active stage        */
 /* ------------------------------------------------------------------ */
 
-.marquee-mask {
-  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+@keyframes file-fill {
+  from {
+    width: 8%;
+  }
+  to {
+    width: 100%;
+  }
+}
+@keyframes os-stripes {
+  to {
+    background-position: 16px 0;
+  }
+}
+.file-fill {
+  width: 100%;
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.24) 0 4px, transparent 4px 8px);
+  background-size: 16px 16px;
+}
+html[data-motion="on"] .file-fill {
+  animation:
+    file-fill linear both,
+    os-stripes 1.1s linear infinite;
 }
 
 /* ------------------------------------------------------------------ */

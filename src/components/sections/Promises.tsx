@@ -1,24 +1,24 @@
 import type { CSSProperties } from "react";
-import { PRINCIPLES } from "@/content/site";
+import { PROMISES } from "@/content/site";
 import { Split } from "@/components/motion/Split";
 
-/** 06 · What it's like to work with us. Five promises, set like a table of contents. */
-export function Principles() {
+/** 04 · What stays in your hands: the rules every One Spot build follows, set like a table of contents. */
+export function Promises() {
   return (
-    <section aria-labelledby="principles-title" className="section pb-[clamp(64px,8vw,112px)]">
+    <section aria-labelledby="promises-title" className="section pb-[clamp(64px,8vw,112px)]">
       <div className="wrap">
         <p className="t-eyebrow" data-reveal>
-          {PRINCIPLES.eyebrow}
+          {PROMISES.eyebrow}
         </p>
-        <Split id="principles-title" lines={PRINCIPLES.headline} className="t-h2 mt-6" />
+        <Split id="promises-title" lines={PROMISES.headline} className="t-h2 mt-6" />
 
-        <ol className="mt-16 border-t border-[var(--line)] lg:mt-20">
-          {PRINCIPLES.items.map((item, i) => (
+        <ol className="mt-12 border-t border-[var(--line)] lg:mt-16">
+          {PROMISES.items.map((item, i) => (
             <li
               key={item.title}
               data-reveal
               style={{ "--reveal-delay": `${i * 0.06}s` } as CSSProperties}
-              className="group relative grid grid-cols-[2.75rem_1fr] items-baseline gap-x-4 gap-y-2 border-b border-[var(--line)] py-8 md:grid-cols-[5rem_minmax(0,1fr)_minmax(0,1fr)] md:gap-x-8 md:py-10"
+              className="group relative grid grid-cols-[2.75rem_1fr] items-baseline gap-x-4 gap-y-2 border-b border-[var(--line)] py-6 md:grid-cols-[5rem_minmax(0,1fr)_minmax(0,1fr)] md:gap-x-8 md:py-8"
             >
               {/* the spot slides in under the row on hover */}
               <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-[-1px] h-px origin-left scale-x-0 bg-[var(--spot)] transition-transform duration-700 ease-[var(--ease-out)] group-hover:scale-x-100" />

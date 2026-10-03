@@ -5,7 +5,7 @@ import { Icon, type IconName } from "@/components/ui/Icons";
 import { CartDemo } from "@/components/websites/CartDemo";
 import { StoreCompare } from "@/components/websites/StoreCompare";
 
-/** 05 · Websites. The storefront is part of the business too: before and after, a bag that sells, and what we build. */
+/** 03 · Websites. The storefront is part of the business too: before and after, a bag that sells, and what we build. */
 export function Websites() {
   return (
     <section id="websites" aria-labelledby="websites-title" className="section bg-[var(--paper-2)]">

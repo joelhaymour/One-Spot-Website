@@ -4,7 +4,7 @@ import { Split } from "@/components/motion/Split";
 import { Mark } from "@/components/ui/Mark";
 import { ContactForm } from "./ContactForm";
 
-/** 08 · The close. Talk about the business, not the technology. */
+/** 06 · The close. Tell us where it feels manual; we do our homework before we talk. */
 export function Contact() {
   return (
     <section id="contact" aria-labelledby="contact-title" className="px-3 pb-3 sm:px-4 sm:pb-4">

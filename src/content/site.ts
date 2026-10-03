@@ -8,15 +8,13 @@
 
 export const SITE = {
   name: "One Spot",
-  title: "One Spot — Your business, easier to run",
+  title: "One Spot — We learn your business before we build anything",
   description:
-    "One Spot is an agentic consulting company for small and mid-sized businesses. We learn how your company works, connect the tools you already use, take repetitive work off your team's plate, and give you one clear view of everything.",
-  tagline: "Your business, easier to run.",
+    "One Spot is a consulting company for small and mid-sized businesses. We learn how your company really works, map where work gets stuck, show you the fix before you say yes, then build it around the tools you already use.",
 } as const;
 
 export const NAV = [
-  { label: "What we do", href: "#what" },
-  { label: "How we work", href: "#process" },
+  { label: "How we work", href: "#how" },
   { label: "Examples", href: "#examples" },
   { label: "Websites", href: "#websites" },
   { label: "FAQ", href: "#faq" },
@@ -30,205 +28,168 @@ export const NAV_CTA = { label: "Talk to us", href: "#contact" } as const;
 
 export const HERO = {
   eyebrow: "Consulting for small and mid-sized businesses",
-  headline: ["Your business,", "easier to run."],
-  /** Index of the headline line set in italic accent. */
-  accentLine: 1,
-  lead: "We get to know how your company really works. Then we connect the tools you already use, take repetitive work off your team's plate, and give you one clear view of everything that's happening.",
+  headline: ["We learn your business", "before we build anything."],
+  lead: "We study how work really moves through your company, find what's worth fixing, and show you the result before you say yes. Then we build it around the tools you already use, and stay with it.",
   primary: { label: "Start with a conversation", href: "#contact" },
-  secondary: { label: "See how it works", href: "#what" },
+  secondary: { label: "See how we work", href: "#how" },
   reassurance: "No jargon. No ripping out the tools you already use.",
-  cue: "Scroll to sort a busy Monday",
 } as const;
 
-export type Lane = "handled" | "routed" | "you";
-
-export type ChipIcon = "mail" | "phone" | "chat" | "invoice" | "calendar" | "sheet" | "box" | "report" | "file";
-
-export interface BoardChip {
-  id: string;
-  icon: ChipIcon;
-  title: string;
-  /** Where it came from, shown while it is still loose on the desk. */
-  raw: string;
-  /** What happened to it, shown once it has been sorted. */
-  status: string;
-  lane: Lane;
-  /** Hidden on phones, where the board has less room. */
-  desktopOnly?: boolean;
-}
-
-/** The sorted board at the end of the hero: a normal Monday morning at Harbor Home Services. */
-export const BOARD = {
-  eyebrow: "With One Spot",
-  headline: ["Your Monday morning,", "sorted."],
-  lead: "Most of it handled. Some of it passed to the right person. Only what truly needs you, waiting for you.",
-  lanes: [
-    { id: "handled", title: "Handled for you" },
-    { id: "routed", title: "Sent to the right person" },
-    { id: "you", title: "Waiting on your OK" },
-  ] satisfies { id: Lane; title: string }[],
-  chips: [
-    { id: "invoice", icon: "invoice", title: "Invoice #1042 · 14 days late", raw: "Accounting · flagged Friday", status: "Friendly reminder sent", lane: "handled" },
-    { id: "call", icon: "phone", title: "Missed call · Mrs. Patel", raw: "Voicemail · 7:40pm", status: "Called back, booked Thu 9am", lane: "handled" },
-    { id: "order", icon: "chat", title: "“Is my order on its way?”", raw: "Website chat · 11:02pm", status: "Tracking link sent", lane: "handled" },
-    { id: "timesheets", icon: "sheet", title: "Timesheets · week 38", raw: "Spreadsheet · 3 missing", status: "Collected and filed", lane: "handled", desktopOnly: true },
-    { id: "report", icon: "report", title: "Month-end report", raw: "Not started", status: "Drafted for Friday", lane: "handled", desktopOnly: true },
-    { id: "quote", icon: "mail", title: "Quote request · Jensen Co.", raw: "Email · 6:58am", status: "To Maria in Sales, with past jobs", lane: "routed" },
-    { id: "schedule", icon: "calendar", title: "Tuesday · two techs short", raw: "Calendar · 3 clashes", status: "To Dev, with two fixes ready", lane: "routed" },
-    { id: "prices", icon: "mail", title: "Supplier price update", raw: "Email · PDF attached", status: "To accounting, prices updated", lane: "routed", desktopOnly: true },
-    { id: "stock", icon: "box", title: "Low stock · ½″ copper fittings", raw: "Stockroom · 12 left", status: "Reorder $1,240 · approve?", lane: "you" },
-    { id: "renewal", icon: "file", title: "Van lease renewal · Oct 1", raw: "Paper file · drawer 2", status: "Renew at the new rate?", lane: "you", desktopOnly: true },
-  ] satisfies BoardChip[],
-};
-
-/* ------------------------------------------------------------------ */
-/* 01 · The problem                                                    */
-/* ------------------------------------------------------------------ */
-
-export const PROBLEM = {
-  eyebrow: "Sound familiar?",
-  statement:
-    "Most growing businesses don't have a people problem. They have a handoff problem. The details live in inboxes, spreadsheets and people's heads, and somewhere along the way the owner became the glue holding it all together.",
-  pains: [
-    { icon: "person", quote: "I'm the only one who knows where everything is." },
-    { icon: "copies", quote: "We type the same details into three different places." },
-    { icon: "inbox", quote: "Customers wait because a message sat in someone's inbox." },
-    { icon: "month", quote: "I find out about problems at the end of the month." },
+/**
+ * The company file in the hero: one business, the six steps, and what we know growing at each one.
+ * Harbor Home Services and its numbers are illustrative.
+ */
+export const FILE = {
+  label: "Company file",
+  company: "Harbor Home Services",
+  meta: "Plumbing & heating · 24 people",
+  /** One line per step, added as the file reaches it. tone: what the line means. */
+  lines: [
+    { text: "Likely tools: Jobber, QuickBooks, Gmail", tone: "ink" },
+    { text: "Dana retypes every job at night", tone: "risk" },
+    { text: "Invoices wait 6 days after the job", tone: "wait" },
+    { text: "3 fixes worth making, 1 that isn't", tone: "spot" },
+    { text: "About 11 hours back every week", tone: "spot" },
+    { text: "Live: invoices go out the same day", tone: "done" },
   ],
-  close: "None of this means you need new software, or a tech team. It means the pieces aren't talking to each other yet.",
+  next: ["Prepare the first conversation", "Map how a job becomes an invoice", "Find what's worth fixing", "Choose what to build", "Show Dana the preview", "Measure what changed"],
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* 02 · What we do                                                     */
+/* 01 · How we work: the six steps                                     */
 /* ------------------------------------------------------------------ */
 
-export type PillarScene = "connect" | "organize" | "automate" | "see";
+export type StepKey = "look" | "listen" | "map" | "find" | "show" | "build";
 
-export const WHAT = {
-  eyebrow: "What we do",
-  headline: ["Four things we do", "for every business."],
-  lead: "Every company is different, so every setup is too. But the work always comes down to the same four jobs.",
-  pillars: [
-    {
-      scene: "connect",
-      title: "Connect the tools you already use",
-      body: "Your email, calendar, accounting and customer list start sharing what they know, so nobody types the same thing twice.",
-      example: "Add a new customer once, and they show up everywhere they're needed.",
-    },
-    {
-      scene: "organize",
-      title: "Organize how information moves",
-      body: "When something happens in one part of the business, the right people hear about it straight away, with the details they need.",
-      example: "A signed quote tells scheduling to book the job and accounting to send the deposit invoice.",
-    },
-    {
-      scene: "automate",
-      title: "Take the repetitive work off your team",
-      body: "Reminders, follow-ups, data entry and reports get done on time, every time, by agents we set up to work the way you do.",
-      example: "Late invoices get a polite nudge on day seven, and a call on your list by day fourteen.",
-    },
-    {
-      scene: "see",
-      title: "Give you a clear view of everything",
-      body: "One simple summary of what's happening across the company, and a heads-up the moment something needs you.",
-      example: "Every Monday: last week in plain English, and the few things worth your attention.",
-    },
-  ] satisfies { scene: PillarScene; title: string; body: string; example: string }[],
-};
-
-/** Words and numbers inside the four illustrations. Illustrative: Harbor Home Services is fictional. */
-export const SCENES = {
-  connect: {
-    tools: ["Email", "Calendar", "Accounting", "Spreadsheets", "Phone", "Customer list", "Inventory", "Payroll"],
-    /** Tool indexes that receive the new customer. */
-    receivers: [1, 2, 5],
-    packet: "New customer · Rivera Dental",
-    caption: "Entered once. Up to date everywhere.",
-  },
-  organize: {
-    source: { dept: "Sales", title: "Quote signed · Jensen Co.", detail: "$7,400 · kitchen repipe" },
-    outcomes: [
-      { dept: "Scheduling", title: "Job booked", detail: "Thu 9:00 · Maria's crew" },
-      { dept: "Accounting", title: "Deposit invoice sent", detail: "$1,850 · due in 7 days" },
-      { dept: "Customer", title: "Confirmation sent", detail: "What to expect, and when" },
-    ],
-    owner: "You: nothing to do. It's in Monday's summary.",
-  },
-  automate: {
-    title: "This week's routine work",
-    tasks: [
-      { label: "Appointment reminders", count: "38 sent" },
-      { label: "Follow up on open quotes", count: "7 sent" },
-      { label: "Nudge late invoices", count: "4 sent" },
-      { label: "Timesheets into payroll", count: "12 filed" },
-      { label: "Update stock counts", count: "Done" },
-      { label: "Write the weekly report", count: "Done" },
-    ],
-    hoursLabel: "Hours back for your team this week",
-    hours: 11.5,
-  },
-  see: {
-    greeting: "Good morning, Dana.",
-    intro: "Here's last week at Harbor Home Services.",
-    stats: [
-      { label: "Jobs completed", value: "46", note: "6 more than usual" },
-      { label: "Invoiced", value: "$38,420", note: "92% already paid" },
-      { label: "Reply to customers", value: "6 min", note: "on average" },
-    ],
-    attentionTitle: "Worth your attention",
-    attention: [
-      { text: "Two invoices are over 30 days late ($4,100). Reminders are out.", action: "Call them" },
-      { text: "Copper fittings are running low. Reorder drafted: $1,240.", action: "Approve" },
-      { text: "Tuesday is overbooked. Moving two jobs to Wednesday would fix it.", action: "Move them" },
-    ],
-  },
-} as const;
-
-/* ------------------------------------------------------------------ */
-/* 03 · How we work                                                    */
-/* ------------------------------------------------------------------ */
-
-export const PROCESS = {
+export const JOURNEY = {
   eyebrow: "How we work",
-  headline: ["Business first.", "Technology second."],
-  lead: "We don't show up with software to sell. We show up to listen, and we only build what will make your week noticeably easier.",
-  note: "Every engagement starts the same way: a conversation about your business, not a sales pitch.",
+  headline: ["Six steps, from first call", "to something that works."],
+  lead: "Every business goes through the same six steps with us. Each one takes away a little more guesswork, so by the time we build, we know we're building the right thing.",
+  note: "Harbor Home Services is an example business, and its numbers are illustrative.",
   steps: [
     {
-      name: "Listen",
-      when: "Week one",
-      body: "We spend time with you and your team, watching how work actually gets done. Not how the org chart says it does.",
-      get: "A clear list of where time and money slip away.",
+      key: "look",
+      short: "Look",
+      question: "What should we know before we talk?",
+      title: "We do our homework first.",
+      body: "Before we meet, we learn how businesses like yours usually run, where they tend to get stuck, and which tools you probably use. Your first call is about you, not the basics.",
     },
     {
-      name: "Map",
-      when: "Week two",
-      body: "We draw your whole business on one page: every tool, every handoff, every place where things wait or get lost.",
-      get: "A map of your company you'll want to keep.",
+      key: "listen",
+      short: "Listen",
+      question: "How does the work really happen?",
+      title: "We sit with you and your team.",
+      body: "We talk with the people doing the work and watch a normal day. Every messy note becomes something clear: what hurts, who does what, and the rules nobody wrote down.",
     },
     {
-      name: "Plan",
-      when: "Before any build",
-      body: "Together we choose what to fix first, starting with what gives you the most time back. Clear scope, clear price, no surprises.",
-      get: "A simple plan, written in plain English.",
+      key: "map",
+      short: "Map",
+      question: "Where does work wait?",
+      title: "We map how work really moves.",
+      body: "Step by step, person by person. Every place something gets typed twice, handed off, or left waiting, on one page you can read in ten seconds.",
     },
     {
-      name: "Build",
-      when: "One improvement at a time",
-      body: "We connect your tools, set up the automations, and train your agents to work the way your business works. Your team keeps working while we build.",
-      get: "Working improvements your team can feel.",
+      key: "find",
+      short: "Find",
+      question: "What's worth fixing?",
+      title: "We find the few changes that matter most.",
+      body: "We look across the whole business, not one department at a time. The smallest set of changes that removes the most pain, and an honest list of what's not worth building.",
     },
     {
-      name: "Stay",
-      when: "For as long as it helps",
-      body: "We check in, fine-tune, and add the next improvement when you're ready. You're never handed a black box and left alone with it.",
-      get: "A partner who knows your business.",
+      key: "show",
+      short: "Show",
+      question: "What would it look like?",
+      title: "You see it before you say yes.",
+      body: "A clickable preview with work like yours in it, the before and after side by side, and a short proposal in plain English with one clear price.",
     },
-  ],
+    {
+      key: "build",
+      short: "Build",
+      question: "Is it working?",
+      title: "We build it, then we stay.",
+      body: "It runs alongside the way you work now until you're sure. Then we measure what changed, and keep improving it with you.",
+    },
+  ] satisfies { key: StepKey; short: string; question: string; title: string; body: string }[],
+};
+
+/** Words and numbers inside the six illustrations. Illustrative: Harbor Home Services is fictional. */
+export const STEP_SCENES = {
+  look: {
+    company: "Harbor Home Services",
+    meta: "Plumbing & heating · 24 people",
+    toolsLabel: "Likely tools",
+    tools: ["Jobber", "QuickBooks", "Gmail", "Spreadsheets"],
+    stuckLabel: "Where businesses like this get stuck",
+    stuck: ["Jobs get finished, invoices go out late", "The office retypes the techs' notes", "Quotes go out and nobody follows up"],
+    openerLabel: "Ask first",
+    opener: "How does a finished job turn into an invoice?",
+  },
+  listen: {
+    notes: [
+      { quote: "Techs text me photos. I type it all into QuickBooks at night.", who: "Dana, owner" },
+      { quote: "Half the quotes we send, nobody ever follows up.", who: "Maria, office" },
+      { quote: "Anything over five grand, Dana has to see it.", who: "Dev, lead tech" },
+    ],
+    findings: [
+      { kind: "Pain", text: "Every job typed twice, five nights a week" },
+      { kind: "Pain", text: "Quotes with no follow-up" },
+      { kind: "Rule", text: "Quotes over $5,000 need Dana's OK" },
+    ],
+  },
+  map: {
+    lanes: ["Customer", "Office", "Tech", "Dana"],
+    /** lane index, label, pain? and the wait that follows it */
+    steps: [
+      { lane: 0, label: "Calls for a repair" },
+      { lane: 1, label: "Books the job" },
+      { lane: 2, label: "Does it, texts photos" },
+      { lane: 3, label: "Retypes it at night", pain: true, wait: "2 days" },
+      { lane: 1, label: "Builds the invoice", pain: true, wait: "4 days" },
+      { lane: 0, label: "Finally gets the bill" },
+    ],
+    total: "6 days from finished job to invoice",
+  },
+  find: {
+    painsLabel: "What we found",
+    pains: ["Retyping job notes", "Late invoices", "Quotes nobody chases", "Parts missing from the van", "A new phone system"],
+    fixesLabel: "What we'd fix",
+    fixes: [
+      { title: "Job notes become the invoice", solves: "Fixes 2" },
+      { title: "Quote follow-ups on day 3 and 7", solves: "Fixes 1" },
+      { title: "Tomorrow's parts checked tonight", solves: "Fixes 1" },
+    ],
+    skip: { title: "A new phone system", why: "Not worth it. The one you have works." },
+  },
+  show: {
+    title: "A finished job, to a paid invoice",
+    stats: [
+      { label: "Steps", before: "6", after: "3" },
+      { label: "Done by hand", before: "4", after: "1" },
+      { label: "Turnaround", before: "6 days", after: "Same day" },
+    ],
+    hoursLabel: "Hours back each week",
+    hours: "~11",
+    after: [
+      { actor: "onespot", text: "Turns the tech's notes and photos into the invoice" },
+      { actor: "system", text: "QuickBooks sends it the same day" },
+      { actor: "you", text: "Dana approves anything over $5,000" },
+    ],
+    approve: "Approve the plan",
+    approved: "Approved",
+  },
+  build: {
+    status: ["Building", "Running side by side", "Live"],
+    tasks: ["Connect Jobber and QuickBooks", "Run it next to the old way", "Dana switches it on"],
+    measuredLabel: "Measured after 30 days",
+    measured: [
+      { label: "Invoices out", value: "Same day" },
+      { label: "Retyping at night", value: "None" },
+    ],
+  },
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* 04 · Examples                                                       */
+/* 02 · Examples                                                       */
 /* ------------------------------------------------------------------ */
 
 export const EXAMPLES = {
@@ -242,7 +203,7 @@ export const EXAMPLES = {
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* 05 · Websites                                                       */
+/* 03 · Websites                                                       */
 /* The store in the mockups (Seaside Swim Co.) is fictional. The        */
 /* features are the ones we build for real online stores.               */
 /* ------------------------------------------------------------------ */
@@ -291,43 +252,23 @@ export const WEBSITES = {
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* 06 · Principles and who we work with                                */
+/* 04 · What stays in your hands                                       */
 /* ------------------------------------------------------------------ */
 
-export const PRINCIPLES = {
+export const PROMISES = {
   eyebrow: "Working with us",
-  headline: ["What it feels like", "to work with us."],
+  headline: ["Built around you.", "Decided by you."],
   items: [
-    { title: "Business first", body: "We learn how your company runs before we recommend anything." },
-    { title: "Your tools stay", body: "We build around what your team already knows and uses every day." },
-    { title: "You stay in charge", body: "Agents handle the routine. The decisions stay with you." },
-    { title: "Plain English", body: "No jargon in our meetings, our reports, or our invoices." },
-    { title: "Small steps, real results", body: "We start with one change that pays off, then build from there." },
-  ],
-} as const;
-
-export const INDUSTRIES = {
-  lead: "Built for businesses like",
-  list: [
-    "Plumbing & HVAC",
-    "Dental practices",
-    "Wholesale & distribution",
-    "Accounting firms",
-    "Property management",
-    "Builders & trades",
-    "Car dealerships",
-    "Auto body & glass",
-    "Clinics",
-    "Agencies",
-    "Landscaping",
-    "Manufacturing",
-    "Retail",
-    "Cleaning services",
+    { title: "You stay in charge", body: "Prices, approvals, anything a customer sees: you choose where a person decides, and it stays that way." },
+    { title: "Everything is written down", body: "Every action the system takes is recorded, so you can always see what happened and why." },
+    { title: "Side by side first", body: "Your current way keeps working until the new one has proven itself on your real work." },
+    { title: "Nothing reaches customers early", body: "We test with your own examples before anything goes live." },
+    { title: "Every business makes us better", body: "We remember what actually worked for businesses like yours, and trust what was proven over what only looked good on paper." },
   ],
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* 07 · FAQ                                                            */
+/* 05 · FAQ                                                            */
 /* ------------------------------------------------------------------ */
 
 export const FAQ = {
@@ -339,20 +280,16 @@ export const FAQ = {
       a: "Not at all. You know your business; that's the part we need from you. We handle everything technical and explain it in plain English along the way.",
     },
     {
-      q: "Will this replace my staff?",
-      a: "That isn't the goal. We take the repetitive work off your team's plate, like copying details between systems and chasing reminders, so they can spend their time on customers and the work they were hired to do.",
-    },
-    {
       q: "Do we have to switch software?",
       a: "Almost never. We build around the tools you already use. If something truly isn't working for you, we'll tell you why and let you decide.",
     },
     {
-      q: "What exactly is an agent?",
-      a: "Think of it as a digital team member with one clear job, like sending invoice reminders or booking appointments. It follows the rules you set, checks with a person before anything important, and keeps a record of everything it does.",
+      q: "Will this replace my staff?",
+      a: "That isn't the goal. We take the repetitive work off your team's plate, like copying details between systems and chasing reminders, so they can spend their time on customers and the work they were hired to do.",
     },
     {
-      q: "What if something goes wrong?",
-      a: "Agents work inside limits you agree to and ask before anything that matters. Every action is recorded, so it's easy to see what happened, fix it, and adjust the rules. We keep an eye on things with you.",
+      q: "What exactly is an agent?",
+      a: "Think of it as a digital team member with one clear job, like turning job notes into invoices or following up on quotes. It follows the rules you set, checks with a person before anything important, and keeps a record of everything it does.",
     },
     {
       q: "Is our information safe?",
@@ -360,45 +297,45 @@ export const FAQ = {
     },
     {
       q: "How long does it take, and what does it cost?",
-      a: "It depends on your business, which is why we start by listening. After we've mapped how your company works, you'll get a clear plan with a clear price before any building starts. We begin with the change that gives you the most time back.",
+      a: "It depends on your business, which is why we start by learning it. Before you commit to anything, you'll see a preview of the change, the before and after, and a short proposal with one clear price.",
     },
   ],
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* 08 · Contact                                                        */
+/* 06 · Contact                                                        */
 /* ------------------------------------------------------------------ */
 
 export const CONTACT = {
   eyebrow: "Start here",
-  headline: ["Let's talk about your business.", "Not about AI."],
-  lead: "Tell us a little about how your company works and where the day gets stuck. We'll come back with a few honest ideas, even if we're not the right fit.",
+  headline: ["Tell us where it", "feels manual."],
+  lead: "A few lines is plenty. We'll do our homework on your business before we talk, so the first conversation is about you, not the basics.",
   next: [
-    { title: "We reply to set up a call", body: "At a time that suits you." },
-    { title: "We ask about your business", body: "How work flows, not what software you run." },
+    { title: "We look into your business", body: "Before we ever get on a call." },
+    { title: "We talk, and mostly listen", body: "About how work moves, not what software you run." },
     { title: "You get a few honest ideas", body: "Yours to keep, whether we work together or not." },
   ],
   fields: {
     name: "Your name",
     email: "Email",
     company: "Your company, and what it does",
-    stuck: "Where does the day get stuck?",
+    stuck: "Where does it feel manual?",
   },
   placeholders: {
     name: "Dana Reyes",
     email: "dana@harborhome.com",
     company: "Harbor Home Services, plumbing and heating, 24 people",
-    stuck: "Scheduling takes hours every week, and invoices go out late.",
+    stuck: "We type every job in twice, and invoices go out a week late.",
   },
   submit: "Send",
   sending: "Sending",
   success: {
     title: "Thank you. We've got it.",
-    body: "We'll be in touch soon to find a time to talk. No need to prepare anything.",
+    body: "We'll look into your business and be in touch soon to find a time to talk. No need to prepare anything.",
   },
   error: "Something went wrong and your message didn't send. Please try again.",
 } as const;
 
 export const FOOTER = {
-  line: "Consulting for small and mid-sized businesses. We connect your tools, organize how work moves, take the repetitive work off your team, and give you one clear view.",
+  line: "Consulting for small and mid-sized businesses. We learn how your company works, find what's worth fixing, and build it around the tools you already use.",
 } as const;

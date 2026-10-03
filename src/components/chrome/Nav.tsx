@@ -171,9 +171,9 @@ export function Nav() {
         <ul className="wrap flex flex-col pt-6">
           {NAV.map((item, i) => (
             <li key={item.href} className="border-b border-[var(--line)]">
-              <AnchorLink href={item.href} onNavigate={close} className="flex items-baseline justify-between py-5 font-[family-name:var(--font-serif)] text-[2.25rem] leading-none tracking-[-0.02em]">
+              <AnchorLink href={item.href} onNavigate={close} className="flex items-baseline justify-between py-5 text-[2rem] font-[650] leading-none tracking-[-0.04em]">
                 {item.label}
-                <span className="t-num font-[family-name:var(--font-sans)] text-[0.8rem] tracking-normal text-[var(--ink-3)]">0{i + 1}</span>
+                <span className="t-num text-[0.8rem] font-normal tracking-normal text-[var(--ink-3)]">0{i + 1}</span>
               </AnchorLink>
             </li>
           ))}
