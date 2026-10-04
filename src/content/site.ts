@@ -3,20 +3,20 @@
  *
  * Voice: US English, the company speaks as "we", plain words a busy owner would use. No jargon, no
  * "AI-powered", no futurism. Examples are operational (jobs, invoices, schedules, stock), never marketing.
- * The running example business is Harbor Home Services, owned by Dana. It is fictional and illustrative.
+ * Every business, person and number in the examples is fictional and illustrative.
  */
 
 export const SITE = {
   name: "One Spot",
-  title: "One Spot — We learn your business before we build anything",
+  title: "One Spot — Modern workflows, made simple",
   description:
-    "One Spot is a consulting company for small and mid-sized businesses. We learn how your company really works, map where work gets stuck, show you the fix before you say yes, then build it around the tools you already use.",
+    "One Spot helps small and mid-sized businesses cut through endless tools and new technology. We find what actually fits your business, connect the software you already use, and put it to work.",
 } as const;
 
 export const NAV = [
-  { label: "How we work", href: "#how" },
-  { label: "Examples", href: "#examples" },
-  { label: "Websites", href: "#websites" },
+  { label: "Examples", href: "#top" },
+  { label: "How we work", href: "#process" },
+  { label: "Your tools", href: "#tools" },
   { label: "FAQ", href: "#faq" },
 ] as const;
 
@@ -28,247 +28,207 @@ export const NAV_CTA = { label: "Talk to us", href: "#contact" } as const;
 
 export const HERO = {
   eyebrow: "Consulting for small and mid-sized businesses",
-  headline: ["We learn your business", "before we build anything."],
-  lead: "We study how work really moves through your company, find what's worth fixing, and show you the result before you say yes. Then we build it around the tools you already use, and stay with it.",
+  headline: ["Modern workflows.", "Made simple."],
+  lead: "In a world with endless tools and new technology, knowing where to start is the hard part. We cut through the noise, find what actually fits your business, and put it to work.",
   primary: { label: "Start with a conversation", href: "#contact" },
-  secondary: { label: "See how we work", href: "#how" },
+  secondary: { label: "See how we work", href: "#process" },
   reassurance: "No jargon. No ripping out the tools you already use.",
 } as const;
 
-/**
- * The company file in the hero: one business, the six steps, and what we know growing at each one.
- * Harbor Home Services and its numbers are illustrative.
- */
-export const FILE = {
-  label: "Company file",
-  company: "Harbor Home Services",
-  meta: "Plumbing & heating · 24 people",
-  /** One line per step, added as the file reaches it. tone: what the line means. */
-  lines: [
-    { text: "Likely tools: Jobber, QuickBooks, Gmail", tone: "ink" },
-    { text: "Dana retypes every job at night", tone: "risk" },
-    { text: "Invoices wait 6 days after the job", tone: "wait" },
-    { text: "3 fixes worth making, 1 that isn't", tone: "spot" },
-    { text: "About 11 hours back every week", tone: "spot" },
-    { text: "Live: invoices go out the same day", tone: "done" },
-  ],
-  next: ["Prepare the first conversation", "Map how a job becomes an invoice", "Find what's worth fixing", "Choose what to build", "Show Dana the preview", "Measure what changed"],
-} as const;
-
 /* ------------------------------------------------------------------ */
-/* 01 · How we work: the six steps                                     */
+/* Hero examples: one ordinary job, before and with One Spot           */
+/* Illustrative: the businesses, people and numbers are made up.       */
 /* ------------------------------------------------------------------ */
 
-export type StepKey = "look" | "listen" | "map" | "find" | "show" | "build";
+export type ExampleActor = "team" | "onespot" | "you" | "wait" | "outside";
 
-export const JOURNEY = {
-  eyebrow: "How we work",
-  headline: ["Six steps, from first call", "to something that works."],
-  lead: "Every business goes through the same six steps with us. Each one takes away a little more guesswork, so by the time we build, we know we're building the right thing.",
-  note: "Harbor Home Services is an example business, and its numbers are illustrative.",
-  steps: [
+export interface ExampleStep {
+  text: string;
+  /** Who does it, in a word or two. */
+  who: string;
+  actor: ExampleActor;
+  /** Something that hurts (before) or the thing that's now caught early (after). */
+  flag?: string;
+  /** Apps this step makes someone open (before) or keeps in sync (after). */
+  apps?: string[];
+}
+
+export interface HeroExample {
+  key: string;
+  tab: string;
+  icon: "car" | "tooth" | "bank" | "tools";
+  moment: string;
+  before: ExampleStep[];
+  after: ExampleStep[];
+  stats: { label: string; before: string; after: string }[];
+}
+
+export const HERO_EXAMPLES = {
+  label: "One job, two ways",
+  before: "Today",
+  after: "With One Spot",
+  note: "Illustrative examples",
+  items: [
     {
-      key: "look",
-      short: "Look",
-      question: "What should we know before we talk?",
-      title: "We do our homework first.",
-      body: "Before we meet, we learn how businesses like yours usually run, where they tend to get stuck, and which tools you probably use. Your first call is about you, not the basics.",
+      key: "body",
+      tab: "Body shop",
+      icon: "car",
+      moment: "A customer books a bumper repair for Thursday.",
+      before: [
+        { text: "Front desk books it, nobody checks the parts", who: "Front desk", actor: "team" },
+        { text: "Tuesday cancels; their parts sit uncounted on the shelf", who: "Parts room", actor: "team", flag: "Count is wrong" },
+        { text: "Thursday the clips are missing, the car waits in the bay", who: "Technician", actor: "wait", flag: "Bay blocked 2 days" },
+        { text: "Someone phones the supplier and re-books the customer", who: "Front desk", actor: "team" },
+      ],
+      after: [
+        { text: "The booking checks parts on hand: bumper cover ✓, clips short", who: "One Spot", actor: "onespot" },
+        { text: "The clips are ordered from the supplier, arriving Wednesday", who: "One Spot", actor: "onespot" },
+        { text: "Tuesday's cancellation puts its parts back for the next booking", who: "One Spot", actor: "onespot" },
+        { text: "Orders over your limit wait for your OK", who: "You", actor: "you" },
+      ],
+      stats: [
+        { label: "Cars waiting on parts", before: "3 a week", after: "None" },
+        { label: "Parts orders", before: "By phone", after: "Automatic" },
+      ],
     },
     {
-      key: "listen",
-      short: "Listen",
-      question: "How does the work really happen?",
-      title: "We sit with you and your team.",
-      body: "We talk with the people doing the work and watch a normal day. Every messy note becomes something clear: what hurts, who does what, and the rules nobody wrote down.",
+      key: "dental",
+      tab: "Dental & medical",
+      icon: "tooth",
+      moment: "A patient comes in for a cleaning and X-rays.",
+      before: [
+        { text: "Front desk calls the insurer to check coverage", who: "Front desk", actor: "wait", flag: "20 min on hold" },
+        { text: "After the visit, codes and notes are typed into the insurer's site", who: "Front desk", actor: "team" },
+        { text: "Two weeks later the claim bounces: X-rays not attached", who: "Insurer", actor: "outside", flag: "Rejected" },
+        { text: "It's fixed and sent again; payment lands a month later", who: "Front desk", actor: "wait" },
+      ],
+      after: [
+        { text: "Coverage is checked the day before the appointment", who: "One Spot", actor: "onespot" },
+        { text: "After the visit, the claim fills itself from the chart, X-rays attached", who: "One Spot", actor: "onespot" },
+        { text: "It's checked against the insurer's rules before it goes", who: "One Spot", actor: "onespot", flag: "Caught before sending" },
+        { text: "Anything unusual comes to the desk to approve", who: "Front desk", actor: "you" },
+      ],
+      stats: [
+        { label: "Claims sent back", before: "1 in 5", after: "Rare" },
+        { label: "Time on claims", before: "9 hrs a week", after: "2 hrs" },
+      ],
     },
     {
-      key: "map",
-      short: "Map",
-      question: "Where does work wait?",
-      title: "We map how work really moves.",
-      body: "Step by step, person by person. Every place something gets typed twice, handed off, or left waiting, on one page you can read in ten seconds.",
+      key: "finance",
+      tab: "Financing",
+      icon: "bank",
+      moment: "An account manager submits a deal for funding.",
+      before: [
+        { text: "The doc request joins the queue", who: "Account manager", actor: "team" },
+        { text: "Hours later the specialist finds the invoice name doesn't match and the license expired", who: "Contract specialist", actor: "team", flag: "Sent back" },
+        { text: "The account manager chases the customer and the dealership", who: "Account manager", actor: "team" },
+        { text: "The dealership replies tomorrow; every deal behind it waits", who: "Dealership", actor: "wait", flag: "+1 day, queue stuck" },
+      ],
+      after: [
+        { text: "Checked the moment it's submitted: business name, invoice, license", who: "One Spot", actor: "onespot" },
+        { text: "Invoice name doesn't match, license expired: it's held", who: "One Spot", actor: "onespot", flag: "Caught at submit" },
+        { text: "The account manager gets the fix list, with the requests drafted", who: "Account manager", actor: "team" },
+        { text: "Only clean deals reach the queue for the specialist", who: "Contract specialist", actor: "you" },
+      ],
+      stats: [
+        { label: "Deals sent back", before: "1 in 4", after: "Almost none" },
+        { label: "Submit to funded", before: "3 days", after: "Same day" },
+      ],
     },
     {
-      key: "find",
-      short: "Find",
-      question: "What's worth fixing?",
-      title: "We find the few changes that matter most.",
-      body: "We look across the whole business, not one department at a time. The smallest set of changes that removes the most pain, and an honest list of what's not worth building.",
+      key: "hvac",
+      tab: "HVAC",
+      icon: "tools",
+      moment: "A technician quotes a furnace replacement on site.",
+      before: [
+        { text: "The tech builds the estimate in the field app", who: "Technician", actor: "team", apps: ["Field app"] },
+        { text: "The office retypes it into accounting, the CRM and the job folder", who: "Office", actor: "team", apps: ["Accounting", "CRM", "Shared drive"] },
+        { text: "The account manager emails it out for approval and a deposit", who: "Account manager", actor: "team", apps: ["Email"] },
+        { text: "The customer adds a humidifier: redo it in every app", who: "Everyone", actor: "wait", flag: "Start over", apps: ["Field app", "Accounting", "CRM", "Email"] },
+      ],
+      after: [
+        { text: "The estimate goes from the field app to everywhere it's needed", who: "One Spot", actor: "onespot", apps: ["Accounting", "CRM", "Shared drive"] },
+        { text: "The customer gets it to approve and pay the deposit", who: "One Spot", actor: "onespot", apps: ["Email"] },
+        { text: "Add a humidifier once, and every app updates", who: "One Spot", actor: "onespot", flag: "Nothing retyped" },
+        { text: "The office reviews it and books the install", who: "Office", actor: "you" },
+      ],
+      stats: [
+        { label: "Apps per job", before: "5, by hand", after: "1" },
+        { label: "Times retyped", before: "3+", after: "0" },
+      ],
     },
-    {
-      key: "show",
-      short: "Show",
-      question: "What would it look like?",
-      title: "You see it before you say yes.",
-      body: "A clickable preview with work like yours in it, the before and after side by side, and a short proposal in plain English with one clear price.",
-    },
-    {
-      key: "build",
-      short: "Build",
-      question: "Is it working?",
-      title: "We build it, then we stay.",
-      body: "It runs alongside the way you work now until you're sure. Then we measure what changed, and keep improving it with you.",
-    },
-  ] satisfies { key: StepKey; short: string; question: string; title: string; body: string }[],
+  ] satisfies HeroExample[],
 };
 
-/** Words and numbers inside the six illustrations. Illustrative: Harbor Home Services is fictional. */
-export const STEP_SCENES = {
-  look: {
-    company: "Harbor Home Services",
-    meta: "Plumbing & heating · 24 people",
-    toolsLabel: "Likely tools",
-    tools: ["Jobber", "QuickBooks", "Gmail", "Spreadsheets"],
-    stuckLabel: "Where businesses like this get stuck",
-    stuck: ["Jobs get finished, invoices go out late", "The office retypes the techs' notes", "Quotes go out and nobody follows up"],
-    openerLabel: "Ask first",
-    opener: "How does a finished job turn into an invoice?",
-  },
-  listen: {
-    notes: [
-      { quote: "Techs text me photos. I type it all into QuickBooks at night.", who: "Dana, owner" },
-      { quote: "Half the quotes we send, nobody ever follows up.", who: "Maria, office" },
-      { quote: "Anything over five grand, Dana has to see it.", who: "Dev, lead tech" },
-    ],
-    findings: [
-      { kind: "Pain", text: "Every job typed twice, five nights a week" },
-      { kind: "Pain", text: "Quotes with no follow-up" },
-      { kind: "Rule", text: "Quotes over $5,000 need Dana's OK" },
-    ],
-  },
-  map: {
-    lanes: ["Customer", "Office", "Tech", "Dana"],
-    /** lane index, label, pain? and the wait that follows it */
-    steps: [
-      { lane: 0, label: "Calls for a repair" },
-      { lane: 1, label: "Books the job" },
-      { lane: 2, label: "Does it, texts photos" },
-      { lane: 3, label: "Retypes it at night", pain: true, wait: "2 days" },
-      { lane: 1, label: "Builds the invoice", pain: true, wait: "4 days" },
-      { lane: 0, label: "Finally gets the bill" },
-    ],
-    total: "6 days from finished job to invoice",
-  },
-  find: {
-    painsLabel: "What we found",
-    pains: ["Retyping job notes", "Late invoices", "Quotes nobody chases", "Parts missing from the van", "A new phone system"],
-    fixesLabel: "What we'd fix",
-    fixes: [
-      { title: "Job notes become the invoice", solves: "Fixes 2" },
-      { title: "Quote follow-ups on day 3 and 7", solves: "Fixes 1" },
-      { title: "Tomorrow's parts checked tonight", solves: "Fixes 1" },
-    ],
-    skip: { title: "A new phone system", why: "Not worth it. The one you have works." },
-  },
-  show: {
-    title: "A finished job, to a paid invoice",
-    stats: [
-      { label: "Steps", before: "6", after: "3" },
-      { label: "Done by hand", before: "4", after: "1" },
-      { label: "Turnaround", before: "6 days", after: "Same day" },
-    ],
-    hoursLabel: "Hours back each week",
-    hours: "~11",
-    after: [
-      { actor: "onespot", text: "Turns the tech's notes and photos into the invoice" },
-      { actor: "system", text: "QuickBooks sends it the same day" },
-      { actor: "you", text: "Dana approves anything over $5,000" },
-    ],
-    approve: "Approve the plan",
-    approved: "Approved",
-  },
-  build: {
-    status: ["Building", "Running side by side", "Live"],
-    tasks: ["Connect Jobber and QuickBooks", "Run it next to the old way", "Dana switches it on"],
-    measuredLabel: "Measured after 30 days",
-    measured: [
-      { label: "Invoices out", value: "Same day" },
-      { label: "Retyping at night", value: "None" },
-    ],
-  },
-} as const;
-
 /* ------------------------------------------------------------------ */
-/* 02 · Examples                                                       */
+/* 01 · How we work                                                    */
 /* ------------------------------------------------------------------ */
 
-export const EXAMPLES = {
-  eyebrow: "Examples",
-  headline: ["See it in a", "real business."],
-  lead: "One ordinary moment, before and after One Spot. Pick the kind of business that looks most like yours.",
-  disclaimer: "Illustrative examples, drawn from situations every business in these fields will recognize.",
-  before: "Before",
-  after: "With One Spot",
-  switchPrompt: "Now see it with One Spot",
-} as const;
-
-/* ------------------------------------------------------------------ */
-/* 03 · Websites                                                       */
-/* The store in the mockups (Seaside Swim Co.) is fictional. The        */
-/* features are the ones we build for real online stores.               */
-/* ------------------------------------------------------------------ */
-
-export const WEBSITES = {
-  eyebrow: "Websites & online stores",
-  headline: ["Your website,", "organized to sell."],
-  lead: "Your website is part of how the business runs. We rebuild it so customers find what they want in a click or two, know what will fit, and see the things that go with it, on the platform you already use.",
-  compare: {
-    label: "Drag to compare the store before and after",
-    before: "Before",
-    after: "After",
-    caption: "An illustrative online store, before and after a One Spot redesign.",
-  },
-  cart: {
-    eyebrow: "Try it",
-    title: "Your bag",
-    threshold: 150,
-    items: [
-      { name: "Coral tie top", detail: "Size M", price: 44 },
-      { name: "Seafoam one-piece", detail: "Size S", price: 74 },
-    ],
-    setTitle: "Complete the set",
-    set: { name: "Coral tie bottom", detail: "Size M, matched to your top", price: 38 },
-    addOnsTitle: "Easy add-ons",
-    addOns: [
-      { name: "Straw sun hat", detail: "One size", price: 28 },
-      { name: "Canvas beach tote", detail: "One size", price: 36 },
-    ],
-    add: "Add",
-    added: "Added",
-    away: "away from free shipping",
-    unlocked: "Free shipping unlocked",
-    reset: "Start over",
-    note: "What a shopper sees in the cart: how close they are to free shipping, and the pieces that go with what they chose.",
-  },
-  features: [
-    { icon: "list", title: "Menus that make sense", body: "Dozens of scattered collections become a handful of clear choices." },
-    { icon: "check", title: "Sizes, sorted", body: "One size scale, and filters that only show what's in stock." },
-    { icon: "person", title: "Fit before they buy", body: "A simple runs small, true to size, runs big guide on every product." },
-    { icon: "copies", title: "Complete the set", body: "The cart suggests the piece that goes with it, already in their size." },
-    { icon: "cart", title: "A nudge to free shipping", body: "Shoppers see how close they are, with a few easy add-ons to get there." },
-    { icon: "mail", title: "A welcome offer that behaves", body: "A first-order discount that only works for new subscribers, once." },
-  ],
-  platform: "We build on the platform you already use, like Shopify, so your team can keep editing it themselves.",
-} as const;
-
-/* ------------------------------------------------------------------ */
-/* 04 · What stays in your hands                                       */
-/* ------------------------------------------------------------------ */
-
-export const PROMISES = {
-  eyebrow: "Working with us",
-  headline: ["Built around you.", "Decided by you."],
-  items: [
-    { title: "You stay in charge", body: "Prices, approvals, anything a customer sees: you choose where a person decides, and it stays that way." },
-    { title: "Everything is written down", body: "Every action the system takes is recorded, so you can always see what happened and why." },
-    { title: "Side by side first", body: "Your current way keeps working until the new one has proven itself on your real work." },
-    { title: "Nothing reaches customers early", body: "We test with your own examples before anything goes live." },
-    { title: "Every business makes us better", body: "We remember what actually worked for businesses like yours, and trust what was proven over what only looked good on paper." },
+export const PROCESS = {
+  eyebrow: "How we work",
+  headline: ["Business first.", "Technology second."],
+  lead: "We don't show up with software to sell. We show up to listen, and we only build what will make your week noticeably easier.",
+  note: "Every engagement starts the same way: a conversation about your business, not a sales pitch.",
+  steps: [
+    {
+      name: "Listen",
+      when: "Week one",
+      body: "We spend time with you and your team, watching how work actually gets done. Not how the org chart says it does.",
+      get: "A clear list of where time and money slip away.",
+    },
+    {
+      name: "Map",
+      when: "Week two",
+      body: "We draw your whole business on one page: every tool, every handoff, every place where things wait or get lost.",
+      get: "A map of your company you'll want to keep.",
+    },
+    {
+      name: "Plan",
+      when: "Before any build",
+      body: "Together we choose what to fix first, starting with what gives you the most time back. Clear scope, clear price, no surprises.",
+      get: "A simple plan, written in plain English.",
+    },
+    {
+      name: "Build",
+      when: "One improvement at a time",
+      body: "We connect your tools, set up the automations, and train your agents to work the way your business works. Your team keeps working while we build.",
+      get: "Working improvements your team can feel.",
+    },
+    {
+      name: "Stay",
+      when: "For as long as it helps",
+      body: "We check in, fine-tune, and add the next improvement when you're ready. You're never handed a black box and left alone with it.",
+      get: "A partner who knows your business.",
+    },
   ],
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* 05 · FAQ                                                            */
+/* 02 · Your tools: too many clicks, then connected                    */
+/* ------------------------------------------------------------------ */
+
+export const TOOLS = {
+  eyebrow: "Your tools",
+  headline: ["One job.", "Too many clicks."],
+  lead: "Most businesses don't need more software. They need the software they already have to talk to each other. Scroll to follow one job through a typical office.",
+  counter: "Clicks to finish one job",
+  retyped: "Details typed again",
+  before: { clicks: 47, retyped: 9, label: "Today: every app on its own" },
+  after: { clicks: 6, retyped: 0, label: "With One Spot: connected" },
+  close: "Same tools you use today. We just connect them, so the work moves by itself.",
+  apps: [
+    { name: "Email", icon: "mail", color: "#c4533d" },
+    { name: "Accounting", icon: "invoice", color: "#2b7a57" },
+    { name: "CRM", icon: "users", color: "#7b5cd6" },
+    { name: "Shared drive", icon: "file", color: "#2f8aa0" },
+    { name: "Spreadsheet", icon: "sheet", color: "#3f8f4f" },
+    { name: "Calendar", icon: "calendar", color: "#d08a1e" },
+    { name: "Field app", icon: "phone", color: "#2d4ae0" },
+  ],
+} as const;
+
+/* ------------------------------------------------------------------ */
+/* 03 · FAQ                                                            */
 /* ------------------------------------------------------------------ */
 
 export const FAQ = {
@@ -297,13 +257,13 @@ export const FAQ = {
     },
     {
       q: "How long does it take, and what does it cost?",
-      a: "It depends on your business, which is why we start by learning it. Before you commit to anything, you'll see a preview of the change, the before and after, and a short proposal with one clear price.",
+      a: "It depends on your business, which is why we start by listening. After we've mapped how your company works, you'll get a clear plan with a clear price before any building starts. We begin with the change that gives you the most time back.",
     },
   ],
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* 06 · Contact                                                        */
+/* 04 · Contact                                                        */
 /* ------------------------------------------------------------------ */
 
 export const CONTACT = {
@@ -337,5 +297,5 @@ export const CONTACT = {
 } as const;
 
 export const FOOTER = {
-  line: "Consulting for small and mid-sized businesses. We learn how your company works, find what's worth fixing, and build it around the tools you already use.",
+  line: "Consulting for small and mid-sized businesses. We cut through the noise, find what actually fits your business, and connect the tools you already use.",
 } as const;

@@ -35,15 +35,13 @@ Visitors see operational problems, handoffs, automated work, approvals, and owne
 
 ## Main experience
 
-The page follows the same journey every client takes in the One Spot HUD, told with animation rather than explanation:
+The page is short and leans on animation:
 
-1. **Hero**: the promise, and one company file filling in step by step
-2. **How we work**: six steps, each with its own animation (look, listen, map, find, show, build)
-3. **Examples**: one moment in six businesses, before and after
-4. **Websites**: an online store before and after, and a cart that sells
-5. **Working with us**: what stays in the owner's hands
-6. **FAQ**
-7. **Contact**: "Tell us where it feels manual"
+1. **Hero**: "Modern workflows. Made simple." and one ordinary job in four businesses (body shop, dental and medical, financing, HVAC), shown today and with One Spot
+2. **How we work**: business first, technology second (listen, map, plan, build, stay)
+3. **Your tools**: one job takes too many clicks across seven apps, until One Spot connects them (scroll-scrubbed)
+4. **FAQ**
+5. **Contact**: "Tell us where it feels manual"
 
 ## Project structure
 
@@ -53,12 +51,9 @@ src/
 ├── components/
 │   ├── hero/
 │   ├── motion/
-│   ├── scenes/
-│   ├── sections/
-│   └── websites/
+│   └── sections/
 └── content/
-    ├── site.ts
-    └── stories.ts
+    └── site.ts
 ```
 
 Most copy and scenario data is separated from presentation code so the site can be iterated quickly without rewriting components.
