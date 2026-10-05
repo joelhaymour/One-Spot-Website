@@ -123,17 +123,20 @@ svg{display:block}
 .vstate:not(.none):hover{text-decoration:underline}
 
 /* workspace */
-.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:12px}
-.panel{display:flex;flex-direction:column;min-height:0;min-width:0;height:clamp(560px,calc(100vh - 286px),900px)}
+[hidden]{display:none!important}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:12px;align-items:start}
+#main-card{min-width:0}
 .panel-h{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);flex:none}
 .panel-h h2{margin:0;font-size:14px;font-weight:700}
 .panel-h .sub{font-size:12px;color:var(--muted)}
 .ptabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);flex:none;overflow-x:auto;scrollbar-width:none}
-.ptab{padding:10px 8px;border-bottom:3px solid transparent;margin-bottom:-1px;color:var(--muted);white-space:nowrap}
-.ptab.on{border-bottom-color:var(--brand);color:var(--text);font-weight:600}
+.ptab{padding:10px 8px;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;color:var(--muted);white-space:nowrap;background:none;font-size:13px}
+button.ptab{cursor:pointer;color:var(--text)}
+button.ptab:hover{border-bottom-color:var(--line-2)}
+.ptab.on,.ptab.on:hover{border-bottom-color:var(--brand);color:var(--text);font-weight:600}
 
 /* record detail */
-.rec-body{overflow:auto;flex:1;padding:6px 12px 16px}
+.rec-body{padding:6px 14px 18px}
 .sec{margin-top:10px}
 .sec-t{display:flex;align-items:center;gap:6px;background:var(--page);border-radius:4px;padding:5px 8px;font-size:14px;font-weight:600}
 .sec-t svg{width:10px;height:10px;color:var(--muted)}
@@ -152,20 +155,50 @@ svg{display:block}
 .fld:hover .pencil{opacity:1}
 .fld[data-st] .pencil{display:none}
 
-/* documents */
-.dtabs{display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line);overflow-x:auto;flex:none;scrollbar-width:thin}
-.dtab{display:flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:#fff;border-radius:16px;padding:4px 10px 4px 6px;cursor:pointer;white-space:nowrap;font-size:12px}
+/* files tab */
+.files-view{display:grid;grid-template-columns:250px minmax(0,1fr);height:clamp(520px,calc(100vh - 200px),920px)}
+.flist{border-right:1px solid var(--line);padding:10px;overflow:auto;min-width:0}
+.flist-h{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:2px 6px 8px}
+.dtabs{display:flex;flex-direction:column;gap:2px}
+.dtab{display:flex;align-items:center;gap:8px;border:1px solid transparent;background:none;border-radius:4px;padding:7px 8px;cursor:pointer;text-align:left;width:100%}
 .dtab:hover{background:var(--hover)}
+.dtab.on{background:var(--brand-tint);border-color:#b8d4f5}
+.fname{display:flex;flex-direction:column;min-width:0;flex:1}
+.fname b{font-size:12.5px;font-weight:600}
+.fname small{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pdf{width:16px;height:16px;flex:none}
-.dtab.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand);background:var(--brand-tint)}
-.dtab .st{width:14px;height:14px;border-radius:50%;display:none;place-items:center;color:#fff}
-.dtab .st svg{width:9px;height:9px}
-.dtab[data-st="pass"] .st{display:grid;background:var(--ok)}
-.dtab[data-st="fail"] .st{display:grid;background:var(--bad)}
+.dtab .pdf,.sfile .pdf{width:22px;height:22px}
+.st{width:16px;height:16px;border-radius:50%;display:none;place-items:center;color:#fff;flex:none}
+.st svg{width:9px;height:9px}
+[data-st="pass"]>.st{display:grid;background:var(--ok)}
+[data-st="fail"]>.st{display:grid;background:var(--bad)}
+.viewer{display:flex;flex-direction:column;min-width:0;min-height:0}
+
+/* sidebar */
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.side-h{display:flex;align-items:center;gap:8px;padding:10px 12px}
+.side-h h2{margin:0;font-size:14px;font-weight:700}
+.side-ico{width:24px;height:24px;border-radius:4px;display:grid;place-items:center;color:#fff;flex:none}
+.side-ico svg{width:14px;height:14px}
+.side-ico.files{background:#7f8de1}
+.side-ico.act{background:#3ba755}
+.sfiles{list-style:none;margin:0;padding:0 6px}
+.sfile{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;text-align:left;padding:7px 6px;border-radius:4px;cursor:pointer}
+.sfile:hover{background:var(--hover)}
+.sfile .fname b{color:var(--brand);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side-all{display:block;width:100%;border:0;border-top:1px solid var(--line);background:none;color:var(--brand);padding:9px;margin-top:6px;cursor:pointer;border-radius:0 0 4px 4px}
+.side-all:hover{background:var(--hover);text-decoration:underline}
+.timeline{list-style:none;margin:0;padding:0 12px 12px;display:flex;flex-direction:column}
+.timeline li{display:grid;grid-template-columns:14px 1fr auto;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:12.5px}
+.timeline li div{display:flex;flex-direction:column;min-width:0}
+.timeline li span:not(.tl-dot){color:var(--muted);font-size:12px}
+.timeline time{font-size:11.5px;color:var(--faint);white-space:nowrap}
+.tl-dot{width:10px;height:10px;border-radius:50%;margin-top:4px}
+.tl-dot.sign{background:#ff9a3c}.tl-dot.task{background:#3ba755}.tl-dot.mail{background:#939393}.tl-dot.ok{background:var(--brand)}
 .dmeta{display:flex;align-items:center;gap:8px;padding:6px 14px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);flex:none;min-width:0}
 .dmeta b{color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dmeta span{white-space:nowrap}
-.doc-stage{flex:1;overflow:auto;background:var(--stage);padding:16px 14px 40px}
+.doc-stage{flex:1;overflow:auto;background:var(--stage);padding:16px 14px 40px;border-radius:0 0 4px 0}
 .paper{background:var(--paper);color:var(--ink);max-width:640px;margin:0 auto;padding:26px 28px 30px;box-shadow:0 1px 3px rgba(0,0,0,.18),0 6px 18px rgba(0,0,0,.06);font-size:12px;line-height:1.5}
 .paper.legal{font-family:var(--serif)}
 .lh{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:14px}
@@ -326,9 +359,12 @@ svg{display:block}
 
 @media (max-width:860px){
   .workspace{grid-template-columns:minmax(0,1fr)}
-  .panel{height:auto}
-  .rec-body{max-height:420px}
-  .doc-stage{max-height:620px}
+  .files-view{grid-template-columns:minmax(0,1fr);height:auto}
+  .flist{border-right:0;border-bottom:1px solid var(--line)}
+  .dtabs{flex-direction:row;overflow-x:auto}
+  .dtab{width:auto;flex:none}
+  .fname small{display:none}
+  .doc-stage{max-height:640px}
 }
 @media (max-width:640px){
   .fields,.kv2,.sigs{grid-template-columns:1fr}
@@ -440,17 +476,41 @@ svg{display:block}
   </section>
 
   <div class="workspace">
-    <section class="card panel" aria-label="Deal record">
-      <div class="ptabs"><span class="ptab on">Details</span><span class="ptab">Related</span><span class="ptab">Activity</span><span class="ptab">Approval History</span></div>
+    <section class="card" id="main-card" aria-label="Deal record">
+      <div class="ptabs" role="tablist">
+        <button class="ptab on" role="tab" data-tab="details" aria-selected="true">Details</button>
+        <button class="ptab" role="tab" data-tab="files" aria-selected="false">Files (5)</button>
+        <span class="ptab">Related</span><span class="ptab">Activity</span><span class="ptab">Approval History</span>
+      </div>
       <div class="rec-body" id="rec-body"></div>
+      <div class="files-view" id="files-view" hidden>
+        <div class="flist">
+          <div class="flist-h">Doc Request DR-01482 · 5 files</div>
+          <div class="dtabs" id="dtabs" role="tablist" aria-label="Files"></div>
+        </div>
+        <div class="viewer">
+          <div class="dmeta" id="dmeta"></div>
+          <div class="doc-stage" id="doc-stage"></div>
+        </div>
+      </div>
     </section>
 
-    <section class="card panel" aria-label="Files">
-      <div class="panel-h"><h2>Files</h2><span class="sub">5 attached to Doc Request DR-01482</span></div>
-      <div class="dtabs" id="dtabs" role="tablist" aria-label="Files"></div>
-      <div class="dmeta" id="dmeta"></div>
-      <div class="doc-stage" id="doc-stage"></div>
-    </section>
+    <aside class="side">
+      <section class="card">
+        <div class="side-h"><span class="side-ico files"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5l3 3v10H4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 1.5v3h3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span><h2>Files (5)</h2></div>
+        <ul class="sfiles" id="side-files"></ul>
+        <button class="side-all" id="side-all">View All</button>
+      </section>
+      <section class="card">
+        <div class="side-h"><span class="side-ico act"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8.5h3l2-5 3 9 2-4h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h2>Activity</h2></div>
+        <ul class="timeline">
+          <li><span class="tl-dot sign"></span><div><b>Contract e-signed</b><span>Marcus Hale signed EFA-24-10387</span></div><time>Oct 1</time></li>
+          <li><span class="tl-dot task"></span><div><b>Customer uploaded 2 files</b><span>Void check and insurance certificate</span></div><time>Sep 30</time></li>
+          <li><span class="tl-dot mail"></span><div><b>Email from Dana Whitaker</b><span>"Invoice for the Ridgeline CAT 320 attached"</span></div><time>Sep 26</time></li>
+          <li><span class="tl-dot ok"></span><div><b>Credit approved</b><span>CA-77214 · up to $225,000 · 60 mo</span></div><time>Sep 24</time></li>
+        </ul>
+      </section>
+    </aside>
   </div>
 </main>
 </div>
@@ -534,11 +594,11 @@ BAD.contract.term = '72 months';
 BAD.contract.payment = '3,975.03';
 
 const DOCS = [
-  {id:'contract', short:'Contract', name:'contract', file:'EFA-24-10387_signed.pdf', meta:'3 pages · e-signed Oct 1'},
-  {id:'invoice', short:'Invoice', name:'invoice', file:'Summit_Invoice_SHE-55821.pdf', meta:'1 page · from Dana Whitaker'},
-  {id:'approval', short:'Credit Approval', name:'credit approval', file:'Credit_Approval_CA-77214.pdf', meta:'1 page · Credit dept.'},
-  {id:'coi', short:'Insurance', name:'insurance certificate', file:'COI_Ridgeline_IM-4471902.pdf', meta:'1 page · from customer'},
-  {id:'check', short:'Void Check', name:'void check', file:'Void_Check_1047.jpg', meta:'Image · from customer'},
+  {id:'contract', short:'Contract', name:'contract', file:'EFA-24-10387_signed.pdf', meta:'3 pages · e-signed Oct 1', info:'Oct 1, 2026 · 412 KB · pdf'},
+  {id:'invoice', short:'Invoice', name:'invoice', file:'Summit_Invoice_SHE-55821.pdf', meta:'1 page · from Dana Whitaker', info:'Sep 26, 2026 · 184 KB · pdf'},
+  {id:'approval', short:'Credit Approval', name:'credit approval', file:'Credit_Approval_CA-77214.pdf', meta:'1 page · Credit dept.', info:'Sep 24, 2026 · 96 KB · pdf'},
+  {id:'coi', short:'Insurance', name:'insurance certificate', file:'COI_Ridgeline_IM-4471902.pdf', meta:'1 page · from customer', info:'Sep 30, 2026 · 221 KB · pdf'},
+  {id:'check', short:'Void Check', name:'void check', file:'Void_Check_1047.jpg', meta:'Image · from customer', info:'Sep 30, 2026 · 1.2 MB · jpg'},
 ];
 const DOC = Object.fromEntries(DOCS.map(d => [d.id, d]));
 
@@ -725,10 +785,22 @@ function renderRecord() {
       </div></div>`).join('');
 }
 function renderDocs() {
-  $('#dtabs').innerHTML = DOCS.map(d => `<button class="dtab" role="tab" data-doc="${d.id}" aria-selected="false">${I.pdf}${d.short}<span class="st"></span></button>`).join('');
+  $('#dtabs').innerHTML = DOCS.map(d => `<button class="dtab" role="tab" data-doc="${d.id}" aria-selected="false">${I.pdf}<span class="fname"><b>${d.short}</b><small>${d.file}</small></span><span class="st"></span></button>`).join('');
+  $('#side-files').innerHTML = DOCS.map(d => `<li><button class="sfile" data-doc="${d.id}">${I.pdf}<span class="fname"><b>${d.file}</b><small>${d.info}</small></span><span class="st"></span></button></li>`).join('');
+  $$('.sfile').forEach(b => b.onclick = () => openFile(b.dataset.doc));
   $('#doc-stage').innerHTML = DOCS.map(d => `<div class="docpage" data-doc="${d.id}" hidden>${TPL[d.id](S[d.id])}</div>`).join('');
   $$('.dtab').forEach(b => b.onclick = () => showDoc(b.dataset.doc));
   showDoc('contract');
+}
+function showTab(name) {
+  $$('button.ptab').forEach(t => { const on = t.dataset.tab === name; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); });
+  $('#rec-body').hidden = name !== 'details';
+  $('#files-view').hidden = name !== 'files';
+}
+function openFile(id) {
+  showTab('files'); showDoc(id);
+  const card = $('#main-card');
+  if (card.getBoundingClientRect().top < 0) card.scrollIntoView({block:'start', behavior: reduce ? 'auto' : 'smooth'});
 }
 function showDoc(id) {
   curDoc = id;
@@ -902,13 +974,13 @@ function renderVerifyDone(fresh) {
 function markPage() {
   $$('.f.bad').forEach(e => e.classList.remove('bad'));
   $$('.fld').forEach(f => { delete f.dataset.st; f.querySelector('.fs').innerHTML = ''; });
-  $$('.dtab').forEach(t => t.dataset.st = 'pass');
+  $$('.dtab, .sfile').forEach(t => t.dataset.st = 'pass');
   const fieldSt = {};
   result.rows.forEach(row => row.c.steps.forEach(s => { const rf = s.rf || row.c.rf; fieldSt[rf] ||= 'pass'; }));
   result.fixes.forEach(f => f.fails.forEach(({s, rf}) => {
     fieldSt[rf] = 'fail';
     const el = $(`[data-k="${s.doc}.${s.k}"]`); if (el) el.classList.add('bad');
-    $(`.dtab[data-doc="${s.doc}"]`).dataset.st = 'fail';
+    $$(`.dtab[data-doc="${s.doc}"], .sfile[data-doc="${s.doc}"]`).forEach(t => t.dataset.st = 'fail');
   }));
   Object.entries(fieldSt).forEach(([rf, st]) => { const f = $('#r-' + rf); if (f) { f.dataset.st = st; f.querySelector('.fs').innerHTML = st === 'pass' ? I.check : I.x; } });
 }
@@ -968,12 +1040,10 @@ addEventListener('resize', closePop);
 
 function jumpTo(f) {
   closeVerify();
-  showDoc(f.doc);
-  const s = f.fails[0].s, el = $(`[data-k="${s.doc}.${s.k}"]`), box = $('#doc-stage');
+  showTab('files'); showDoc(f.doc);
+  const s = f.fails[0].s, el = $(`[data-k="${s.doc}.${s.k}"]`);
   if (!el) return;
-  const b = box.getBoundingClientRect(), e = el.getBoundingClientRect();
-  box.scrollTo({top: Math.max(0, box.scrollTop + e.top - b.top - box.clientHeight / 2), behavior: reduce ? 'auto' : 'smooth'});
-  if (box.scrollHeight <= box.clientHeight + 2 || innerWidth <= 860) el.scrollIntoView({block:'center', behavior: reduce ? 'auto' : 'smooth'});
+  el.scrollIntoView({block:'center', behavior: reduce ? 'auto' : 'smooth'});
   f.fails.forEach(({s}) => { const x = $(`[data-k="${s.doc}.${s.k}"]`); if (x) { x.classList.remove('flash'); void x.offsetWidth; x.classList.add('flash'); } });
 }
 
@@ -1056,7 +1126,7 @@ function closeEmail() { $('#email-root').innerHTML = ''; }
 function resetAll() {
   runId++; result = null; verifying = false; submitted = false;
   closePop(); closeEmail(); $('#verify-root').innerHTML = '';
-  renderRecord(); renderDocs(); renderStageBar();
+  renderRecord(); renderDocs(); renderStageBar(); showTab('details');
   $('#rec-body').scrollTop = 0;
 }
 function setScenario(name) {
@@ -1069,6 +1139,8 @@ function setScenario(name) {
 $('#tab-incorrect').onclick = () => setScenario('incorrect');
 $('#tab-correct').onclick = () => setScenario('correct');
 $('#btn-reset').onclick = resetAll;
+$$('button.ptab').forEach(t => t.onclick = () => showTab(t.dataset.tab));
+$('#side-all').onclick = () => openFile(curDoc);
 $('#btn-verify').onclick = () => openVerify(true);
 $('#vstate').onclick = () => { if (result) openVerify(false); };
 $('#btn-submit').onclick = () => submitDocRequest($('#btn-submit'));
