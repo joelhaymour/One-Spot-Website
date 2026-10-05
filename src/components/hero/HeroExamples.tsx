@@ -79,6 +79,7 @@ function Row({ step, mode, i }: { step: ExampleStep; mode: Mode; i: number }) {
  */
 export function HeroExamples({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const [mode, setMode] = useState<Mode>("before");
   const [auto, setAuto] = useState(false);
@@ -112,6 +113,17 @@ export function HeroExamples({ className }: { className?: string }) {
     return () => clearTimeout(t);
   }, [auto, visible, mode, index]);
 
+  // On narrow screens the tabs don't all fit: slide the row so the business playing is in view.
+  // Scrolls only the row, never the page.
+  useEffect(() => {
+    const list = tabsRef.current;
+    const tab = list?.children[index] as HTMLElement | undefined;
+    if (!list || !tab || list.scrollWidth <= list.clientWidth) return;
+    const left = tab.offsetLeft - (list.clientWidth - tab.offsetWidth) / 2;
+    const smooth = document.documentElement.dataset.motion === "on";
+    list.scrollTo({ left: Math.max(0, left), behavior: smooth ? "smooth" : "auto" });
+  }, [index]);
+
   const ex = items[index];
   const steps = mode === "before" ? ex.before : ex.after;
   const playing = auto && visible;
@@ -129,7 +141,7 @@ export function HeroExamples({ className }: { className?: string }) {
   return (
     <div ref={ref} className={cn("rounded-[24px] border border-[var(--line)] bg-[var(--card)] shadow-[var(--shadow-float)]", className)}>
       {/* the four businesses */}
-      <div role="tablist" aria-label="Example businesses" className="no-scrollbar flex gap-1 overflow-x-auto border-b border-[var(--line-soft)] p-2">
+      <div ref={tabsRef} role="tablist" aria-label="Example businesses" className="no-scrollbar relative flex gap-1 overflow-x-auto border-b border-[var(--line-soft)] p-2">
         {items.map((it, i) => (
           <button
             key={it.key}
