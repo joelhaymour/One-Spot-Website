@@ -196,9 +196,9 @@ export function HeroExamples({ className }: { className?: string }) {
             <div key={s.label} className="rounded-2xl bg-[var(--paper-2)] px-3.5 py-3">
               <p className="text-[0.72rem] text-[var(--ink-3)]">{s.label}</p>
               <p className="mt-1 flex flex-wrap items-baseline gap-x-2">
-                <span className={cn("t-num transition-all duration-500", mode === "after" ? "text-[0.8rem] text-[var(--ink-4)] line-through decoration-[rgba(180,65,47,0.5)]" : "text-[1.05rem] font-semibold text-[var(--ink)]")}>{s.before}</span>
+                <span className={cn("t-num transition-all duration-500", mode === "after" ? "w-full text-[0.75rem] leading-snug text-[var(--ink-4)] line-through decoration-[rgba(180,65,47,0.5)]" : "w-full text-[0.92rem] font-semibold leading-snug text-[var(--ink)] sm:text-[0.98rem]")}>{s.before}</span>
                 {mode === "after" ? (
-                  <span key={`${ex.key}-${s.label}`} className="story-fade t-num text-[1.05rem] font-semibold tracking-[-0.02em] text-[var(--done)]">
+                  <span key={`${ex.key}-${s.label}`} className="story-fade t-num w-full text-[0.92rem] font-semibold leading-snug tracking-[-0.015em] sm:text-[0.98rem] text-[var(--done)]">
                     {s.after}
                   </span>
                 ) : null}
