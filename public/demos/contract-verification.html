@@ -16,17 +16,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Mrs+Saint+Delafield&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <style>
-/* Layout: CRM record page — highlights panel + path, then Deal record | Documents | Agent rail. Single light theme on purpose (it mirrors a light CRM). */
+/* Layout: CRM record page — highlights + stage path (with Verify / Submit), then Deal record | Files. Verification runs in a modal. Single light theme on purpose (it mirrors a light CRM). */
 :root{
   --page:#f3f3f3; --band:#cfe2fb;
   --card:#ffffff; --line:#e5e5e5; --line-2:#c9c9c9; --hover:#f3f6fa;
   --text:#181818; --muted:#5c5c5c; --faint:#747474;
   --brand:#0176d3; --brand-dk:#014486; --brand-tint:#eef4ff;
-  --ok:#2e844a; --ok-tint:#e8f5e3; --bad:#ba0517; --bad-tint:#fde4df; --warn:#8c4b02; --warn-tint:#fef1cd;
+  --ok:#2e844a; --ok-tint:#e8f5e3; --bad:#ba0517; --bad-tint:#fde4df;
   --agent:#5a2fc2; --agent-tint:#f2edff;
   --deal:#ff9a3c; --path-todo:#ecebea;
   --paper:#fffefb; --ink:#1f2328; --ink-soft:#5b6168; --stage:#e4e6ea;
-  --demo:#032d60; --demo-2:#0b3f80;
+  --demo:#032d60;
   --ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -55,8 +55,6 @@ svg{display:block}
 .demo-ctrls{display:flex;gap:8px;margin-left:auto;align-items:center;flex-wrap:wrap}
 .dbtn{border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;border-radius:4px;padding:5px 10px;cursor:pointer}
 .dbtn:hover{background:rgba(255,255,255,.1)}
-.dbtn[aria-pressed="true"]{background:#fff;color:var(--demo);border-color:#fff}
-.dlabel{color:#a9c1e2;font-size:12px}
 .demo-credit{color:#d6e4f7;font-size:12px;white-space:nowrap;border-left:1px solid rgba(255,255,255,.2);padding-left:14px}
 .demo-credit b{color:#fff;font-weight:600}
 .demo-credit:hover{color:#fff}
@@ -67,7 +65,7 @@ svg{display:block}
 .logo{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--brand-dk);letter-spacing:-.01em;white-space:nowrap}
 .logo small{display:block;font-weight:500;font-size:10px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin-top:-2px}
 .search{flex:1;max-width:560px;margin:0 auto;display:flex;align-items:center;gap:8px;border:1px solid var(--line-2);border-radius:4px;padding:6px 10px;color:var(--faint);background:#fff}
-.gh-icons{display:flex;align-items:center;gap:14px;color:var(--muted)}
+.gh-icons{display:flex;align-items:center;gap:14px;color:var(--muted);margin-left:auto}
 .gh-icons svg{width:18px;height:18px}
 .bell{position:relative}
 .bell b{position:absolute;top:-6px;right:-7px;background:#ea001e;color:#fff;font-size:9px;border-radius:8px;padding:0 4px;line-height:14px}
@@ -77,8 +75,8 @@ svg{display:block}
 .appnav{background:#fff;border-bottom:3px solid var(--brand);padding-inline:16px;box-shadow:0 2px 3px rgba(0,0,0,.06)}
 .appnav-in{display:flex;align-items:stretch;gap:4px;height:40px;max-width:1680px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
 .waffle{display:grid;place-items:center;width:32px;color:var(--muted)}
-.appname{display:flex;align-items:center;font-size:18px;font-weight:400;padding-right:18px;white-space:nowrap}
-.navtab{display:flex;align-items:center;gap:6px;padding:0 12px;color:var(--text);white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-3px}
+.appname{display:flex;align-items:center;font-size:18px;padding-right:18px;white-space:nowrap}
+.navtab{display:flex;align-items:center;gap:6px;padding:0 12px;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-3px}
 .navtab svg{width:10px;height:10px;color:var(--faint)}
 .navtab.on{border-bottom-color:var(--brand-dk);font-weight:600;background:var(--hover)}
 
@@ -87,44 +85,45 @@ svg{display:block}
 .wrap{max-width:1680px;margin:0 auto;padding:12px 16px 24px;display:flex;flex-direction:column;gap:12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
 
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line-2);background:#fff;color:var(--brand);border-radius:4px;padding:0 14px;min-height:32px;cursor:pointer;font-weight:500;white-space:nowrap}
-.btn:hover{background:var(--hover)}
-.btn svg{width:14px;height:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line-2);background:#fff;color:var(--brand);border-radius:4px;padding:0 14px;min-height:32px;cursor:pointer;font-weight:500;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--hover);text-decoration:none}
+.btn svg{width:14px;height:14px;flex:none}
 .btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}
 .btn.brand:hover{background:var(--brand-dk);border-color:var(--brand-dk)}
-.btn.success{background:var(--ok);border-color:var(--ok);color:#fff}
-.btn:disabled{background:#f3f3f3;border-color:var(--line-2);color:#aeaeae;cursor:not-allowed}
-.btn-group{display:flex;flex-wrap:wrap;gap:6px}
+.btn:disabled{background:#f3f3f3;border-color:var(--line-2);color:#9a9a9a;cursor:not-allowed}
 
 /* highlights */
 .hl{padding:14px 16px}
 .hl-top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
-.obj-ico{width:32px;height:32px;border-radius:4px;display:grid;place-items:center;color:#fff;flex:none}
+.obj-ico{width:32px;height:32px;border-radius:4px;display:grid;place-items:center;color:#fff;flex:none;background:var(--deal)}
 .obj-ico svg{width:20px;height:20px}
-.obj-ico.deal{background:var(--deal)}
 .obj-type{font-size:12px;color:var(--muted)}
 .hl h1{margin:0;font-size:18px;font-weight:700;line-height:1.25;text-wrap:balance}
 .hl-title{flex:1;min-width:220px}
 .hl-actions{display:flex;gap:6px;flex-wrap:wrap}
 .hl-fields{display:flex;flex-wrap:wrap;gap:10px 36px;margin:14px 0 0;padding:0}
-.hl-fields div{min-width:0}
 .hl-fields dt{font-size:12px;color:var(--muted)}
 .hl-fields dd{margin:2px 0 0;font-size:14px}
-.stage-pill{display:inline-flex;align-items:center;gap:6px}
 
 /* path */
-.path{padding:10px 12px}
-.path ol{display:flex;gap:4px;list-style:none;margin:0;padding:0;overflow-x:auto;scrollbar-width:none}
-.path li{flex:1 0 auto;min-width:122px;height:32px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 20px;background:var(--path-todo);color:var(--text);font-size:13px;white-space:nowrap;
+.path{padding:10px 12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.path ol{flex:1;min-width:0;display:flex;gap:4px;list-style:none;margin:0;padding:0;overflow-x:auto;scrollbar-width:none}
+.path li{flex:1 0 auto;min-width:130px;height:32px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 20px;background:var(--path-todo);font-size:13px;white-space:nowrap;
   clip-path:polygon(0 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,0 100%,11px 50%);transition:background .4s,color .4s}
 .path li:first-child{clip-path:polygon(0 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,0 100%);border-radius:16px 0 0 16px}
 .path li:last-child{clip-path:polygon(0 0,100% 0,100% 100%,0 100%,11px 50%);border-radius:0 16px 16px 0}
 .path li[data-st="done"]{background:var(--ok);color:#fff}
 .path li[data-st="current"]{background:var(--brand-dk);color:#fff;font-weight:600}
-.path li svg{width:12px;height:12px}
+.path-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.vstate{display:inline-flex;align-items:center;gap:6px;font-size:12px;border-radius:14px;padding:4px 10px;border:0;cursor:pointer;font-weight:600}
+.vstate svg{width:12px;height:12px}
+.vstate.none{background:var(--page);color:var(--muted);cursor:default;font-weight:500}
+.vstate.fail{background:var(--bad-tint);color:var(--bad)}
+.vstate.pass{background:var(--ok-tint);color:var(--ok)}
+.vstate:not(.none):hover{text-decoration:underline}
 
 /* workspace */
-.workspace{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.32fr) minmax(0,1fr);gap:12px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:12px}
 .panel{display:flex;flex-direction:column;min-height:0;min-width:0;height:clamp(560px,calc(100vh - 286px),900px)}
 .panel-h{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);flex:none}
 .panel-h h2{margin:0;font-size:14px;font-weight:700}
@@ -134,21 +133,20 @@ svg{display:block}
 .ptab.on{border-bottom-color:var(--brand);color:var(--text);font-weight:600}
 
 /* record detail */
-.rec-body{overflow:auto;flex:1;padding:6px 12px 16px;position:relative;scroll-behavior:auto}
+.rec-body{overflow:auto;flex:1;padding:6px 12px 16px}
 .sec{margin-top:10px}
 .sec-t{display:flex;align-items:center;gap:6px;background:var(--page);border-radius:4px;padding:5px 8px;font-size:14px;font-weight:600}
 .sec-t svg{width:10px;height:10px;color:var(--muted)}
 .fields{display:grid;grid-template-columns:1fr 1fr;column-gap:16px;padding:0 4px}
-.fld{position:relative;border-bottom:1px solid var(--line);padding:6px 26px 6px 8px;min-width:0;border-radius:3px;transition:background .25s,box-shadow .25s}
+.fld{position:relative;border-bottom:1px solid var(--line);padding:6px 26px 6px 8px;min-width:0;border-radius:3px}
 .fld.wide{grid-column:1/-1}
 .fl{font-size:12px;color:var(--muted)}
 .fv{font-size:13px;min-height:19px;overflow-wrap:anywhere}
 .fv.link{color:var(--brand)}
-.fld .fs{position:absolute;right:4px;top:50%;translate:0 -50%;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;opacity:0;scale:.6;transition:opacity .2s,scale .25s}
+.fld .fs{position:absolute;right:4px;top:50%;translate:0 -50%;width:18px;height:18px;border-radius:50%;display:none;place-items:center;color:#fff}
 .fld .fs svg{width:11px;height:11px}
-.fld.active{background:var(--brand-tint);box-shadow:inset 3px 0 0 var(--brand)}
-.fld[data-st="pass"] .fs{opacity:1;scale:1;background:var(--ok);color:#fff}
-.fld[data-st="fail"] .fs{opacity:1;scale:1;background:var(--bad);color:#fff}
+.fld[data-st="pass"] .fs{display:grid;background:var(--ok)}
+.fld[data-st="fail"] .fs{display:grid;background:var(--bad)}
 .fld[data-st="fail"]{background:var(--bad-tint)}
 .fld .pencil{position:absolute;right:6px;top:8px;width:12px;height:12px;color:var(--line-2);opacity:0}
 .fld:hover .pencil{opacity:1}
@@ -156,7 +154,7 @@ svg{display:block}
 
 /* documents */
 .dtabs{display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line);overflow-x:auto;flex:none;scrollbar-width:thin}
-.dtab{display:flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:#fff;border-radius:16px;padding:4px 10px 4px 6px;cursor:pointer;white-space:nowrap;font-size:12px;position:relative;transition:box-shadow .2s,border-color .2s,background .2s}
+.dtab{display:flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:#fff;border-radius:16px;padding:4px 10px 4px 6px;cursor:pointer;white-space:nowrap;font-size:12px}
 .dtab:hover{background:var(--hover)}
 .pdf{width:16px;height:16px;flex:none}
 .dtab.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand);background:var(--brand-tint)}
@@ -164,14 +162,11 @@ svg{display:block}
 .dtab .st svg{width:9px;height:9px}
 .dtab[data-st="pass"] .st{display:grid;background:var(--ok)}
 .dtab[data-st="fail"] .st{display:grid;background:var(--bad)}
-.dtab.scan{box-shadow:0 0 0 3px rgba(1,118,211,.35);border-color:var(--brand)}
 .dmeta{display:flex;align-items:center;gap:8px;padding:6px 14px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);flex:none;min-width:0}
 .dmeta b{color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dmeta span{white-space:nowrap}
-.doc-wrap{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
-.doc-stage{flex:1;overflow:auto;background:var(--stage);padding:16px 14px 120px}
-.paper{background:var(--paper);color:var(--ink);max-width:600px;margin:0 auto;padding:26px 28px 30px;box-shadow:0 1px 3px rgba(0,0,0,.18),0 6px 18px rgba(0,0,0,.06);font-size:12px;line-height:1.5;animation:paperIn .3s ease}
-@keyframes paperIn{from{opacity:.4;translate:0 6px}to{opacity:1;translate:0 0}}
+.doc-stage{flex:1;overflow:auto;background:var(--stage);padding:16px 14px 40px}
+.paper{background:var(--paper);color:var(--ink);max-width:640px;margin:0 auto;padding:26px 28px 30px;box-shadow:0 1px 3px rgba(0,0,0,.18),0 6px 18px rgba(0,0,0,.06);font-size:12px;line-height:1.5}
 .paper.legal{font-family:var(--serif)}
 .lh{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:14px}
 .lh-mark{width:30px;height:30px;flex:none}
@@ -179,7 +174,7 @@ svg{display:block}
 .lh-sub{font-size:10.5px;color:var(--ink-soft)}
 .lh-right{margin-left:auto;text-align:right;font-size:10.5px;color:var(--ink-soft)}
 .lh-right b{color:var(--ink);font-size:12px;font-family:var(--mono);font-weight:500}
-.doc-h{font-size:17px;margin:0 0 12px;font-weight:600;letter-spacing:.01em}
+.doc-h{font-size:17px;margin:0 0 12px;font-weight:600}
 .kl{display:block;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-family:var(--ui);margin-bottom:1px}
 .kv2{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin-bottom:12px}
 .kv2>div{min-width:0}
@@ -191,22 +186,9 @@ svg{display:block}
 .dt tr.tot td{font-weight:600;border-bottom:0;border-top:1.5px solid var(--ink)}
 .fine{font-size:10px;color:var(--ink-soft);margin:12px 0 0;line-height:1.45}
 .sigs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
-.sig-line{border-bottom:1px solid var(--ink);height:38px;display:flex;align-items:flex-end;padding-bottom:2px;position:relative}
+.sig-line{border-bottom:1px solid var(--ink);height:38px;display:flex;align-items:flex-end;padding-bottom:2px}
 .sigtxt{font-family:var(--sig);font-size:30px;line-height:1;color:#1d3b7a;white-space:nowrap}
 .sig-cap{font-size:10px;color:var(--ink-soft);margin-top:4px;font-family:var(--ui)}
-.signhere{position:absolute;left:-30px;bottom:6px;background:#ffd84d;color:#3a2c00;font:600 9px/1 var(--ui);letter-spacing:.06em;padding:5px 8px 5px 6px;clip-path:polygon(0 0,85% 0,100% 50%,85% 100%,0 100%);text-transform:uppercase}
-
-/* field highlights inside documents */
-.f{border-radius:3px;padding:0 2px;margin:0 -2px;transition:background .25s,box-shadow .25s}
-.f.empty{display:inline-block;min-width:150px;min-height:1.35em;vertical-align:bottom}
-.sig-line .f{display:inline-flex;align-items:flex-end}
-.sig-line .f.empty{min-width:170px;min-height:30px}
-.f.scan{background:#d7e8fd;box-shadow:0 0 0 2px var(--brand);animation:scanPulse .9s ease-in-out infinite}
-.f.ok{background:var(--ok-tint);box-shadow:0 0 0 1.5px var(--ok)}
-.f.bad{background:var(--bad-tint);box-shadow:0 0 0 2px var(--bad)}
-@keyframes scanPulse{50%{box-shadow:0 0 0 4px rgba(1,118,211,.35)}}
-
-/* specific documents */
 .inv-lh{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap}
 .inv-name{font-size:16px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#7a4a00}
 .inv-title{font-size:22px;font-weight:300;letter-spacing:.16em;color:var(--ink-soft);text-align:right}
@@ -225,158 +207,139 @@ svg{display:block}
 .check-holder b{font-size:12.5px}
 .check-line{display:flex;align-items:flex-end;gap:8px;margin-top:14px;position:relative}
 .check-line .ln{flex:1;border-bottom:1px solid #6b7f78;height:16px}
-.amtbox{border:1px solid #6b7f78;padding:2px 8px;min-width:90px;background:#fff8}
+.amtbox{border:1px solid #6b7f78;padding:2px 8px;min-width:90px}
 .void{position:absolute;left:50%;top:46%;translate:-50% -50%;rotate:-14deg;font:800 64px/1 var(--ui);letter-spacing:.12em;color:rgba(186,5,23,.18);border:6px solid rgba(186,5,23,.18);padding:2px 18px;border-radius:8px;pointer-events:none}
 .micr{font-family:var(--mono);font-size:14px;letter-spacing:.12em;margin-top:16px;position:relative;color:#20302b;display:flex;gap:18px;flex-wrap:wrap}
 .bank{font-weight:700;color:#244c3f}
+/* a field the verification flagged */
+.f{border-radius:3px;padding:0 2px;margin:0 -2px}
+.f.bad{background:var(--bad-tint);box-shadow:0 0 0 2px var(--bad)}
+.f.flash{animation:flash 1.4s ease 2}
+@keyframes flash{50%{box-shadow:0 0 0 6px rgba(186,5,23,.25)}}
 
-/* compare bubble */
-.compare{position:absolute;left:12px;right:12px;bottom:12px;background:#fff;border:1px solid var(--line-2);border-radius:8px;box-shadow:0 8px 24px rgba(3,45,96,.18);padding:10px 12px;display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;transition:opacity .2s,translate .25s;font-size:12.5px}
-.compare[hidden]{display:none}
-.compare .ct{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-weight:600;font-size:12px;color:var(--agent)}
-.compare .ct svg{width:14px;height:14px}
-.compare .lab{color:var(--muted);font-size:11.5px;white-space:nowrap}
-.compare .val{font-weight:600;min-width:0;overflow-wrap:anywhere}
-.compare .verdict{grid-row:2/4;grid-column:3;display:flex;align-items:center;gap:6px;font-weight:700;font-size:12px;padding:5px 9px;border-radius:14px;white-space:nowrap}
-.verdict svg{width:12px;height:12px}
-.verdict.scan{background:var(--brand-tint);color:var(--brand-dk)}
-.verdict.pass{background:var(--ok-tint);color:var(--ok)}
-.verdict.fail{background:var(--bad-tint);color:var(--bad)}
+/* ---------- modals ---------- */
+.backdrop{position:fixed;inset:0;background:rgba(8,7,7,.55);z-index:50;display:grid;place-items:center;padding:16px;overflow:auto}
+.backdrop.top{z-index:80}
+.modal{background:#fff;border-radius:6px;width:min(760px,100%);box-shadow:0 10px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;max-height:calc(100vh - 32px);animation:mIn .22s ease}
+@keyframes mIn{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+.modal-h{padding:14px 48px 14px 18px;border-bottom:1px solid var(--line);position:relative;display:flex;gap:12px;align-items:center}
+.modal-h.center{justify-content:center;text-align:center;flex-direction:column;gap:2px;padding-inline:48px}
+.modal-h h2{margin:0;font-size:18px;font-weight:400}
+.modal-h p{margin:0;font-size:12px;color:var(--muted)}
+.ag-ico{width:34px;height:34px;border-radius:8px;background:var(--agent);display:grid;place-items:center;color:#fff;flex:none}
+.ag-ico svg{width:19px;height:19px}
+.modal-x{position:absolute;right:10px;top:12px;border:0;background:transparent;cursor:pointer;color:var(--muted);padding:6px;border-radius:4px}
+.modal-x:hover{background:var(--hover)}
+.modal-x svg{width:14px;height:14px}
+.modal-b{padding:14px 18px 18px;overflow:auto;display:flex;flex-direction:column;gap:14px}
+.modal-f{padding:12px 18px;border-top:1px solid var(--line);background:var(--page);border-radius:0 0 6px 6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.modal-f .hint{flex:1;min-width:200px}
+.hint{font-size:11.5px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.hint svg{width:12px;height:12px;flex:none}
 
-/* agent rail */
-.agent .panel-h{background:linear-gradient(180deg,var(--agent-tint),#fff)}
-.ag-ico{width:32px;height:32px;border-radius:8px;background:var(--agent);display:grid;place-items:center;color:#fff;flex:none}
-.ag-ico svg{width:18px;height:18px}
-.ag-title{flex:1;min-width:0}
-.pill{display:inline-flex;align-items:center;gap:6px;border-radius:12px;padding:3px 9px;font-size:11.5px;font-weight:600;white-space:nowrap;background:var(--page);color:var(--muted)}
-.pill svg{width:11px;height:11px}
-.pill.run{background:var(--brand-tint);color:var(--brand-dk)}
-.pill.fail{background:var(--bad-tint);color:var(--bad)}
-.pill.pass{background:var(--ok-tint);color:var(--ok)}
-.agent-body{flex:1;overflow:auto;padding:12px 14px 18px;display:flex;flex-direction:column;gap:12px}
-.intro{border:1px dashed var(--line-2);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px}
-.intro p{margin:0;color:var(--muted)}
-.intro b{color:var(--text)}
-.prog{display:flex;flex-direction:column;gap:6px}
-.prog-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
-.prog-top b{color:var(--text)}
-.bar{height:6px;background:var(--page);border-radius:3px;overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:var(--agent);border-radius:3px;transition:width .35s ease}
-.think{font-size:12px;color:var(--agent);display:flex;align-items:center;gap:6px;min-height:18px}
-.spin{width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex:none}
-@keyframes spin{to{rotate:360deg}}
-
-.cl-h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;display:flex;justify-content:space-between}
-.cl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.ck{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:8px 6px;border-bottom:1px solid var(--line);border-radius:4px;transition:background .25s}
-.ck.active{background:var(--agent-tint)}
-.ck-ico{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line-2);color:#fff;margin-top:1px}
-.ck-ico svg{width:11px;height:11px}
-.ck[data-st="active"] .ck-ico{border-color:var(--agent);color:var(--agent)}
-.ck[data-st="pass"] .ck-ico{background:var(--ok);border-color:var(--ok)}
-.ck[data-st="fail"] .ck-ico{background:var(--bad);border-color:var(--bad)}
-.ck-label{font-weight:600;font-size:13px}
-.ck[data-st="pending"] .ck-label{color:var(--muted);font-weight:500}
-.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:1px 7px 1px 4px;border-radius:10px;background:var(--page);color:var(--faint);border:1px solid transparent;transition:background .2s,color .2s}
-.chip i{width:12px;height:12px;border-radius:50%;display:grid;place-items:center;font-style:normal}
-.chip i svg{width:8px;height:8px}
-.chip[data-st="pending"] i::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--line-2)}
-.chip[data-st="active"]{background:var(--agent-tint);color:var(--agent);border-color:#cdbcf5}
-.chip[data-st="pass"]{background:var(--ok-tint);color:var(--ok)}
-.chip[data-st="pass"] i{background:var(--ok);color:#fff}
-.chip[data-st="fail"]{background:var(--bad-tint);color:var(--bad);font-weight:600}
-.chip[data-st="fail"] i{background:var(--bad);color:#fff}
-.ck-note{font-size:11.5px;color:var(--bad);margin-top:4px}
-
-/* results */
-.result{border-radius:6px;border:1px solid var(--line);overflow:hidden;animation:resIn .45s cubic-bezier(.2,.8,.2,1)}
-@keyframes resIn{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}
-.res-h{display:flex;gap:10px;align-items:flex-start;padding:12px}
-.res-h .big{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;flex:none}
-.res-h .big svg{width:16px;height:16px}
-.result.fail .res-h{background:var(--bad-tint)} .result.fail .big{background:var(--bad)}
-.result.pass .res-h{background:var(--ok-tint)} .result.pass .big{background:var(--ok)}
-.res-h h3{margin:0;font-size:15px;line-height:1.3;text-wrap:balance}
-.res-h p{margin:2px 0 0;color:var(--muted);font-size:12.5px}
-.res-b{padding:4px 12px 12px;display:flex;flex-direction:column;gap:10px}
-.owner{display:flex;flex-direction:column;gap:6px}
-.owner-h{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-top:8px}
-.tag{font-size:10.5px;letter-spacing:0;text-transform:none;border-radius:3px;padding:1px 6px;font-weight:600}
+/* verification modal */
+.vbanner{display:flex;gap:12px;align-items:center;border-radius:6px;padding:12px 14px;background:var(--agent-tint);color:var(--agent)}
+.vbanner h3{margin:0;font-size:15px;line-height:1.3;color:var(--text)}
+.vbanner p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.vbanner .big{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;color:#fff;background:var(--agent)}
+.vbanner .big svg{width:16px;height:16px}
+.vbanner.fail{background:var(--bad-tint)} .vbanner.fail .big{background:var(--bad)}
+.vbanner.pass{background:var(--ok-tint)} .vbanner.pass .big{background:var(--ok)}
+.vbanner .bar{height:5px;background:rgba(90,47,194,.15);border-radius:3px;overflow:hidden;margin-top:8px;width:min(320px,100%)}
+.vbanner .bar i{display:block;height:100%;width:0;background:var(--agent);transition:width .2s linear}
+.vsec-h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 6px;display:flex;justify-content:space-between;gap:8px}
+.vsec-h span:last-child{text-transform:none;letter-spacing:0;font-weight:500}
+.fixes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.fix{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;border:1px solid #f3b9ae;background:#fff;border-radius:6px;padding:9px 10px;cursor:pointer;text-align:left;width:100%;transition:background .15s,border-color .15s}
+.fix:hover,.fix:focus-visible,.fix.pinned{background:var(--bad-tint);border-color:var(--bad)}
+.xdot{width:20px;height:20px;border-radius:50%;background:var(--bad);color:#fff;display:grid;place-items:center}
+.xdot svg{width:11px;height:11px}
+.fix b{display:block;font-size:13.5px}
+.fix .todo{font-size:12px;color:var(--muted);margin-top:1px}
+.where{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--brand);white-space:nowrap}
+.where svg{width:13px;height:13px}
+.tag{font-size:10.5px;border-radius:3px;padding:1px 6px;font-weight:600;margin-left:6px;vertical-align:1px;white-space:nowrap}
 .tag.dealer{background:#fff0d6;color:#7a4300}
 .tag.customer{background:#e3ecff;color:#1d4fa8}
 .tag.internal{background:var(--agent-tint);color:var(--agent)}
-.fixes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;counter-reset:fx}
-.fix{border:1px solid var(--line);border-radius:5px;padding:8px 10px 8px 34px;position:relative;counter-increment:fx;background:#fff}
-.fix::before{content:counter(fx);position:absolute;left:9px;top:8px;width:18px;height:18px;border-radius:50%;background:var(--text);color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center}
-.fix b{display:block;font-size:13px}
-.fix .why{color:var(--muted);font-size:12px;margin-top:2px}
-.fix .do{font-size:12px;margin-top:4px;display:flex;gap:5px}
-.fix .do svg{width:12px;height:12px;flex:none;margin-top:2px;color:var(--brand)}
+
+.vlist{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:6px}
+.vrow{display:grid;grid-template-columns:22px minmax(140px,220px) 1fr;gap:10px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)}
+.vrow:last-child{border-bottom:0}
+.vico{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line-2);color:#fff}
+.vico svg{width:11px;height:11px}
+.vrow[data-st="run"] .vico{border-color:var(--agent);color:var(--agent)}
+.vrow[data-st="pass"] .vico{background:var(--ok);border-color:var(--ok)}
+.vrow[data-st="fail"] .vico{background:var(--bad);border-color:var(--bad)}
+.vrow[data-st="wait"] .vlabel{color:var(--faint)}
+.vlabel{font-weight:600;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;padding:2px 8px 2px 4px;border-radius:11px;background:var(--page);color:var(--faint);border:1px solid transparent}
+.chip i{width:13px;height:13px;border-radius:50%;display:grid;place-items:center;font-style:normal}
+.chip i svg{width:8px;height:8px}
+.chip[data-st="wait"] i::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--line-2)}
+.chip[data-st="pass"]{background:var(--ok-tint);color:var(--ok)}
+.chip[data-st="pass"] i{background:var(--ok);color:#fff}
+.chip[data-st="fail"]{background:var(--bad-tint);color:var(--bad);font-weight:600;border-color:#f3b9ae;cursor:pointer}
+.chip[data-st="fail"] i{background:var(--bad);color:#fff}
+.chip[data-st="fail"]:hover,.chip[data-st="fail"].pinned{border-color:var(--bad)}
+.spin{width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex:none;display:inline-block}
+@keyframes spin{to{rotate:360deg}}
 .wins{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
 .wins li{display:flex;gap:8px;font-size:12.5px}
 .wins svg{width:14px;height:14px;color:var(--ok);flex:none;margin-top:2px}
-.actions{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:2px}
-.actions .btn-group .btn{flex:1}
-.hint{font-size:11.5px;color:var(--muted);display:flex;gap:6px;align-items:center}
-.hint svg{width:12px;height:12px;flex:none}
-.queued{display:flex;gap:8px;align-items:center;background:var(--ok-tint);color:var(--ok);border-radius:4px;padding:8px 10px;font-weight:600;font-size:12.5px}
-.queued svg{width:14px;height:14px}
 
-/* beam */
-.beam{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;overflow:visible}
-.beam path{fill:none;stroke-width:2;stroke-linecap:round}
-.beam .scan{stroke:var(--brand);stroke-dasharray:5 6;animation:dash .5s linear infinite}
-.beam .pass{stroke:var(--ok)}
-.beam .fail{stroke:var(--bad);stroke-width:2.5}
-.beam circle{stroke:#fff;stroke-width:2}
-@keyframes dash{to{stroke-dashoffset:-11}}
+/* "where is it wrong" popover */
+.pop{position:fixed;z-index:70;width:340px;max-width:calc(100vw - 24px);background:#fff;border:1px solid var(--line-2);border-radius:8px;box-shadow:0 12px 32px rgba(3,45,96,.25);padding:12px;display:flex;flex-direction:column;gap:10px;animation:mIn .15s ease}
+.pop-file{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);min-width:0}
+.pop-file b{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pop-t{font-weight:700;font-size:13.5px;color:var(--bad)}
+.cmp{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12px;border-top:1px solid var(--line);padding-top:8px}
+.cmp:first-of-type{border-top:0;padding-top:0}
+.cmp .k{color:var(--muted);white-space:nowrap}
+.cmp .v{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.cmp .v.bad{color:var(--bad)}
+.snip{background:var(--paper);border:1px solid #e3ded3;border-radius:4px;padding:8px 10px;font-size:11.5px;color:var(--ink);box-shadow:inset 0 1px 2px rgba(0,0,0,.04)}
+.snip-h{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;margin-bottom:4px}
+.snip-r{display:flex;justify-content:space-between;gap:10px;padding:3px 4px;border-bottom:1px dashed #e6e1d6;border-radius:3px}
+.snip-r:last-child{border-bottom:0}
+.snip-r span:first-child{color:var(--ink-soft)}
+.snip-r span:last-child{font-family:var(--mono);text-align:right;overflow-wrap:anywhere}
+.snip-r.bad{background:var(--bad-tint);box-shadow:0 0 0 1.5px var(--bad);border-bottom-color:transparent}
+.snip-r.bad span:last-child{color:var(--bad);font-weight:600}
+.pop .btn{align-self:flex-start;min-height:28px;font-size:12px}
+
+/* email modal */
+.mf{display:grid;grid-template-columns:64px 1fr;align-items:center;gap:8px}
+.mf label{font-size:12px;color:var(--muted)}
+.mf input,.mf textarea{width:100%;border:1px solid var(--line-2);border-radius:4px;padding:7px 9px;font:13px/1.45 var(--ui);color:var(--text);background:#fff}
+.mf textarea{min-height:260px;resize:vertical}
+.mf.body{grid-template-columns:1fr}
+.btn.outlook{background:#0f6cbd;border-color:#0f6cbd;color:#fff}
+.btn.outlook:hover{background:#0c5a9e}
 
 /* toast */
-.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);translate:-50% -20px;opacity:0;z-index:60;display:flex;gap:10px;align-items:flex-start;background:var(--ok);color:#fff;border-radius:4px;padding:12px 16px;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:min(560px,calc(100vw - 32px));transition:opacity .25s,translate .3s;pointer-events:none}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);translate:-50% -20px;opacity:0;z-index:90;display:flex;gap:10px;align-items:flex-start;background:var(--ok);color:#fff;border-radius:4px;padding:12px 16px;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:min(560px,calc(100vw - 32px));transition:opacity .25s,translate .3s;pointer-events:none}
 .toast.show{opacity:1;translate:-50% 0}
 .toast svg{width:20px;height:20px;flex:none}
 .toast b{display:block;font-size:14px}
 
-/* modal */
-.backdrop{position:fixed;inset:0;background:rgba(8,7,7,.55);z-index:50;display:grid;place-items:center;padding:16px;overflow:auto}
-.modal{background:#fff;border-radius:6px;width:min(680px,100%);box-shadow:0 10px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;max-height:calc(100vh - 32px);animation:resIn .25s ease}
-.modal-h{padding:14px 18px;border-bottom:1px solid var(--line);text-align:center;position:relative}
-.modal-h h2{margin:0;font-size:18px;font-weight:400}
-.modal-h p{margin:2px 0 0;font-size:12px;color:var(--muted)}
-.modal-x{position:absolute;right:10px;top:10px;border:0;background:transparent;cursor:pointer;color:var(--muted);padding:6px;border-radius:4px}
-.modal-x:hover{background:var(--hover)}
-.modal-x svg{width:14px;height:14px}
-.modal-b{padding:14px 18px;overflow:auto;display:flex;flex-direction:column;gap:10px}
-.mf{display:grid;grid-template-columns:64px 1fr;align-items:center;gap:8px}
-.mf label{font-size:12px;color:var(--muted)}
-.mf input,.mf textarea{width:100%;border:1px solid var(--line-2);border-radius:4px;padding:7px 9px;font:13px/1.45 var(--ui);color:var(--text);background:#fff}
-.mf textarea{min-height:280px;resize:vertical;grid-column:1/-1}
-.mf.body{grid-template-columns:1fr}
-.modal-f{padding:12px 18px;border-top:1px solid var(--line);background:var(--page);border-radius:0 0 6px 6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.modal-f .hint{flex:1;min-width:200px}
-.btn.outlook{background:#0f6cbd;border-color:#0f6cbd;color:#fff}
-.btn.outlook:hover{background:#0c5a9e;text-decoration:none}
-
-@media (max-width:1180px){
-  .workspace{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}
-  .agent{grid-column:1/-1;height:auto}
-  .agent-body{overflow:visible}
-  .cl{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));column-gap:12px}
-}
-@media (max-width:780px){
+@media (max-width:860px){
   .workspace{grid-template-columns:minmax(0,1fr)}
   .panel{height:auto}
-  .rec .rec-body{max-height:420px}
+  .rec-body{max-height:420px}
   .doc-stage{max-height:620px}
-  .fields{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .fields,.kv2,.sigs{grid-template-columns:1fr}
   .search{display:none}
   .gh-icons .opt{display:none}
-  .kv2,.sigs{grid-template-columns:1fr}
   .paper{padding:20px 18px}
   .demo-ctrls{margin-left:0}
-  .compare{grid-template-columns:auto 1fr}
-  .compare .verdict{grid-row:auto;grid-column:1/-1;justify-self:start}
+  .vrow{grid-template-columns:22px 1fr}
+  .vrow .chips{grid-column:2}
+  .fix{grid-template-columns:22px 1fr}
+  .fix .where{grid-column:2}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -394,10 +357,6 @@ svg{display:block}
       <button role="tab" id="tab-correct" aria-selected="false"><span class="dot good"></span>With correct information</button>
     </div>
     <div class="demo-ctrls">
-      <span class="dlabel">Speed</span>
-      <button class="dbtn" id="sp1" aria-pressed="true">1×</button>
-      <button class="dbtn" id="sp2" aria-pressed="false">2×</button>
-      <button class="dbtn" id="btn-skip">Skip to results</button>
       <button class="dbtn" id="btn-reset">Reset</button>
     </div>
     <a class="demo-credit" href="https://www.onespotgroup.com" target="_blank" rel="noopener">Built by <b>One Spot</b> ↗</a>
@@ -443,7 +402,7 @@ svg{display:block}
 <main class="wrap">
   <section class="card hl" aria-label="Deal highlights">
     <div class="hl-top">
-      <div class="obj-ico deal"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 14.5h14l1-8-4 3L10 4 6 9.5l-4-3z" fill="currentColor"/><rect x="3" y="15.5" width="14" height="1.6" rx=".6" fill="currentColor"/></svg></div>
+      <div class="obj-ico"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 14.5h14l1-8-4 3L10 4 6 9.5l-4-3z" fill="currentColor"/><rect x="3" y="15.5" width="14" height="1.6" rx=".6" fill="currentColor"/></svg></div>
       <div class="hl-title">
         <div class="obj-type">Deal</div>
         <h1>Ridgeline Excavation – 2024 CAT 320 Excavator</h1>
@@ -451,10 +410,7 @@ svg{display:block}
       <div class="hl-actions">
         <button class="btn">+ Follow</button>
         <button class="btn">Edit</button>
-        <button class="btn brand" id="btn-run">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.5 4 4 1.5-4 1.5L8 12.5 6.5 8.5l-4-1.5 4-1.5z" fill="currentColor"/><path d="M13 11l.6 1.4 1.4.6-1.4.6L13 15l-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor"/></svg>
-          <span>Run Contract Verification</span>
-        </button>
+        <button class="btn">Clone</button>
       </div>
     </div>
     <dl class="hl-fields">
@@ -464,7 +420,7 @@ svg{display:block}
       <div><dt>Amount Financed</dt><dd>$223,650.00</dd></div>
       <div><dt>Target Funding Date</dt><dd>Oct 6, 2026</dd></div>
       <div><dt>Account Manager</dt><dd><a href="#" onclick="return false">Jordan Reyes</a></dd></div>
-      <div><dt>Stage</dt><dd id="hl-stage">Contract Review</dd></div>
+      <div><dt>Stage</dt><dd id="hl-stage">Prepare Doc Request</dd></div>
     </dl>
   </section>
 
@@ -472,51 +428,37 @@ svg{display:block}
     <ol id="path">
       <li data-st="done">Application</li>
       <li data-st="done">Credit Approved</li>
-      <li data-st="done">Docs Received</li>
-      <li data-st="current">Contract Review</li>
-      <li>Funding Queue</li>
+      <li data-st="current">Prepare Doc Request</li>
+      <li>Doc Request Submitted</li>
       <li>Funded</li>
     </ol>
+    <div class="path-actions">
+      <button class="vstate none" id="vstate" disabled>Not verified yet</button>
+      <button class="btn brand" id="btn-verify"></button>
+      <button class="btn" id="btn-submit" disabled></button>
+    </div>
   </section>
 
-  <div class="workspace" id="workspace">
-    <section class="card panel rec" aria-label="Deal record">
+  <div class="workspace">
+    <section class="card panel" aria-label="Deal record">
       <div class="ptabs"><span class="ptab on">Details</span><span class="ptab">Related</span><span class="ptab">Activity</span><span class="ptab">Approval History</span></div>
       <div class="rec-body" id="rec-body"></div>
     </section>
 
-    <section class="card panel docs" aria-label="Documents">
-      <div class="panel-h">
-        <h2>Files</h2><span class="sub" id="doc-count">6 attached to DR-01482</span>
-      </div>
-      <div class="dtabs" id="dtabs" role="tablist" aria-label="Documents"></div>
+    <section class="card panel" aria-label="Files">
+      <div class="panel-h"><h2>Files</h2><span class="sub">5 attached to Doc Request DR-01482</span></div>
+      <div class="dtabs" id="dtabs" role="tablist" aria-label="Files"></div>
       <div class="dmeta" id="dmeta"></div>
-      <div class="doc-wrap">
-        <div class="doc-stage" id="doc-stage"></div>
-        <div class="compare" id="compare" hidden aria-live="polite"></div>
-      </div>
+      <div class="doc-stage" id="doc-stage"></div>
     </section>
-
-    <aside class="card panel agent" aria-label="Contract Verification Agent">
-      <div class="panel-h">
-        <div class="ag-ico"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l6.5 2.6v5c0 4.2-2.8 7.4-6.5 8.8-3.7-1.4-6.5-4.6-6.5-8.8v-5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.8 10l2.2 2.2 4.2-4.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="ag-title"><h2>Contract Verification Agent</h2><div class="sub">Reviews every document before funding</div></div>
-        <span class="pill" id="ag-pill">Ready</span>
-      </div>
-      <div class="agent-body" id="agent-body">
-        <div id="ag-top"></div>
-        <div class="cl-h"><span>Checklist</span><span id="cl-count"></span></div>
-        <ul class="cl" id="checklist"></ul>
-      </div>
-    </aside>
-
-    <svg class="beam" id="beam" aria-hidden="true"></svg>
   </div>
 </main>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<div id="modal-root"></div>
+<div id="verify-root"></div>
+<div id="email-root"></div>
+<div id="pop-root"></div>
 
 <script>
 (() => {
@@ -527,11 +469,11 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const I = {
   check: '<svg viewBox="0 0 16 16"><path d="M3.2 8.6l3 3 6.6-7.2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   x: '<svg viewBox="0 0 16 16"><path d="M4.2 4.2l7.6 7.6M11.8 4.2l-7.6 7.6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
-  arrow: '<svg viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  shield: '<svg viewBox="0 0 20 20"><path d="M10 1.8l6.5 2.6v5c0 4.2-2.8 7.4-6.5 8.8-3.7-1.4-6.5-4.6-6.5-8.8v-5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6.8 10l2.2 2.2 4.2-4.6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   mail: '<svg viewBox="0 0 16 16"><rect x="1.5" y="3" width="13" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 4l6 5 6-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
   send: '<svg viewBox="0 0 16 16"><path d="M1.8 7.6L14.2 2 10.6 14.2 7.8 9 1.8 7.6z M7.8 9l6.4-7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
   info: '<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 7.2v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="4.9" r=".95" fill="currentColor"/></svg>',
-  spark: '<svg viewBox="0 0 16 16"><path d="M8 1.5l1.5 4 4 1.5-4 1.5L8 12.5 6.5 8.5l-4-1.5 4-1.5z" fill="currentColor"/></svg>',
+  eye: '<svg viewBox="0 0 16 16"><path d="M1.5 8s2.4-4.5 6.5-4.5S14.5 8 14.5 8 12.1 12.5 8 12.5 1.5 8 1.5 8z" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>',
   close: '<svg viewBox="0 0 16 16"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
   chev: '<svg viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
   pencil: '<svg class="pencil" viewBox="0 0 16 16"><path d="M10.8 2.2l3 3-8.3 8.3-3.6.6.6-3.6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>',
@@ -541,12 +483,11 @@ const I = {
 };
 const KEY_SVG = '<svg viewBox="0 0 32 32"><path d="M9 4h14l5 24H4z" fill="#014486"/><path d="M13 4h6l2 10h-10z" fill="#0176d3"/></svg>';
 
-/* ---------------- Salesforce record ---------------- */
+/* ---------------- deal record ---------------- */
 const REC = {
   acct:{l:'Account Name', v:'Ridgeline Excavation LLC', link:1},
-  addr:{l:'Billing Address', v:'4820 Quarry Rd, Boise, ID 83709', wide:1},
   signer:{l:'Authorized Signer', v:'Marcus Hale'},
-  guarantor:{l:'Personal Guarantor', v:'Marcus Hale', link:1},
+  addr:{l:'Billing Address', v:'4820 Quarry Rd, Boise, ID 83709', wide:1},
   custEmail:{l:'Customer Email', v:'marcus@ridgelineexcavation.com', wide:1, link:1},
   dealer:{l:'Dealer', v:'Summit Heavy Equipment Co.', link:1},
   dealerContact:{l:'Dealer Contact', v:'Dana Whitaker', link:1},
@@ -562,22 +503,18 @@ const REC = {
   approvalNo:{l:'Credit Approval', v:'CA-77214', link:1},
   approvedAmt:{l:'Approved Amount', v:'$225,000.00'},
   approvalExp:{l:'Approval Expires', v:'Oct 31, 2026'},
-  fundingDate:{l:'Target Funding Date', v:'Oct 6, 2026'},
-  lossPayee:{l:'Required Loss Payee', v:'Keystone Commercial Finance, ISAOA/ATIMA', wide:1},
-  minCoverage:{l:'Minimum Coverage', v:'$248,500.00'},
   bank:{l:'ACH Bank', v:'First Mountain Bank'},
   routing:{l:'ACH Routing Number', v:'324079555'},
   acctLast4:{l:'ACH Account', v:'••••6620', cmp:'6620'},
   docreq:{l:'Doc Request', v:'DR-01482', link:1},
-  docStatus:{l:'Doc Request Status', v:'Docs Received · 6 of 6'},
+  docStatus:{l:'Required Documents', v:'5 of 5 uploaded'},
   owner:{l:'Account Manager', v:'Jordan Reyes', link:1},
 };
 const SECTIONS = [
-  ['Account Information', ['acct','signer','addr','guarantor','custEmail']],
+  ['Account Information', ['acct','signer','addr','custEmail']],
   ['Dealer', ['dealer','dealerContact','dealerEmail']],
   ['Equipment', ['equip','serial','cost']],
-  ['Deal Terms', ['down','financed','term','rate','payment','approvalNo','approvedAmt','approvalExp','fundingDate']],
-  ['Insurance Requirements', ['lossPayee','minCoverage']],
+  ['Deal Terms', ['down','financed','term','rate','payment','approvalNo','approvedAmt','approvalExp']],
   ['ACH / Payments', ['bank','routing','acctLast4']],
   ['Doc Request', ['docreq','docStatus','owner']],
 ];
@@ -589,106 +526,74 @@ const GOOD = {
   approval:{no:'CA-77214', date:'Sep 24, 2026', applicant:'Ridgeline Excavation LLC', amount:'225,000.00', term:'60 months', rate:'8.49%', expires:'Oct 31, 2026'},
   coi:{insured:'Ridgeline Excavation LLC', addr:'4820 Quarry Rd, Boise, ID 83709', equip:'2024 Caterpillar 320 Hydraulic Excavator', serial:'CAT0320GKXD04187', limit:'250,000.00', period:'Sep 30, 2026 – Sep 30, 2027', lossPayee:'Keystone Commercial Finance, ISAOA/ATIMA'},
   check:{holder:'Ridgeline Excavation LLC', addr:'4820 Quarry Rd, Boise, ID 83709', bank:'First Mountain Bank', routing:'324079555', account:'4471556620', no:'1047'},
-  guarantee:{name:'Marcus Hale', sig:'Marcus Hale', date:'Oct 1, 2026'},
 };
-const clone = o => JSON.parse(JSON.stringify(o));
-const BAD = clone(GOOD);
+const BAD = JSON.parse(JSON.stringify(GOOD));
 BAD.check.holder = 'Ridgeline Excavating Inc.';
 BAD.invoice.serial = 'CAT0320GKXD04178';
 BAD.contract.term = '72 months';
 BAD.contract.payment = '3,975.03';
-BAD.coi.lossPayee = '';
-BAD.guarantee.sig = '';
 
 const DOCS = [
-  {id:'contract', short:'Contract', name:'Equipment Finance Agreement', file:'EFA-24-10387_signed.pdf', meta:'3 pages · e-signed Oct 1'},
-  {id:'invoice', short:'Invoice', name:'Dealer Invoice', file:'Summit_Invoice_SHE-55821.pdf', meta:'1 page · from Dana Whitaker'},
-  {id:'approval', short:'Credit Approval', name:'Credit Approval', file:'Credit_Approval_CA-77214.pdf', meta:'1 page · Credit dept.'},
-  {id:'coi', short:'Insurance', name:'Certificate of Insurance', file:'COI_Ridgeline_IM-4471902.pdf', meta:'1 page · from customer'},
-  {id:'check', short:'Void Check', name:'Voided Check', file:'Void_Check_1047.jpg', meta:'Image · from customer'},
-  {id:'guarantee', short:'Guarantee', name:'Personal Guarantee', file:'Personal_Guarantee_MHale.pdf', meta:'1 page · e-sign packet'},
+  {id:'contract', short:'Contract', name:'contract', file:'EFA-24-10387_signed.pdf', meta:'3 pages · e-signed Oct 1'},
+  {id:'invoice', short:'Invoice', name:'invoice', file:'Summit_Invoice_SHE-55821.pdf', meta:'1 page · from Dana Whitaker'},
+  {id:'approval', short:'Credit Approval', name:'credit approval', file:'Credit_Approval_CA-77214.pdf', meta:'1 page · Credit dept.'},
+  {id:'coi', short:'Insurance', name:'insurance certificate', file:'COI_Ridgeline_IM-4471902.pdf', meta:'1 page · from customer'},
+  {id:'check', short:'Void Check', name:'void check', file:'Void_Check_1047.jpg', meta:'Image · from customer'},
 ];
 const DOC = Object.fromEntries(DOCS.map(d => [d.id, d]));
 
-/* ---------------- checks ---------------- */
+/* ---------------- what gets checked ---------------- */
 const CHECKS = [
-  {id:'docs', label:'Required documents received', rf:'docStatus', steps: DOCS.map(d => ({doc:d.id, k:'_doc', lab:d.name, rule:'present', chip:d.short}))},
-  {id:'name', label:'Customer legal name', rf:'acct', steps:[
+  {id:'docs', label:'Required documents', short:'Document', rf:'docStatus', steps: DOCS.map(d => ({doc:d.id, k:'_doc', lab:'File', rule:'present'}))},
+  {id:'name', label:'Business name', short:'Business name', rf:'acct', steps:[
     {doc:'contract', k:'debtor', lab:'Debtor'}, {doc:'invoice', k:'billTo', lab:'Bill to'}, {doc:'approval', k:'applicant', lab:'Applicant'},
     {doc:'coi', k:'insured', lab:'Named insured'}, {doc:'check', k:'holder', lab:'Account holder'}]},
-  {id:'addr', label:'Customer address', rf:'addr', steps:[
-    {doc:'contract', k:'addr', lab:'Debtor address'}, {doc:'invoice', k:'addr', lab:'Bill-to address'}, {doc:'coi', k:'addr', lab:'Insured address'}]},
-  {id:'dealer', label:'Dealer', rf:'dealer', steps:[
+  {id:'addr', label:'Business address', short:'Business address', rf:'addr', steps:[
+    {doc:'contract', k:'addr', lab:'Debtor address'}, {doc:'invoice', k:'addr', lab:'Bill-to address'}]},
+  {id:'dealer', label:'Dealer', short:'Dealer name', rf:'dealer', steps:[
     {doc:'invoice', k:'dealer', lab:'Seller'}, {doc:'contract', k:'vendor', lab:'Vendor / dealer'}]},
-  {id:'equip', label:'Equipment description', rf:'equip', steps:[
-    {doc:'invoice', k:'equip', lab:'Line item'}, {doc:'contract', k:'equip', lab:'Schedule A'}, {doc:'coi', k:'equip', lab:'Described property'}]},
-  {id:'serial', label:'Serial number', rf:'serial', steps:[
+  {id:'serial', label:'Equipment serial number', short:'Serial number', rf:'serial', steps:[
     {doc:'invoice', k:'serial', lab:'Serial no.'}, {doc:'contract', k:'serial', lab:'Serial no.'}, {doc:'coi', k:'serial', lab:'Serial no.'}]},
-  {id:'cost', label:'Equipment cost', rf:'cost', steps:[
-    {doc:'invoice', k:'cost', lab:'Invoice total'}, {doc:'contract', k:'cost', lab:'Equipment cost'}]},
-  {id:'down', label:'Down payment', rf:'down', steps:[
+  {id:'cost', label:'Equipment cost', short:'Equipment cost', rf:'cost', steps:[
+    {doc:'invoice', k:'cost', lab:'Total sale price'}, {doc:'contract', k:'cost', lab:'Equipment cost'}]},
+  {id:'down', label:'Down payment', short:'Down payment', rf:'down', steps:[
     {doc:'invoice', k:'down', lab:'Down payment'}, {doc:'contract', k:'down', lab:'Down payment'}]},
-  {id:'financed', label:'Amount financed within approval', rf:'financed', steps:[
+  {id:'financed', label:'Amount financed', short:'Amount financed', rf:'financed', steps:[
     {doc:'contract', k:'financed', lab:'Amount financed'}, {doc:'approval', k:'amount', lab:'Approved amount', rule:'lte'}]},
-  {id:'term', label:'Term & payment', rf:'term', steps:[
-    {doc:'approval', k:'term', lab:'Approved term', chip:'Approval'}, {doc:'contract', k:'term', lab:'Term', chip:'Contract'},
-    {doc:'contract', k:'payment', lab:'Monthly payment', rf:'payment', chip:'Payment'}]},
-  {id:'rate', label:'Interest rate', rf:'rate', steps:[
-    {doc:'approval', k:'rate', lab:'Approved rate'}, {doc:'contract', k:'rate', lab:'Interest rate'}]},
-  {id:'approval', label:'Approval valid on funding date', rf:'approvalExp', steps:[
-    {doc:'approval', k:'expires', lab:'Expires', chip:'Expiration'},
-    {doc:'approval', k:'expires', lab:'Expires', rf:'fundingDate', rule:'notBefore', chip:'Funding date'}]},
-  {id:'losspayee', label:'Keystone named as loss payee', rf:'lossPayee', steps:[
-    {doc:'coi', k:'lossPayee', lab:'Loss payee'}]},
-  {id:'coverage', label:'Insurance coverage & dates', rf:'minCoverage', steps:[
-    {doc:'coi', k:'limit', lab:'Limit', rule:'gte', chip:'Coverage'},
-    {doc:'coi', k:'period', lab:'Policy period', rf:'fundingDate', rule:'covers', chip:'Policy dates'}]},
-  {id:'sign', label:'Signatures', rf:'guarantor', steps:[
-    {doc:'contract', k:'sigDebtor', lab:'Debtor signature', rf:'signer', rule:'signed', chip:'Contract'},
-    {doc:'guarantee', k:'name', lab:'Guarantor', chip:'Guarantor name'},
-    {doc:'guarantee', k:'sig', lab:'Guarantor signature', rule:'signed', chip:'Guarantee'}]},
-  {id:'ach', label:'ACH bank account', rf:'routing', steps:[
-    {doc:'check', k:'routing', lab:'Routing no.', chip:'Routing'},
-    {doc:'check', k:'account', lab:'Account no.', rf:'acctLast4', rule:'last4', chip:'Account'}]},
+  {id:'term', label:'Term & monthly payment', short:'Term', rf:'term', steps:[
+    {doc:'contract', k:'term', lab:'Term'}, {doc:'contract', k:'payment', lab:'Monthly payment', rf:'payment'}, {doc:'approval', k:'term', lab:'Approved term'}]},
+  {id:'rate', label:'Interest rate', short:'Interest rate', rf:'rate', steps:[
+    {doc:'contract', k:'rate', lab:'Interest rate'}, {doc:'approval', k:'rate', lab:'Approved rate'}]},
+  {id:'ach', label:'Bank account for payments', short:'Bank account', rf:'routing', steps:[
+    {doc:'check', k:'routing', lab:'Routing no.'}, {doc:'check', k:'account', lab:'Account no.', rf:'acctLast4', rule:'last4'}]},
 ];
 
-/* What the agent tells the account manager, in plain English, when a check fails */
+/* Plain-English fixes, keyed by check:document */
 const FIXES = {
-  serial:{owner:'dealer', title:'Invoice has the wrong serial number',
-    why:'Invoice shows CAT0320GKXD04178. The deal and contract show CAT0320GKXD04187 — the last two digits are swapped.',
-    todo:'Ask Summit Heavy Equipment to reissue invoice SHE-55821.',
-    email:'Invoice SHE-55821 has the wrong serial number. It shows CAT0320GKXD04178, but the excavator\'s serial number is CAT0320GKXD04187 (the last two digits are swapped). Please send a corrected invoice.'},
-  name:{owner:'customer', title:'Void check is under a different name',
-    why:'The check is for “Ridgeline Excavating Inc.” The account is Ridgeline Excavation LLC.',
-    todo:'Get a voided check from the LLC\'s business account.',
+  'name:check':{owner:'customer', todo:'Ask the customer for a voided check from the Ridgeline Excavation LLC business account.',
     email:'Voided check: the check we received is for "Ridgeline Excavating Inc." Please send a voided check from the business account in the exact legal name, Ridgeline Excavation LLC.'},
-  losspayee:{owner:'customer', title:'Keystone isn\'t listed as loss payee on the insurance',
-    why:'The loss payee box on the certificate is blank.',
-    todo:'Customer\'s insurance agent adds “Keystone Commercial Finance, ISAOA/ATIMA” and sends a new certificate.',
-    email:'Insurance certificate: please ask your insurance agent to add "Keystone Commercial Finance, ISAOA/ATIMA" as loss payee on policy IM-4471902 and send us the updated certificate.'},
-  sign:{owner:'customer', title:'Personal guarantee isn\'t signed',
-    why:'Marcus Hale\'s signature line on the guarantee is blank.',
-    todo:'Marcus signs the guarantee and sends it back.',
-    email:'Personal guarantee: the guarantee came back without a signature. Please sign where marked and return it.'},
-  term:{owner:'internal', title:'Contract term doesn\'t match the approval',
-    why:'Contract shows 72 months at $3,975.03/mo. Approval CA-77214 is for 60 months at $4,587.44/mo.',
-    todo:'Regenerate the contract at 60 months and resend it for signature.',
+  'serial:invoice':{owner:'dealer', todo:'Ask Summit Heavy Equipment to reissue invoice SHE-55821 with serial CAT0320GKXD04187.',
+    email:'Invoice SHE-55821 has the wrong serial number. It shows CAT0320GKXD04178, but the excavator\'s serial number is CAT0320GKXD04187 (the last two digits are swapped). Please send a corrected invoice.'},
+  'term:contract':{owner:'internal', todo:'Regenerate the contract at 60 months ($4,587.44/mo) and resend it for signature.',
     customerNote:'We\'re also sending a corrected finance agreement showing the approved 60-month term ($4,587.44 per month). Please sign it when it arrives.'},
 };
-const OWNERS = {
-  dealer:{label:'Dealership', who:'Summit Heavy Equipment Co.'},
-  customer:{label:'Customer', who:'Ridgeline Excavation LLC'},
-  internal:{label:'You', who:'Jordan Reyes · internal fix'},
+const OWNER = {dealer:'Dealership', customer:'Customer', internal:'You'};
+/* Context rows shown in the "where is it wrong" snippet for each file */
+const SNIP = {
+  contract:[['Debtor','debtor'],['Amount financed','financed'],['Term','term'],['Interest rate','rate'],['Monthly payment','payment'],['Serial no.','serial']],
+  invoice:[['Bill to','billTo'],['Description','equip'],['Serial no.','serial'],['Total sale price','cost']],
+  approval:[['Applicant','applicant'],['Approved amount','amount'],['Term','term'],['Rate','rate']],
+  coi:[['Named insured','insured'],['Described property','equip'],['Serial no.','serial']],
+  check:[['Account holder','holder'],['Bank','bank'],['Routing no.','routing'],['Account no.','account']],
 };
 
 /* ---------------- helpers ---------------- */
 const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const num = s => parseFloat(String(s).replace(/[^0-9.]/g, ''));
-const MON = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
-const dt = s => { const m = String(s).match(/([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),\s*(\d{4})/); return m ? new Date(+m[3], MON[m[1].toLowerCase()], +m[2]) : null; };
 const money = s => /^\d{1,3}(,\d{3})*\.\d{2}$/.test(s) ? '$' + s : s;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const F = (doc, k, v) => `<span class="f${v ? '' : ' empty'}" data-k="${doc}.${k}">${v ? esc(v) : ''}</span>`;
+const F = (doc, k, v) => `<span class="f" data-k="${doc}.${k}">${v ? esc(v) : ''}</span>`;
+const wait = ms => reduce ? Promise.resolve() : new Promise(r => setTimeout(r, ms));
 
 /* ---------------- document templates ---------------- */
 const TPL = {
@@ -806,31 +711,12 @@ const TPL = {
     <p class="fine" style="text-align:center">Uploaded by customer · photo of check, 1 of 1</p>
   </div>`,
 
-  guarantee: d => `<div class="paper legal">
-    <div class="lh"><div class="lh-mark">${KEY_SVG}</div><div><div class="lh-name">Keystone Commercial Finance</div><div class="lh-sub">Re: Agreement No. EFA-24-10387</div></div></div>
-    <h3 class="doc-h">Personal Guarantee</h3>
-    <p>For value received, the undersigned (“Guarantor”) unconditionally guarantees to Keystone Commercial Finance the full and prompt payment and performance of all obligations of <b>Ridgeline Excavation LLC</b> under Equipment Finance Agreement No. EFA-24-10387.</p>
-    <p>This guarantee is continuing and will remain in effect until all obligations are paid in full. Guarantor waives notice of acceptance, presentment and demand.</p>
-    <div class="kv2" style="margin-top:14px">
-      <div><span class="kl">Guarantor name</span>${F('guarantee','name',d.name)}</div>
-      <div><span class="kl">Home address</span>311 W Hays St, Boise, ID 83702</div>
-    </div>
-    <div class="sigs" style="grid-template-columns:1fr">
-      <div style="max-width:300px;margin-left:30px"><div class="sig-line">${d.sig ? `<span class="f" data-k="guarantee.sig"><span class="sigtxt">${esc(d.sig)}</span></span>` : `<span class="signhere">Sign here</span>${F('guarantee','sig','')}`}</div>
-        <div class="sig-cap">Guarantor signature · ${d.sig ? d.date : 'Date ____________'}</div></div>
-    </div>
-  </div>`,
 };
 
 /* ---------------- state ---------------- */
-let scenario = 'incorrect';
-let S = BAD;
-let runId = 0, running = false, skipping = false, speed = 1, curDoc = 'contract', results = null, submitted = false;
-let beamState = null;
+let S = BAD, curDoc = 'contract', result = null, verifying = false, submitted = false, runId = 0;
 
-const wait = ms => skipping ? Promise.resolve() : new Promise(r => setTimeout(r, ms / speed));
-
-/* ---------------- render: record ---------------- */
+/* ---------------- render: record + files ---------------- */
 function renderRecord() {
   $('#rec-body').innerHTML = SECTIONS.map(([title, keys]) => `
     <div class="sec"><div class="sec-t">${I.chev}${title}</div>
@@ -838,8 +724,6 @@ function renderRecord() {
         <div class="fld${f.wide ? ' wide' : ''}" id="r-${k}"><div class="fl">${f.l}</div><div class="fv${f.link ? ' link' : ''}">${esc(f.v)}</div><span class="fs"></span>${I.pencil}</div>`; }).join('')}
       </div></div>`).join('');
 }
-
-/* ---------------- render: documents ---------------- */
 function renderDocs() {
   $('#dtabs').innerHTML = DOCS.map(d => `<button class="dtab" role="tab" data-doc="${d.id}" aria-selected="false">${I.pdf}${d.short}<span class="st"></span></button>`).join('');
   $('#doc-stage').innerHTML = DOCS.map(d => `<div class="docpage" data-doc="${d.id}" hidden>${TPL[d.id](S[d.id])}</div>`).join('');
@@ -849,304 +733,300 @@ function renderDocs() {
 function showDoc(id) {
   curDoc = id;
   $$('.dtab').forEach(b => { const on = b.dataset.doc === id; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
-  $$('.docpage').forEach(p => {
-    const on = p.dataset.doc === id;
-    if (on && p.hidden) { p.hidden = false; const paper = p.firstElementChild; paper.style.animation = 'none'; void paper.offsetWidth; paper.style.animation = ''; }
-    else if (!on) p.hidden = true;
-  });
+  $$('.docpage').forEach(p => p.hidden = p.dataset.doc !== id);
   const d = DOC[id];
   $('#dmeta').innerHTML = `${I.pdf}<b>${d.file}</b><span>· ${d.meta}</span>`;
   $('#doc-stage').scrollTop = 0;
 }
 
-/* ---------------- render: agent ---------------- */
-const totalSteps = CHECKS.reduce((n, c) => n + c.steps.length, 0);
-function renderChecklist() {
-  $('#checklist').innerHTML = CHECKS.map(c => `
-    <li class="ck" data-id="${c.id}" data-st="pending">
-      <span class="ck-ico"></span>
-      <div><div class="ck-label">${c.label}</div>
-        <div class="chips">${c.steps.map((s, i) => `<span class="chip" data-i="${i}" data-st="pending"><i></i>${s.chip || DOC[s.doc].short}</span>`).join('')}</div>
-        <div class="ck-note" hidden></div>
-      </div>
-    </li>`).join('');
-  $('#cl-count').textContent = `${CHECKS.length} checks · ${DOCS.length} documents`;
-}
-function renderIntro() {
-  $('#ag-top').innerHTML = `
-    <div class="intro">
-      <p>I'll compare deal <b>D-24-10387</b> against all <b>${DOCS.length} documents</b> on Doc Request DR-01482: names, equipment, serial number, amounts, approval terms, insurance, signatures and bank details.</p>
-      <p>If anything is missing or doesn't match, you'll get a plain-English fix list and a ready-to-send email.</p>
-      <button class="btn brand" id="btn-run2">${I.spark}Run verification</button>
-    </div>`;
-  $('#btn-run2').onclick = start;
-}
-function setPill(kind, text) {
-  const p = $('#ag-pill');
-  p.className = 'pill' + (kind ? ' ' + kind : '');
-  p.innerHTML = (kind === 'run' ? '<span class="spin"></span>' : kind === 'pass' ? I.check : kind === 'fail' ? I.x : '') + text;
+/* ---------------- stage bar ---------------- */
+function renderStageBar() {
+  const vb = $('#btn-verify'), sb = $('#btn-submit'), vs = $('#vstate');
+  const steps = $$('#path li');
+  ['done','done', submitted ? 'done' : 'current', submitted ? 'current' : '', ''].forEach((st, i) => { if (st) steps[i].dataset.st = st; else delete steps[i].dataset.st; });
+  $('#hl-stage').textContent = submitted ? 'Doc Request Submitted' : 'Prepare Doc Request';
+  vb.innerHTML = `${I.shield}${result ? 'Verify again' : 'Verify'}`;
+  vb.hidden = submitted;
+  vb.className = result ? 'btn' : 'btn brand';
+  const ready = result && !result.fixes.length;
+  sb.disabled = !ready || submitted;
+  sb.className = ready && !submitted ? 'btn brand' : 'btn';
+  sb.innerHTML = submitted ? `${I.check}Doc Request Submitted` : `${ready ? I.send : I.lock}Submit Doc Request`;
+  sb.title = ready ? '' : 'Run Verify first. Every item has to match before you can submit.';
+  if (!result) { vs.className = 'vstate none'; vs.disabled = true; vs.innerHTML = 'Verification required to submit'; }
+  else if (result.fixes.length) { vs.className = 'vstate fail'; vs.disabled = false; vs.innerHTML = `${I.x}${result.fixes.length} to fix · View`; }
+  else { vs.className = 'vstate pass'; vs.disabled = false; vs.innerHTML = `${I.check}Verified · View`; }
 }
 
-/* ---------------- evaluation ---------------- */
+/* ---------------- verification ---------------- */
 function evaluate(s, rf) {
   const rec = REC[rf];
-  if (s.rule === 'present') return {ok:true, recText:'Required', docText:DOC[s.doc].file, verdict:['Received','Missing']};
+  if (s.rule === 'present') return {ok:true, recText:'Required', docText:'Uploaded'};
   const dv = S[s.doc][s.k];
-  let ok, docText = dv ? money(dv) : 'Not provided', verdict = ['Match','Mismatch'];
-  switch (s.rule) {
-    case 'lte': ok = num(rec.v) <= num(dv); docText = 'Up to ' + money(dv); verdict = ['Within approval','Over approval']; break;
-    case 'gte': ok = num(dv) >= num(rec.v); verdict = ['Meets minimum','Below minimum']; break;
-    case 'notBefore': ok = dt(dv) >= dt(rec.v); docText = 'Expires ' + dv; verdict = ['Still valid','Expires first']; break;
-    case 'covers': { const [a, b] = dv.split('–'); const f = dt(rec.v); ok = dt(a) <= f && f <= dt(b); verdict = ['In force','Not in force']; break; }
-    case 'signed': ok = !!dv; docText = dv ? 'Signed: ' + dv : 'Signature line is blank'; verdict = ['Signed','Not signed']; break;
-    case 'last4': ok = String(dv).slice(-4) === rec.cmp; docText = '••••' + String(dv).slice(-4) + ' (full no. ' + dv + ')'; break;
-    default: ok = !!dv && norm(dv) === norm(rec.v);
-  }
-  return {ok, recText:rec.v, docText, verdict};
+  let ok, docText = dv ? money(dv) : 'Not provided';
+  if (s.rule === 'lte') { ok = num(rec.v) <= num(dv); docText = 'Up to ' + money(dv); }
+  else if (s.rule === 'last4') { ok = String(dv).slice(-4) === rec.cmp; docText = '••••' + String(dv).slice(-4); }
+  else ok = !!dv && norm(dv) === norm(rec.v);
+  return {ok, recText: rec.v, docText};
+}
+function computeResult() {
+  const rows = CHECKS.map(c => {
+    const byDoc = {};
+    c.steps.forEach(s => {
+      const rf = s.rf || c.rf, res = evaluate(s, rf);
+      (byDoc[s.doc] ||= {doc:s.doc, ok:true, fails:[]});
+      if (!res.ok) { byDoc[s.doc].ok = false; byDoc[s.doc].fails.push({s, rf, res}); }
+    });
+    const docs = Object.values(byDoc);
+    return {c, docs, ok: docs.every(d => d.ok)};
+  });
+  const fixes = [];
+  rows.forEach(r => r.docs.filter(d => !d.ok).forEach(d => {
+    const key = `${r.c.id}:${d.doc}`, fx = FIXES[key] || {};
+    fixes.push({key, row:r.c, doc:d.doc, fails:d.fails, owner: fx.owner || 'customer', todo: fx.todo || `Get a corrected ${DOC[d.doc].name}.`, fx,
+      title: `${r.c.short} is wrong on the ${DOC[d.doc].name}`});
+  }));
+  return {rows, fixes};
 }
 
-/* ---------------- motion helpers ---------------- */
-function scrollWithin(box, el) {
-  if (!box || !el || box.scrollHeight <= box.clientHeight + 2) return;
-  const b = box.getBoundingClientRect(), e = el.getBoundingClientRect();
-  const top = box.scrollTop + (e.top - b.top) - box.clientHeight / 2 + e.height / 2;
-  box.scrollTo({top: Math.max(0, top), behavior: (skipping || reduce) ? 'auto' : 'smooth'});
+function openVerify(rerun) {
+  closePop();
+  $('#verify-root').innerHTML = `
+    <div class="backdrop" id="v-bd">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="v-title">
+        <div class="modal-h">
+          <span class="ag-ico">${I.shield}</span>
+          <div><h2 id="v-title">Contract Verification</h2><p>Doc Request DR-01482 · Ridgeline Excavation – 2024 CAT 320 Excavator</p></div>
+          <button class="modal-x" id="v-x" aria-label="Close">${I.close}</button>
+        </div>
+        <div class="modal-b" id="v-body"></div>
+        <div class="modal-f" id="v-foot"></div>
+      </div>
+    </div>`;
+  $('#v-x').onclick = closeVerify;
+  $('#v-bd').addEventListener('mousedown', e => { if (e.target.id === 'v-bd') closeVerify(); });
+  $('#v-body').addEventListener('scroll', closePop);
+  if (rerun || !result) runVerify(); else renderVerifyDone(false);
 }
-function docTarget(s) { return s.k === '_doc' ? $(`.dtab[data-doc="${s.doc}"]`) : $(`.docpage[data-doc="${s.doc}"] [data-k="${s.doc}.${s.k}"]`); }
+function closeVerify() { runId++; verifying = false; closePop(); $('#verify-root').innerHTML = ''; renderStageBar(); }
 
-function drawBeam() {
-  const svg = $('#beam');
-  if (!beamState) { if (svg.firstChild) svg.innerHTML = ''; return; }
-  const {a, b, st} = beamState;
-  const ws = $('#workspace').getBoundingClientRect();
-  const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
-  if (!rb.width || ra.right > rb.left - 16) { svg.innerHTML = ''; return; }
-  const recBox = $('#rec-body').getBoundingClientRect();
-  const stageBox = b.classList.contains('dtab') ? $('#dtabs').getBoundingClientRect() : $('#doc-stage').getBoundingClientRect();
-  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-  const ax = ra.right - ws.left - 2, ay = clamp(ra.top + ra.height / 2, recBox.top + 4, recBox.bottom - 4) - ws.top;
-  const bx = rb.left - ws.left - 3, by = clamp(rb.top + rb.height / 2, stageBox.top + 4, stageBox.bottom - 4) - ws.top;
-  const dx = Math.max(40, (bx - ax) * .45);
-  const col = st === 'pass' ? 'var(--ok)' : st === 'fail' ? 'var(--bad)' : 'var(--brand)';
-  svg.innerHTML = `<path class="${st}" d="M${ax},${ay} C${ax + dx},${ay} ${bx - dx},${by} ${bx},${by}"/>
-    <circle cx="${ax}" cy="${ay}" r="4.5" fill="${col}"/><circle cx="${bx}" cy="${by}" r="4.5" fill="${col}"/>`;
-}
-(function loop() { drawBeam(); requestAnimationFrame(loop); })();
-
-function showCompare(c, s, rf, res) {
-  const box = $('#compare');
-  box.hidden = false;
-  const vClass = res ? (res.ok ? 'pass' : 'fail') : 'scan';
-  const vText = res ? (res.ok ? I.check + res.verdict[0] : I.x + res.verdict[1]) : '<span class="spin"></span>Comparing';
-  const r = res || evaluateSafe(s, rf);
-  box.innerHTML = `
-    <div class="ct">${I.spark}${c.label}</div>
-    <span class="lab">Deal record · ${REC[rf].l}</span><span class="val">${esc(r.recText)}</span>
-    <span class="verdict ${vClass}">${vText}</span>
-    <span class="lab">${DOC[s.doc].short} · ${s.lab}</span><span class="val" style="${res && !res.ok ? 'color:var(--bad)' : ''}">${esc(r.docText)}</span>`;
-}
-const evaluateSafe = (s, rf) => evaluate(s, rf);
-
-function setChip(cid, i, st) {
-  const ch = $(`.ck[data-id="${cid}"] .chip[data-i="${i}"]`);
-  ch.dataset.st = st;
-  ch.querySelector('i').innerHTML = st === 'pass' ? I.check : st === 'fail' ? I.x : st === 'active' ? '<span class="spin" style="width:9px;height:9px;border-width:1.5px"></span>' : '';
-}
-function setRow(cid, st) {
-  const row = $(`.ck[data-id="${cid}"]`);
-  row.dataset.st = st;
-  row.classList.toggle('active', st === 'active');
-  row.querySelector('.ck-ico').innerHTML = st === 'pass' ? I.check : st === 'fail' ? I.x : st === 'active' ? '<span class="spin" style="width:10px;height:10px"></span>' : '';
-  return row;
-}
-function setField(rf, st) {
-  const f = $('#r-' + rf);
-  if (!f) return;
-  if (st === 'active') { f.classList.add('active'); return; }
-  f.classList.remove('active');
-  if (st && f.dataset.st !== 'fail') { f.dataset.st = st; f.querySelector('.fs').innerHTML = st === 'pass' ? I.check : I.x; }
+function rowsHTML(st) {
+  return CHECKS.map(c => {
+    const docs = [...new Set(c.steps.map(s => s.doc))];
+    return `<li class="vrow" data-id="${c.id}" data-st="${st}"><span class="vico"></span><span class="vlabel">${c.label}</span>
+      <span class="chips">${docs.map(d => `<span class="chip" data-doc="${d}" data-st="wait"><i></i>${DOC[d].short}</span>`).join('')}</span></li>`;
+  }).join('');
 }
 
-/* ---------------- run ---------------- */
-async function start() {
+async function runVerify() {
   const id = ++runId;
-  resetVisuals();
-  running = true; submitted = false;
-  setPill('run', 'Reviewing');
-  const runBtn = $('#btn-run'); runBtn.disabled = true; runBtn.querySelector('span').textContent = 'Verifying…';
-  $('#ag-top').innerHTML = `<div class="prog"><div class="prog-top"><span id="prog-label">Starting…</span><b id="prog-n"></b></div><div class="bar"><i id="prog-bar"></i></div><div class="think" id="think"></div></div>`;
-  const fails = []; let done = 0;
-  const docState = {};
-
-  for (const [ci, c] of CHECKS.entries()) {
-    if (id !== runId) return;
-    const row = setRow(c.id, 'active');
-    scrollWithin($('#agent-body'), row);
-    $('#prog-label').textContent = c.label;
-    $('#prog-n').textContent = `Check ${ci + 1} of ${CHECKS.length}`;
-    let rowFail = null;
-    const fieldRes = {};
-
-    for (const [si, s] of c.steps.entries()) {
-      if (id !== runId) return;
-      const rf = s.rf || c.rf;
-      if (curDoc !== s.doc) { showDoc(s.doc); await wait(c.id === 'docs' ? 120 : 260); if (id !== runId) return; }
-      const target = docTarget(s);
-      setField(rf, 'active');
-      scrollWithin($('#rec-body'), $('#r-' + rf));
-      if (s.k !== '_doc') scrollWithin($('#doc-stage'), target);
-      target.classList.add('scan');
-      setChip(c.id, si, 'active');
-      $('#think').innerHTML = `<span class="spin"></span>${s.k === '_doc' ? `Opening ${DOC[s.doc].name}…` : `Reading ${s.lab.toLowerCase()} on the ${DOC[s.doc].name}…`}`;
-      showCompare(c, s, rf, null);
-      beamState = {a: $('#r-' + rf), b: target, st: 'scan'};
-      await wait(c.id === 'docs' ? 380 : 620); if (id !== runId) return;
-
-      const res = evaluate(s, rf);
-      target.classList.remove('scan');
-      if (s.k !== '_doc') target.classList.add(res.ok ? 'ok' : 'bad');
-      setChip(c.id, si, res.ok ? 'pass' : 'fail');
-      showCompare(c, s, rf, res);
-      beamState = {a: $('#r-' + rf), b: target, st: res.ok ? 'pass' : 'fail'};
-      docState[s.doc] = docState[s.doc] === 'fail' || !res.ok ? 'fail' : 'pass';
-      fieldRes[rf] = fieldRes[rf] === 'fail' || !res.ok ? 'fail' : 'pass';
-      if (!res.ok && !rowFail) rowFail = {step:s, res};
-      done++;
-      $('#prog-bar').style.width = (done / totalSteps * 100) + '%';
-      await wait(res.ok ? (c.id === 'docs' ? 160 : 320) : 1300); if (id !== runId) return;
-      $('#r-' + rf).classList.remove('active');
+  verifying = true;
+  const r = computeResult();
+  $('#v-body').innerHTML = `
+    <div class="vbanner"><span class="big"><span class="spin" style="color:#fff"></span></span>
+      <div style="flex:1"><h3>Checking 5 files against the deal…</h3><p>Contract, invoice, credit approval, insurance and void check.</p><div class="bar"><i id="v-bar"></i></div></div></div>
+    <div><div class="vsec-h"><span>Checklist</span><span>${CHECKS.length} items</span></div><ul class="vlist" id="v-list">${rowsHTML('wait')}</ul></div>`;
+  $('#v-foot').innerHTML = `<div class="hint">${I.info}This takes a few seconds.</div><button class="btn" disabled>${I.lock}Submit Doc Request</button>`;
+  for (const [i, row] of r.rows.entries()) {
+    const li = $(`.vrow[data-id="${row.c.id}"]`);
+    li.dataset.st = 'run'; li.querySelector('.vico').innerHTML = '<span class="spin" style="width:10px;height:10px"></span>';
+    await wait(170); if (id !== runId) return;
+    for (const d of row.docs) {
+      const ch = li.querySelector(`.chip[data-doc="${d.doc}"]`);
+      ch.dataset.st = d.ok ? 'pass' : 'fail'; ch.querySelector('i').innerHTML = d.ok ? I.check : I.x;
+      await wait(55); if (id !== runId) return;
     }
-    Object.entries(fieldRes).forEach(([rf, st]) => setField(rf, st));
-    setRow(c.id, rowFail ? 'fail' : 'pass');
-    if (rowFail) {
-      const n = $(`.ck[data-id="${c.id}"] .ck-note`);
-      n.hidden = false;
-      n.textContent = `${DOC[rowFail.step.doc].short}: ${rowFail.res.docText}`;
-      fails.push(c.id);
-    }
+    li.dataset.st = row.ok ? 'pass' : 'fail'; li.querySelector('.vico').innerHTML = row.ok ? I.check : I.x;
+    $('#v-bar').style.width = ((i + 1) / r.rows.length * 100) + '%';
   }
-  if (id !== runId) return;
-  beamState = null;
-  $('#compare').hidden = true;
-  $$('.dtab').forEach(t => { if (docState[t.dataset.doc]) t.dataset.st = docState[t.dataset.doc]; });
-  running = false; skipping = false;
-  runBtn.disabled = false; runBtn.querySelector('span').textContent = 'Re-run Verification';
-  results = fails;
-  renderResults(fails);
+  await wait(250); if (id !== runId) return;
+  result = r; verifying = false;
+  markPage();
+  renderStageBar();
+  renderVerifyDone(true);
 }
 
-function renderResults(fails) {
-  const passed = CHECKS.length - fails.length;
-  const body = $('#agent-body');
-  if (fails.length) {
-    setPill('fail', `${fails.length} fixes needed`);
-    const groups = {dealer:[], customer:[], internal:[]};
-    fails.forEach(id => { const f = FIXES[id]; if (f) groups[f.owner].push(f); });
-    const groupHTML = Object.entries(groups).filter(([, l]) => l.length).map(([o, list]) => `
-      <div class="owner"><div class="owner-h"><span class="tag ${o}">${OWNERS[o].label}</span>${OWNERS[o].who}</div>
-        <ol class="fixes">${list.map(f => `<li class="fix"><b>${esc(f.title)}</b><div class="why">${esc(f.why)}</div><div class="do">${I.arrow}<span>${esc(f.todo)}</span></div></li>`).join('')}</ol>
-      </div>`).join('');
-    $('#ag-top').innerHTML = `
-      <div class="result fail">
-        <div class="res-h"><span class="big">${I.x}</span><div><h3>Not ready for funding: ${fails.length} things to fix</h3><p>${passed} of ${CHECKS.length} checks passed. Here's what needs to change and who needs to do it.</p></div></div>
-        <div class="res-b">${groupHTML}
-          <div class="actions">
-            <div class="btn-group">
-              ${groups.dealer.length ? `<button class="btn" id="em-dealer">${I.mail}Email dealership</button>` : ''}
-              ${groups.customer.length ? `<button class="btn" id="em-customer">${I.mail}Email customer</button>` : ''}
-            </div>
-            <button class="btn" disabled>${I.lock}Submit Doc Request</button>
-            <div class="hint">${I.info}Submitting unlocks once every check passes. Re-run the verification after the fixes come in.</div>
-          </div>
-        </div>
-      </div>`;
+function renderVerifyDone(fresh) {
+  const r = result, n = r.fixes.length, passed = r.rows.filter(x => x.ok).length;
+  const owners = new Set(r.fixes.map(f => f.owner));
+  const fixList = r.fixes.map((f, i) => `
+    <li><button class="fix" data-fix="${i}">
+      <span class="xdot">${I.x}</span>
+      <span><b>${esc(f.title)}<span class="tag ${f.owner}">${OWNER[f.owner]}</span></b><span class="todo">${esc(f.todo)}</span></span>
+      <span class="where">${I.eye}Show where</span>
+    </button></li>`).join('');
+  $('#v-body').innerHTML = n ? `
+    <div class="vbanner fail"><span class="big">${I.x}</span>
+      <div><h3>${n} ${n === 1 ? 'thing needs' : 'things need'} fixing before you can submit</h3><p>${passed} of ${CHECKS.length} items match. Hover or tap an item to see exactly where it's wrong.</p></div></div>
+    <div><div class="vsec-h"><span>What to fix</span><span>Who fixes it</span></div><ul class="fixes">${fixList}</ul></div>
+    <div><div class="vsec-h"><span>Checklist</span><span>${passed} of ${CHECKS.length} match</span></div><ul class="vlist" id="v-list">${rowsHTML('wait')}</ul></div>`
+  : `
+    <div class="vbanner pass"><span class="big">${I.check}</span>
+      <div><h3>Everything matches. Ready to submit.</h3><p>All ${CHECKS.length} items match across the 5 files.</p></div></div>
+    <ul class="wins">
+      <li>${I.check}<span>All 5 required files are uploaded.</span></li>
+      <li>${I.check}<span>Business name, address, dealer and serial number match on every file.</span></li>
+      <li>${I.check}<span>$223,650.00 financed is within the $225,000.00 approval at 60 months, 8.49%.</span></li>
+      <li>${I.check}<span>The void check matches the bank account on file for payments.</span></li>
+    </ul>
+    <div><div class="vsec-h"><span>Checklist</span><span>${CHECKS.length} of ${CHECKS.length} match</span></div><ul class="vlist" id="v-list">${rowsHTML('wait')}</ul></div>`;
+  // fill the checklist in its finished state
+  r.rows.forEach(row => {
+    const li = $(`.vrow[data-id="${row.c.id}"]`);
+    li.dataset.st = row.ok ? 'pass' : 'fail'; li.querySelector('.vico').innerHTML = row.ok ? I.check : I.x;
+    row.docs.forEach(d => { const ch = li.querySelector(`.chip[data-doc="${d.doc}"]`); ch.dataset.st = d.ok ? 'pass' : 'fail'; ch.querySelector('i').innerHTML = d.ok ? I.check : I.x;
+      if (!d.ok) { const fi = r.fixes.findIndex(f => f.key === `${row.c.id}:${d.doc}`); ch.dataset.fix = fi; ch.tabIndex = 0; } });
+  });
+  $$('[data-fix]', $('#v-body')).forEach(el => bindPop(el, r.fixes[+el.dataset.fix]));
+
+  if (n) {
+    $('#v-foot').innerHTML = `
+      ${owners.has('dealer') ? `<button class="btn" id="em-dealer">${I.mail}Email dealership</button>` : ''}
+      ${owners.has('customer') ? `<button class="btn" id="em-customer">${I.mail}Email customer</button>` : ''}
+      <div class="hint" style="justify-content:flex-end">${I.lock}Submit unlocks when everything matches.</div>
+      <button class="btn" disabled>Submit Doc Request</button>`;
     const ed = $('#em-dealer'), ec = $('#em-customer');
-    if (ed) ed.onclick = () => openEmail('dealer', groups);
-    if (ec) ec.onclick = () => openEmail('customer', groups);
+    if (ed) ed.onclick = () => openEmail('dealer');
+    if (ec) ec.onclick = () => openEmail('customer');
   } else {
-    setPill('pass', 'Ready for funding');
-    $('#ag-top').innerHTML = `
-      <div class="result pass">
-        <div class="res-h"><span class="big">${I.check}</span><div><h3>Everything matches. This deal is ready for funding.</h3><p>All ${CHECKS.length} checks passed across ${DOCS.length} documents.</p></div></div>
-        <div class="res-b">
-          <ul class="wins">
-            <li>${I.check}<span>All ${DOCS.length} required documents are on file.</span></li>
-            <li>${I.check}<span>Ridgeline Excavation LLC, the address and serial no. CAT0320GKXD04187 match on every document.</span></li>
-            <li>${I.check}<span>$223,650.00 financed is within the $225,000.00 approval: 60 months at 8.49%, $4,587.44/mo.</span></li>
-            <li>${I.check}<span>Insurance names Keystone as loss payee with $250,000 of coverage in force on Oct 6.</span></li>
-            <li>${I.check}<span>Contract and guarantee are signed, and the void check matches the ACH account on file.</span></li>
-          </ul>
-          <div class="actions" id="submit-area">
-            <button class="btn brand" id="btn-submit">${I.send}Submit Doc Request</button>
-            <div class="hint">${I.info}Sends DR-01482 to the funding team's queue.</div>
-          </div>
-        </div>
-      </div>`;
-    $('#btn-submit').onclick = submitDocRequest;
+    $('#v-foot').innerHTML = submitted
+      ? `<div class="hint">${I.check}Submitted to the funding team.</div><button class="btn" id="v-close">Close</button>`
+      : `<div class="hint">${I.info}Moves the deal to Doc Request Submitted and sends it to the funding queue.</div>
+         <button class="btn" id="v-close">Not now</button><button class="btn brand" id="v-submit">${I.send}Submit Doc Request</button>`;
+    $('#v-close').onclick = closeVerify;
+    const vs = $('#v-submit'); if (vs) vs.onclick = () => submitDocRequest(vs);
   }
-  body.scrollTo({top:0, behavior: reduce ? 'auto' : 'smooth'});
 }
 
-function submitDocRequest() {
-  if (submitted) return;
-  const b = $('#btn-submit');
-  b.disabled = true; b.innerHTML = '<span class="spin"></span>Submitting…';
+/* mark the page itself once verification has run */
+function markPage() {
+  $$('.f.bad').forEach(e => e.classList.remove('bad'));
+  $$('.fld').forEach(f => { delete f.dataset.st; f.querySelector('.fs').innerHTML = ''; });
+  $$('.dtab').forEach(t => t.dataset.st = 'pass');
+  const fieldSt = {};
+  result.rows.forEach(row => row.c.steps.forEach(s => { const rf = s.rf || row.c.rf; fieldSt[rf] ||= 'pass'; }));
+  result.fixes.forEach(f => f.fails.forEach(({s, rf}) => {
+    fieldSt[rf] = 'fail';
+    const el = $(`[data-k="${s.doc}.${s.k}"]`); if (el) el.classList.add('bad');
+    $(`.dtab[data-doc="${s.doc}"]`).dataset.st = 'fail';
+  }));
+  Object.entries(fieldSt).forEach(([rf, st]) => { const f = $('#r-' + rf); if (f) { f.dataset.st = st; f.querySelector('.fs').innerHTML = st === 'pass' ? I.check : I.x; } });
+}
+
+/* ---------------- "where is it wrong" popover ---------------- */
+let popFor = null, pinned = false, hideT;
+function popHTML(f) {
+  const d = DOC[f.doc], data = S[f.doc], badKeys = new Set(f.fails.map(x => x.s.k));
+  return `
+    <div class="pop-file">${I.pdf}<b>${d.file}</b></div>
+    <div class="pop-t">${esc(f.title)}</div>
+    ${f.fails.map(({s, rf, res}) => `<div class="cmp">
+      <span class="k">From file · ${s.lab}</span><span class="v bad">${esc(res.docText)}</span>
+      <span class="k">In Salesforce · ${REC[rf].l}</span><span class="v">${esc(res.recText)}</span></div>`).join('')}
+    <div class="snip"><div class="snip-h">${d.short} · where it appears</div>
+      ${SNIP[f.doc].map(([l, k]) => `<div class="snip-r${badKeys.has(k) ? ' bad' : ''}"><span>${l}</span><span>${esc(money(data[k]))}</span></div>`).join('')}</div>
+    <button class="btn" id="pop-open">${I.eye}Open the ${d.name}</button>`;
+}
+function placePop(pop, anchor) {
+  const a = anchor.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight, vw = innerWidth, vh = innerHeight, m = 12;
+  let x, y;
+  if (a.right + m + w <= vw - 8) { x = a.right + m; y = a.top + a.height / 2 - h / 2; }
+  else if (a.left - m - w >= 8) { x = a.left - m - w; y = a.top + a.height / 2 - h / 2; }
+  else { x = a.right - w; y = a.bottom + 6; if (y + h > vh - 8) y = a.top - h - 6; }
+  pop.style.left = Math.max(8, Math.min(vw - w - 8, x)) + 'px';
+  pop.style.top = Math.max(8, Math.min(vh - h - 8, y)) + 'px';
+}
+function showPop(anchor, f, pin) {
+  clearTimeout(hideT);
+  if (popFor === anchor && $('#pop')) { if (pin) { pinned = true; anchor.classList.add('pinned'); } return; }
+  closePop();
+  popFor = anchor; pinned = !!pin;
+  if (pin) anchor.classList.add('pinned');
+  $('#pop-root').innerHTML = `<div class="pop" id="pop" role="tooltip">${popHTML(f)}</div>`;
+  const pop = $('#pop');
+  placePop(pop, anchor);
+  pop.addEventListener('mouseenter', () => clearTimeout(hideT));
+  pop.addEventListener('mouseleave', () => { if (!pinned) hideSoon(); });
+  $('#pop-open').onclick = () => jumpTo(f);
+}
+function hideSoon() { clearTimeout(hideT); hideT = setTimeout(closePop, 180); }
+function closePop() {
+  clearTimeout(hideT);
+  if (popFor) popFor.classList.remove('pinned');
+  popFor = null; pinned = false; $('#pop-root').innerHTML = '';
+}
+function bindPop(el, f) {
+  el.addEventListener('mouseenter', () => showPop(el, f, false));
+  el.addEventListener('mouseleave', () => { if (!pinned) hideSoon(); });
+  el.addEventListener('focus', () => showPop(el, f, false));
+  el.addEventListener('blur', () => { if (!pinned) hideSoon(); });
+  el.addEventListener('click', e => { e.stopPropagation(); if (popFor === el && pinned) closePop(); else showPop(el, f, true); });
+}
+document.addEventListener('click', e => { if (pinned && !e.target.closest('#pop')) closePop(); });
+document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('#pop')) closePop(); else if ($('#email-root').firstChild) closeEmail(); else if ($('#verify-root').firstChild) closeVerify(); });
+addEventListener('resize', closePop);
+
+function jumpTo(f) {
+  closeVerify();
+  showDoc(f.doc);
+  const s = f.fails[0].s, el = $(`[data-k="${s.doc}.${s.k}"]`), box = $('#doc-stage');
+  if (!el) return;
+  const b = box.getBoundingClientRect(), e = el.getBoundingClientRect();
+  box.scrollTo({top: Math.max(0, box.scrollTop + e.top - b.top - box.clientHeight / 2), behavior: reduce ? 'auto' : 'smooth'});
+  if (box.scrollHeight <= box.clientHeight + 2 || innerWidth <= 860) el.scrollIntoView({block:'center', behavior: reduce ? 'auto' : 'smooth'});
+  f.fails.forEach(({s}) => { const x = $(`[data-k="${s.doc}.${s.k}"]`); if (x) { x.classList.remove('flash'); void x.offsetWidth; x.classList.add('flash'); } });
+}
+
+/* ---------------- submit ---------------- */
+function submitDocRequest(btn) {
+  if (submitted || !result || result.fixes.length) return;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Submitting…'; }
   setTimeout(() => {
     submitted = true;
-    $('#submit-area').innerHTML = `<div class="queued">${I.check}Submitted · DR-01482 is #4 in the funding queue</div><div class="hint">${I.info}Estimated funding Oct 6, 2026. The dealer gets a funding notice when it's paid.</div>`;
-    const steps = $$('#path li');
-    steps[3].dataset.st = 'done'; steps[4].dataset.st = 'current';
-    $('#hl-stage').textContent = 'Funding Queue';
-    const ds = $('#r-docStatus .fv'); if (ds) ds.textContent = 'Submitted to Funding Queue';
-    setPill('pass', 'In funding queue');
-    toast('Doc Request DR-01482 submitted', 'Ridgeline Excavation – 2024 CAT 320 Excavator was added to the funding queue.');
-  }, skipping || reduce ? 200 : 900);
+    const ds = $('#r-docStatus .fv'); if (ds) ds.textContent = 'Submitted to funding queue';
+    closeVerify();
+    toast('Doc Request DR-01482 submitted', 'The deal moved to Doc Request Submitted and is #4 in the funding queue.');
+  }, reduce ? 100 : 800);
 }
-
-let toastTimer;
+let toastT;
 function toast(title, msg) {
   const t = $('#toast');
   t.innerHTML = `${I.check}<div><b>${esc(title)}</b>${esc(msg)}</div>`;
   t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 4200);
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 4500);
 }
 
 /* ---------------- email ---------------- */
 const SIG = '\n\nThanks,\nJordan Reyes\nAccount Manager, Keystone Commercial Finance\n(208) 555-0142';
-function buildEmail(kind, groups) {
-  if (kind === 'dealer') {
-    const items = groups.dealer.map((f, i) => `${i + 1}. ${f.email}`).join('\n\n');
-    return {
-      to: REC.dealerEmail.v, cc: 'jordan.reyes@keystonecf.com',
-      subject: 'Correction needed: Invoice SHE-55821 – Ridgeline Excavation LLC (Deal D-24-10387)',
-      body: `Hi Dana,\n\nWe're getting the Ridgeline Excavation LLC deal (D-24-10387) ready to fund and need ${groups.dealer.length === 1 ? 'one correction' : 'a few corrections'} from your side:\n\n${items}\n\nAs soon as we have ${groups.dealer.length === 1 ? 'it' : 'these'}, we can move the deal to funding and pay you out.` + SIG,
-    };
-  }
-  const items = groups.customer.map((f, i) => `${i + 1}. ${f.email}`).join('\n\n');
-  const note = groups.internal.map(f => f.customerNote).filter(Boolean).join('\n\n');
+function buildEmail(kind) {
+  const list = result.fixes.filter(f => f.owner === kind);
+  const items = list.map((f, i) => `${i + 1}. ${f.fx.email || f.todo}`).join('\n\n');
+  if (kind === 'dealer') return {
+    to: REC.dealerEmail.v, cc: 'jordan.reyes@keystonecf.com',
+    subject: 'Correction needed: Invoice SHE-55821 – Ridgeline Excavation LLC (Deal D-24-10387)',
+    body: `Hi Dana,\n\nWe're getting the Ridgeline Excavation LLC deal (D-24-10387) ready to fund and need ${list.length === 1 ? 'one correction' : 'a few corrections'} from your side:\n\n${items}\n\nAs soon as we have ${list.length === 1 ? 'it' : 'these'}, we can submit the deal for funding and pay you out.` + SIG};
+  const note = result.fixes.filter(f => f.owner === 'internal').map(f => f.fx.customerNote).filter(Boolean).join('\n\n');
   return {
     to: REC.custEmail.v, cc: 'jordan.reyes@keystonecf.com',
-    subject: 'A few items needed to fund your CAT 320 Excavator (Deal D-24-10387)',
-    body: `Hi Marcus,\n\nThanks for sending your paperwork over. Before we can fund your 2024 Caterpillar 320 Excavator, we need ${groups.customer.length} quick update${groups.customer.length > 1 ? 's' : ''}:\n\n${items}${note ? '\n\n' + note : ''}\n\nOnce these are in, we can fund the deal and the dealer can schedule delivery.` + SIG,
-  };
+    subject: 'Quick update needed to fund your CAT 320 Excavator (Deal D-24-10387)',
+    body: `Hi Marcus,\n\nThanks for sending your paperwork over. Before we can fund your 2024 Caterpillar 320 Excavator, we need ${list.length === 1 ? 'one quick update' : list.length + ' quick updates'}:\n\n${items}${note ? '\n\n' + note : ''}\n\nOnce ${list.length === 1 ? 'that\'s' : 'these are'} in, we can fund the deal and the dealer can schedule delivery.` + SIG};
 }
-function openEmail(kind, groups) {
-  const e = buildEmail(kind, groups);
-  const who = kind === 'dealer' ? 'Dealership' : 'Customer';
-  $('#modal-root').innerHTML = `
-    <div class="backdrop" id="bd">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
-        <div class="modal-h"><h2 id="m-title">Email ${who}</h2><p>Drafted by the Contract Verification Agent from the fix list. Edit anything before opening it in Outlook.</p>
-          <button class="modal-x" id="m-x" aria-label="Close">${I.close}</button></div>
-        <div class="modal-b">
+function openEmail(kind) {
+  closePop();
+  const e = buildEmail(kind), who = kind === 'dealer' ? 'Dealership' : 'Customer';
+  $('#email-root').innerHTML = `
+    <div class="backdrop top" id="e-bd">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="e-title" style="width:min(680px,100%)">
+        <div class="modal-h center"><h2 id="e-title">Email ${who}</h2><p>Written from the fix list. Change anything you like before opening it in Outlook.</p>
+          <button class="modal-x" id="e-x" aria-label="Close">${I.close}</button></div>
+        <div class="modal-b" style="gap:10px">
           <div class="mf"><label for="m-to">To</label><input id="m-to" value="${esc(e.to)}"></div>
           <div class="mf"><label for="m-cc">Cc</label><input id="m-cc" value="${esc(e.cc)}"></div>
           <div class="mf"><label for="m-sub">Subject</label><input id="m-sub" value="${esc(e.subject)}"></div>
-          <div class="mf body"><label for="m-body" class="sr" hidden>Message</label><textarea id="m-body">${esc(e.body)}</textarea></div>
+          <div class="mf body"><textarea id="m-body" aria-label="Message">${esc(e.body)}</textarea></div>
         </div>
         <div class="modal-f">
-          <div class="hint">${I.info}Opens a pre-filled draft. Nothing is sent until you press Send in Outlook.</div>
+          <div class="hint">${I.info}Opens a draft. Nothing is sent until you press Send in Outlook.</div>
           <button class="btn" id="m-copy">${I.copy}<span>Copy</span></button>
           <a class="btn" id="m-mailto" href="#">Outlook desktop</a>
           <a class="btn outlook" id="m-web" href="#" target="_blank" rel="noopener">${I.mail}Open in Outlook</a>
@@ -1160,53 +1040,38 @@ function openEmail(kind, groups) {
     $('#m-mailto').href = `mailto:${v.to}?cc=${enc(v.cc)}&subject=${enc(v.subject)}&body=${enc(v.body)}`;
   };
   sync();
-  $$('#modal-root input, #modal-root textarea').forEach(el => el.addEventListener('input', sync));
-  const close = () => { $('#modal-root').innerHTML = ''; document.removeEventListener('keydown', onKey); };
-  const onKey = ev => { if (ev.key === 'Escape') close(); };
-  document.addEventListener('keydown', onKey);
-  $('#m-x').onclick = close;
-  $('#bd').onclick = ev => { if (ev.target.id === 'bd') close(); };
+  $$('#email-root input, #email-root textarea').forEach(el => el.addEventListener('input', sync));
+  $('#e-x').onclick = closeEmail;
+  $('#e-bd').addEventListener('mousedown', ev => { if (ev.target.id === 'e-bd') closeEmail(); });
   $('#m-copy').onclick = () => {
-    const v = vals(); const text = `To: ${v.to}\nCc: ${v.cc}\nSubject: ${v.subject}\n\n${v.body}`;
-    const done = () => { $('#m-copy span').textContent = 'Copied'; setTimeout(() => { const s = $('#m-copy span'); if (s) s.textContent = 'Copy'; }, 1600); };
-    navigator.clipboard?.writeText(text).then(done, () => { $('#m-body').select(); });
+    const v = vals(), text = `To: ${v.to}\nCc: ${v.cc}\nSubject: ${v.subject}\n\n${v.body}`;
+    const ok = () => { $('#m-copy span').textContent = 'Copied'; setTimeout(() => { const s = $('#m-copy span'); if (s) s.textContent = 'Copy'; }, 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(ok, () => $('#m-body').select()); else $('#m-body').select();
   };
   $('#m-to').focus();
 }
+function closeEmail() { $('#email-root').innerHTML = ''; }
 
-/* ---------------- reset / scenario ---------------- */
-function resetVisuals() {
-  beamState = null;
-  $('#compare').hidden = true;
-  submitted = false;
-  renderRecord(); renderDocs(); renderChecklist();
-  const steps = $$('#path li');
-  ['done','done','done','current','',''].forEach((st, i) => { if (st) steps[i].dataset.st = st; else delete steps[i].dataset.st; });
-  $('#hl-stage').textContent = 'Contract Review';
-  $('#rec-body').scrollTop = 0; $('#agent-body').scrollTop = 0;
-}
+/* ---------------- scenario / reset ---------------- */
 function resetAll() {
-  runId++; running = false; skipping = false; results = null;
-  resetVisuals(); renderIntro(); setPill('', 'Ready');
-  const runBtn = $('#btn-run'); runBtn.disabled = false; runBtn.querySelector('span').textContent = 'Run Contract Verification';
+  runId++; result = null; verifying = false; submitted = false;
+  closePop(); closeEmail(); $('#verify-root').innerHTML = '';
+  renderRecord(); renderDocs(); renderStageBar();
+  $('#rec-body').scrollTop = 0;
 }
 function setScenario(name) {
-  scenario = name;
   S = name === 'correct' ? GOOD : BAD;
   $('#tab-incorrect').setAttribute('aria-selected', name === 'incorrect');
   $('#tab-correct').setAttribute('aria-selected', name === 'correct');
   try { history.replaceState(null, '', '#' + name); } catch (e) {}
   resetAll();
 }
-
 $('#tab-incorrect').onclick = () => setScenario('incorrect');
 $('#tab-correct').onclick = () => setScenario('correct');
-$('#btn-run').onclick = start;
 $('#btn-reset').onclick = resetAll;
-$('#btn-skip').onclick = () => { if (running) skipping = true; else { skipping = true; start(); } };
-const setSpeed = v => { speed = v; $('#sp1').setAttribute('aria-pressed', v === 1); $('#sp2').setAttribute('aria-pressed', v !== 1); };
-$('#sp1').onclick = () => setSpeed(1);
-$('#sp2').onclick = () => setSpeed(2);
+$('#btn-verify').onclick = () => openVerify(true);
+$('#vstate').onclick = () => { if (result) openVerify(false); };
+$('#btn-submit').onclick = () => submitDocRequest($('#btn-submit'));
 
 setScenario(location.hash === '#correct' ? 'correct' : 'incorrect');
 })();
