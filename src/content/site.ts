@@ -14,9 +14,9 @@ export const SITE = {
 } as const;
 
 export const NAV = [
-  { label: "Examples", href: "#top" },
   { label: "How we work", href: "#process" },
   { label: "Your tools", href: "#tools" },
+  { label: "Examples", href: "#examples" },
   { label: "FAQ", href: "#faq" },
 ] as const;
 
@@ -36,7 +36,62 @@ export const HERO = {
 } as const;
 
 /* ------------------------------------------------------------------ */
-/* Hero examples: one ordinary job, before and with One Spot           */
+/* Hero calculator: what a better way of working could be worth         */
+/* Recovered time is shown as potential value, never as cash saved.     */
+/* ------------------------------------------------------------------ */
+
+export type WorthMode = "team" | "you";
+
+export interface WorthSlider {
+  key: string;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+  value: number;
+  unit: "people" | "hours" | "money" | "weeks";
+}
+
+export const WORTH = {
+  headline: "What could a better way of working be worth?",
+  lead: "Small improvements add up. See what getting time back and getting more done could mean for your business.",
+  modes: [
+    { key: "team", label: "My Team's Time" },
+    { key: "you", label: "My Time" },
+  ] satisfies { key: WorthMode; label: string }[],
+  defaultMode: "team" as WorthMode,
+  /** A workweek, for "workweeks recovered". */
+  weekHours: 40,
+  team: {
+    sliders: [
+      { key: "people", label: "Number of employees", min: 1, max: 150, step: 1, value: 15, unit: "people" },
+      { key: "hours", label: "Hours saved per employee each week", min: 0.5, max: 10, step: 0.5, value: 3, unit: "hours" },
+      { key: "rate", label: "Average hourly cost", min: 15, max: 150, step: 1, value: 35, unit: "money" },
+    ] satisfies WorthSlider[],
+    weeks: 52,
+    hoursLabel: "hours your team gets back every year",
+    valueLabel: "Potential value of that time",
+    weeksLabel: "Workweeks recovered",
+    statement: "Imagine what your team could accomplish with that time back.",
+  },
+  you: {
+    sliders: [
+      { key: "hours", label: "Hours you'd get back each week", min: 1, max: 25, step: 1, value: 5, unit: "hours" },
+      { key: "rate", label: "What an hour of your time is worth", min: 25, max: 500, step: 5, value: 100, unit: "money" },
+      { key: "weeks", label: "Weeks you work in a year", min: 30, max: 52, step: 1, value: 48, unit: "weeks" },
+    ] satisfies WorthSlider[],
+    hoursLabel: "hours of your own time back every year",
+    valueLabel: "Potential value of your time",
+    weeksLabel: "Workweeks back",
+    statement: "Imagine what you could do if you had that time back.",
+  },
+  yearLabel: { start: "Week 1", end: "Week 52" },
+  footnote: "Potential value at the hourly figure above. Actual savings depend on how the time is used.",
+  close: ["You don't always need more people.", "Sometimes you just need a better way of working."],
+};
+
+/* ------------------------------------------------------------------ */
+/* Examples: one ordinary job, before and with One Spot                */
 /* Illustrative: the businesses, people and numbers are made up.       */
 /* ------------------------------------------------------------------ */
 
@@ -63,7 +118,10 @@ export interface HeroExample {
   stats: { label: string; before: string; after: string }[];
 }
 
-export const HERO_EXAMPLES = {
+export const EXAMPLES = {
+  eyebrow: "Examples",
+  headline: ["One job,", "two ways."],
+  lead: "Pick the kind of business closest to yours, and watch an ordinary job run the way it does today, then with One Spot.",
   label: "One job, two ways",
   before: "Today",
   after: "With One Spot",

@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { Split } from "@/components/motion/Split";
 import { Icon } from "@/components/ui/Icons";
 
-/** 03 · The questions owners actually ask, answered straight. */
+/** 04 · The questions owners actually ask, answered straight. */
 export function Faq() {
   const [open, setOpen] = useState<number | null>(0);
   const uid = useId();

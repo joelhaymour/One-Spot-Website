@@ -2,11 +2,11 @@ import type { CSSProperties } from "react";
 import { HERO } from "@/content/site";
 import { Split } from "@/components/motion/Split";
 import { AnchorButton } from "@/components/ui/Button";
-import { HeroExamples } from "@/components/hero/HeroExamples";
+import { WorthCalculator } from "@/components/worth/WorthCalculator";
 
 /**
- * The opening: the promise on the left, and on the right one ordinary job in four kinds of business,
- * today and with One Spot.
+ * The opening: the promise on the left, and on the right what a better way of working could be worth,
+ * worked out from the visitor's own numbers.
  */
 export function Hero() {
   return (
@@ -14,7 +14,7 @@ export function Hero() {
       <div aria-hidden className="dot-grid absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_70%_60%_at_70%_45%,#000_15%,transparent_75%)]" />
       <div aria-hidden className="pointer-events-none absolute right-[-10%] top-[8%] h-[720px] w-[720px] rounded-full [background:radial-gradient(circle,rgba(45,74,224,0.10),rgba(45,74,224,0)_62%)]" />
 
-      <div className="wrap relative grid items-center gap-12 pb-20 pt-[calc(var(--nav-h)+48px)] md:pb-28 lg:min-h-[100svh] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16 lg:pb-16 lg:pt-[calc(var(--nav-h)+24px)]">
+      <div className="wrap relative grid items-center gap-12 pb-20 pt-[calc(var(--nav-h)+48px)] md:pb-28 lg:min-h-[100svh] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16 lg:pb-10 lg:pt-[calc(var(--nav-h)+16px)]">
         <div className="min-w-0">
           <p className="t-eyebrow max-sm:text-[0.64rem] max-sm:tracking-[0.1em]" data-reveal style={{ "--reveal-delay": "0.05s" } as CSSProperties}>
             {HERO.eyebrow}
@@ -35,7 +35,7 @@ export function Hero() {
         </div>
 
         <div className="relative mx-auto w-full min-w-0 max-w-[540px] lg:mr-0" data-reveal style={{ "--reveal-delay": "0.35s", "--reveal-y": "36px" } as CSSProperties}>
-          <HeroExamples />
+          <WorthCalculator />
         </div>
       </div>
     </section>

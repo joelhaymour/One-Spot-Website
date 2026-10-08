@@ -448,6 +448,82 @@ html[data-motion="on"] .story-fade {
 }
 
 /* ------------------------------------------------------------------ */
+/* Worth calculator: quiet sliders, and the year chart                 */
+/* ------------------------------------------------------------------ */
+
+.worth-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 24px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.worth-range:focus-visible {
+  outline: none;
+}
+.worth-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--spot) var(--fill), var(--paper-3) var(--fill));
+}
+.worth-range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--paper-3);
+}
+.worth-range::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--spot);
+}
+.worth-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 2px 6px rgba(21, 23, 27, 0.16);
+  transition:
+    transform 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+.worth-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 2px 6px rgba(21, 23, 27, 0.16);
+}
+.worth-range:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 6px rgba(var(--spot-rgb), 0.14), 0 2px 6px rgba(21, 23, 27, 0.16);
+}
+.worth-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--spot);
+}
+.worth-range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--spot);
+}
+
+.worth-bar {
+  transform-origin: bottom;
+  transition:
+    height 600ms var(--ease-out),
+    opacity 700ms var(--ease-out),
+    transform 900ms var(--ease-out),
+    background-color 400ms var(--ease-out);
+}
+html[data-motion="on"] .worth-chart:not([data-seen]) .worth-bar {
+  opacity: 0 !important;
+  transform: scaleY(0);
+}
+
+/* ------------------------------------------------------------------ */
 /* Hero examples: how long until the card moves on                     */
 /* ------------------------------------------------------------------ */
 

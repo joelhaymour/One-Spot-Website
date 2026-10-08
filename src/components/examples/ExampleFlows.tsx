@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { HERO_EXAMPLES, TOOLS, type ExampleActor, type ExampleStep } from "@/content/site";
+import { EXAMPLES, TOOLS, type ExampleActor, type ExampleStep } from "@/content/site";
 import { onIntroDone } from "@/lib/intro";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/Icons";
@@ -9,7 +9,7 @@ import { Mark } from "@/components/ui/Mark";
 
 type Mode = "before" | "after";
 
-const { items } = HERO_EXAMPLES;
+const { items } = EXAMPLES;
 const BEFORE_MS = 4800;
 const AFTER_MS = 5600;
 
@@ -73,11 +73,11 @@ function Row({ step, mode, i }: { step: ExampleStep; mode: Mode; i: number }) {
 }
 
 /**
- * The hero's right side: one ordinary job in four kinds of business, first as it runs today, then with
+ * One ordinary job in four kinds of business, first as it runs today, then with
  * One Spot. It plays through on its own (today, then with One Spot, then the next business) while it's
  * on screen; the moment a visitor picks a tab or a side, it stops and stays where they put it.
  */
-export function HeroExamples({ className }: { className?: string }) {
+export function ExampleFlows({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -170,8 +170,8 @@ export function HeroExamples({ className }: { className?: string }) {
 
       <div className="px-4 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5" role="tabpanel" aria-live="polite">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[var(--ink-3)]">{HERO_EXAMPLES.label}</p>
-          <p className="text-[0.7rem] text-[var(--ink-4)]">{HERO_EXAMPLES.note}</p>
+          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[var(--ink-3)]">{EXAMPLES.label}</p>
+          <p className="text-[0.7rem] text-[var(--ink-4)]">{EXAMPLES.note}</p>
         </div>
         <p key={ex.key} className="story-fade mt-2 text-[1.1rem] font-semibold leading-snug tracking-[-0.025em] text-[var(--ink)] sm:text-[1.2rem]">
           {ex.moment}
@@ -188,11 +188,11 @@ export function HeroExamples({ className }: { className?: string }) {
           />
           <button type="button" aria-pressed={mode === "before"} onClick={() => side("before")} className={cn("relative z-10 flex items-center justify-center gap-1.5 rounded-full py-2 transition-colors duration-300", mode === "before" ? "text-[var(--ink)]" : "text-[var(--ink-3)]")}>
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--risk)]" />
-            {HERO_EXAMPLES.before}
+            {EXAMPLES.before}
           </button>
           <button type="button" aria-pressed={mode === "after"} onClick={() => side("after")} className={cn("relative z-10 flex items-center justify-center gap-1.5 rounded-full py-2 transition-colors duration-300", mode === "after" ? "text-white" : "text-[var(--ink-3)]")}>
             <Mark size={13} spot={mode === "after" ? "#fff" : "var(--spot)"} />
-            {HERO_EXAMPLES.after}
+            {EXAMPLES.after}
           </button>
         </div>
 

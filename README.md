@@ -37,11 +37,12 @@ Visitors see operational problems, handoffs, automated work, approvals, and owne
 
 The page is short and leans on animation:
 
-1. **Hero**: "Modern workflows. Made simple." and one ordinary job in four businesses (body shop, dental and medical, financing, HVAC), shown today and with One Spot
+1. **Hero**: "Modern workflows. Made simple." and a calculator: what a better way of working could be worth (my team's time or my time, three sliders, hours back a year)
 2. **How we work**: business first, technology second (listen, map, plan, build, stay)
 3. **Your tools**: one job takes too many clicks across seven apps, until One Spot connects them (scroll-scrubbed)
-4. **FAQ**
-5. **Contact**: "Tell us where it feels manual"
+4. **Examples**: one ordinary job in four businesses (body shop, dental, financing, HVAC), today and with One Spot
+5. **FAQ**
+6. **Contact**: "Tell us where it feels manual"
 
 ## Project structure
 
@@ -49,9 +50,10 @@ The page is short and leans on animation:
 src/
 ├── app/
 ├── components/
-│   ├── hero/
+│   ├── examples/
 │   ├── motion/
-│   └── sections/
+│   ├── sections/
+│   └── worth/
 └── content/
     └── site.ts
 ```
