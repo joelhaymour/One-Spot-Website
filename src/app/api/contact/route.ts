@@ -103,23 +103,52 @@ async function sendToWebhook(values: ContactValues, url: string): Promise<boolea
   return res.ok;
 }
 
-/** Try each configured channel in order; the first that accepts the enquiry wins. */
+/** The One Spot HUD: every enquiry becomes (or updates) an account there, with a to-do to reply. */
+async function sendToHud(values: ContactValues, url: string, secret: string): Promise<boolean> {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      company: oneLine(values.company),
+      contact: { name: oneLine(values.name), email: values.email },
+      message: values.stuck,
+      source: "Website enquiry form",
+    }),
+    signal: AbortSignal.timeout(OUTBOUND_TIMEOUT_MS),
+  });
+  if (!res.ok) console.error(`[contact] HUD responded ${res.status}`);
+  return res.ok;
+}
+
+/** Error names only (timeout, network). Never the enquiry itself. */
+async function attempt(send: () => Promise<boolean>): Promise<boolean> {
+  try {
+    return await send();
+  } catch (error) {
+    console.error(`[contact] Delivery attempt threw: ${error instanceof Error ? error.name : "unknown"}`);
+    return false;
+  }
+}
+
+/**
+ * The email (or, failing that, the webhook) and the HUD, at the same time. The enquiry counts as
+ * delivered if either reached us, so a HUD outage never costs an email and vice versa.
+ */
 async function deliver(values: ContactValues): Promise<"sent" | "failed" | "unconfigured"> {
-  const { RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_WEBHOOK_URL } = process.env;
+  const { RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_WEBHOOK_URL, HUD_LEADS_URL, HUD_LEADS_SECRET } = process.env;
   const channels: (() => Promise<boolean>)[] = [];
   if (RESEND_API_KEY && CONTACT_TO_EMAIL) channels.push(() => sendWithResend(values, RESEND_API_KEY, CONTACT_TO_EMAIL));
   if (CONTACT_WEBHOOK_URL) channels.push(() => sendToWebhook(values, CONTACT_WEBHOOK_URL));
-  if (channels.length === 0) return "unconfigured";
+  const hud = HUD_LEADS_URL && HUD_LEADS_SECRET ? () => sendToHud(values, HUD_LEADS_URL, HUD_LEADS_SECRET) : null;
+  if (channels.length === 0 && !hud) return "unconfigured";
 
-  for (const send of channels) {
-    try {
-      if (await send()) return "sent";
-    } catch (error) {
-      // Error names only (timeout, network). Never the enquiry itself.
-      console.error(`[contact] Delivery attempt threw: ${error instanceof Error ? error.name : "unknown"}`);
-    }
-  }
-  return "failed";
+  // Try each channel in order; the first that accepts the enquiry wins.
+  const notify = async () => {
+    for (const send of channels) if (await attempt(send)) return true;
+    return false;
+  };
+  const [notified, saved] = await Promise.all([notify(), hud ? attempt(hud) : Promise.resolve(false)]);
+  return notified || saved ? "sent" : "failed";
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -180,6 +209,6 @@ export async function POST(request: Request): Promise<Response> {
     return json({ ok: true }, 200);
   }
   // Production without a channel must fail loudly: the form shows its error instead of dropping an enquiry.
-  console.error("[contact] No delivery channel configured. Set RESEND_API_KEY + CONTACT_TO_EMAIL or CONTACT_WEBHOOK_URL.");
+  console.error("[contact] No delivery channel configured. Set RESEND_API_KEY + CONTACT_TO_EMAIL, CONTACT_WEBHOOK_URL, or HUD_LEADS_URL + HUD_LEADS_SECRET.");
   return json({ ok: false, error: "Contact delivery is not configured." }, 503);
 }
