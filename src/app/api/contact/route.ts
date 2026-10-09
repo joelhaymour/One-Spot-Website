@@ -1,4 +1,5 @@
 import { MAX_BODY_BYTES, readContact, validateContact, type ContactResponse, type ContactValues } from "@/components/sections/validate";
+import { makePass } from "@/lib/proposal-pass";
 
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_PER_WINDOW = 5;
@@ -80,9 +81,10 @@ async function sendWithResend(values: ContactValues, apiKey: string, to: string)
       text: [
         `Name: ${oneLine(values.name)}`,
         `Email: ${values.email}`,
-        `Company, and what it does: ${oneLine(values.company)}`,
+        `Company: ${oneLine(values.company)}`,
+        `Website: ${values.site ? oneLine(values.site) : "(not given)"}`,
         "",
-        "Where the day gets stuck:",
+        "What they'd like help with:",
         values.stuck,
       ].join("\n"),
     }),
@@ -109,8 +111,9 @@ async function sendToHud(values: ContactValues, url: string, secret: string): Pr
     method: "POST",
     headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      company: oneLine(values.company),
+      name: oneLine(values.company),
       contact: { name: oneLine(values.name), email: values.email },
+      ...(values.site ? { website: oneLine(values.site) } : {}),
       message: values.stuck,
       source: "Website enquiry form",
     }),
@@ -201,7 +204,9 @@ export async function POST(request: Request): Promise<Response> {
   if (Object.keys(fields).length > 0) return json({ ok: false, error: "Some fields need attention.", fields }, 422);
 
   const outcome = await deliver(contact.values);
-  if (outcome === "sent") return json({ ok: true }, 200);
+  // With the HUD connected, they can go on to ask for a proposal by tomorrow (see /api/contact/proposal).
+  const secret = process.env.HUD_LEADS_SECRET;
+  if (outcome === "sent") return json(secret ? { ok: true, proposal: makePass(contact.values.email, contact.values.name, secret) } : { ok: true }, 200);
   if (outcome === "failed") return json({ ok: false, error: "The message could not be delivered." }, 502);
 
   if (process.env.NODE_ENV !== "production") {

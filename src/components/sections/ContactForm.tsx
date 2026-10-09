@@ -9,6 +9,7 @@ import {
   CONTACT_LIMITS,
   EMPTY_CONTACT,
   HONEYPOT_FIELD,
+  OPTIONAL_FIELDS,
   validateContact,
   validateField,
   type ContactErrors,
@@ -25,7 +26,7 @@ const DIRECT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
 interface FieldSpec {
   field: ContactField;
   multiline?: boolean;
-  type?: "text" | "email";
+  type?: "text" | "email" | "url";
   autoComplete: string;
   inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
   className?: string;
@@ -34,7 +35,8 @@ interface FieldSpec {
 const FIELD_SPECS: FieldSpec[] = [
   { field: "name", autoComplete: "name" },
   { field: "email", type: "email", autoComplete: "email", inputMode: "email" },
-  { field: "company", autoComplete: "organization", className: "sm:col-span-2" },
+  { field: "company", autoComplete: "organization" },
+  { field: "site", type: "url", autoComplete: "url", inputMode: "url" },
   { field: "stuck", multiline: true, autoComplete: "off", className: "sm:col-span-2" },
 ];
 
@@ -57,7 +59,7 @@ function Field({ id, field, multiline, type = "text", autoComplete, inputMode, c
     id,
     name: field,
     value,
-    required: true,
+    required: !OPTIONAL_FIELDS.has(field),
     readOnly: locked,
     maxLength: CONTACT_LIMITS[field],
     autoComplete,
@@ -97,6 +99,7 @@ export function ContactForm() {
   const [errors, setErrors] = useState<ContactErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   const [busy, setBusy] = useState(false);
+  const [proposal, setProposal] = useState<string | null>(null);
   const pending = status === "pending";
 
   useEffect(() => () => requestRef.current?.abort(), []);
@@ -145,6 +148,7 @@ export function ContactForm() {
       const result = (await response.json().catch(() => null)) as ContactResponse | null;
 
       if (response.ok && result?.ok) {
+        setProposal(typeof result.proposal === "string" ? result.proposal : null);
         setStatus("success");
       } else if (response.status === 422 && result?.fields) {
         const fields = result.fields;
@@ -173,6 +177,7 @@ export function ContactForm() {
         <p id={`${uid}-received`} className="t-lead max-w-[26rem]">
           {CONTACT.success.body}
         </p>
+        {proposal ? <ProposalOffer pass={proposal} /> : null}
       </div>
     );
   }
@@ -222,5 +227,50 @@ export function ContactForm() {
         </div>
       </div>
     </form>
+  );
+}
+
+type OfferStatus = "idle" | "pending" | "error";
+
+/**
+ * After the enquiry: "want a proposal by tomorrow?" One click makes their project questions (and emails
+ * them the link), then opens them here.
+ */
+function ProposalOffer({ pass }: { pass: string }) {
+  const [status, setStatus] = useState<OfferStatus>("idle");
+  const pending = status === "pending";
+
+  const open = async () => {
+    if (pending) return;
+    setStatus("pending");
+    try {
+      const response = await fetch("/api/contact/proposal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pass }),
+      });
+      const result = (await response.json().catch(() => null)) as { ok?: boolean; url?: string } | null;
+      if (response.ok && result?.ok && result.url) {
+        window.location.assign(result.url);
+        return;
+      }
+      setStatus("error");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="mt-2 max-w-[30rem] rounded-2xl border border-[var(--line-strong)] bg-[var(--card)] p-5">
+      <p className="text-[1.05rem] font-medium text-[var(--ink)]">{CONTACT.proposal.title}</p>
+      <p className="mt-1.5 text-[0.95rem] leading-[1.5] text-[var(--ink-2)]">{CONTACT.proposal.body}</p>
+      <button type="button" onClick={open} aria-disabled={pending} className="btn btn-primary mt-4 aria-disabled:pointer-events-none aria-disabled:opacity-60">
+        {pending ? CONTACT.proposal.opening : CONTACT.proposal.button}
+        {!pending && <Icon name="arrow" size={17} strokeWidth={1.8} className="btn-arrow" />}
+      </button>
+      <p aria-live="polite" className="mt-3 text-[0.82rem] leading-[1.45] text-[var(--ink-3)]">
+        {status === "error" ? <span className="text-[var(--wait)]">{CONTACT.proposal.error}</span> : CONTACT.proposal.emailed}
+      </p>
+    </div>
   );
 }

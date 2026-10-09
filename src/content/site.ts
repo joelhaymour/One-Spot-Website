@@ -326,7 +326,7 @@ export const FAQ = {
 
 export const CONTACT = {
   eyebrow: "Start here",
-  headline: ["Tell us where it", "feels manual."],
+  headline: ["Tell us what you'd", "like help with."],
   lead: "A few lines is plenty. We'll do our homework on your business before we talk, so the first conversation is about you, not the basics.",
   next: [
     { title: "We look into your business", body: "Before we ever get on a call." },
@@ -336,20 +336,30 @@ export const CONTACT = {
   fields: {
     name: "Your name",
     email: "Email",
-    company: "Your company, and what it does",
-    stuck: "Where does it feel manual?",
+    company: "Company name",
+    site: "Website (optional)",
+    stuck: "What would you like help with?",
   },
   placeholders: {
     name: "Dana Reyes",
     email: "dana@harborhome.com",
-    company: "Harbor Home Services, plumbing and heating, 24 people",
-    stuck: "We type every job in twice, and invoices go out a week late.",
+    company: "Harbor Home Services",
+    site: "harborhome.com",
+    stuck: "We copy every order from email into a spreadsheet by hand, and invoices go out a week late.",
   },
   submit: "Send",
   sending: "Sending",
   success: {
     title: "Thank you. We've got it.",
-    body: "We'll look into your business and be in touch soon to find a time to talk. No need to prepare anything.",
+    body: "Your message is on its way to us. We'll look into your business and be in touch soon.",
+  },
+  proposal: {
+    title: "Want a proposal by tomorrow?",
+    body: "Answer 10 quick questions (about 5 minutes) and we'll email you a tailored proposal by tomorrow.",
+    button: "Answer the questions",
+    opening: "Opening",
+    emailed: "We'll also email you the link, so you can finish later.",
+    error: "That didn't open. Please try again, or reply to our email and we'll send the questions.",
   },
   error: "Something went wrong and your message didn't send. Please try again.",
 } as const;
