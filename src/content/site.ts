@@ -355,7 +355,7 @@ export const CONTACT = {
   },
   proposal: {
     title: "Want a proposal by tomorrow?",
-    body: "Answer 10 quick questions (about 5 minutes) and we'll email you a tailored proposal by tomorrow.",
+    body: "Answer a few quick questions (about 2 minutes, mostly taps) and we'll email you a tailored proposal by tomorrow.",
     button: "Answer the questions",
     opening: "Opening",
     emailed: "We'll also email you the link, so you can finish later.",

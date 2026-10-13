@@ -33,7 +33,7 @@ async function emailLink(to: string, name: string, url: string): Promise<boolean
       text: [
         `Hi ${firstName(name)},`,
         "",
-        "Thanks for reaching out to One Spot. Here are your 10 quick questions (about 5 minutes):",
+        "Thanks for reaching out to One Spot. Here are a few quick questions for you (about 2 minutes, mostly taps):",
         url,
         "",
         "Once you send them back, we'll email you a tailored proposal by tomorrow. Rough answers are fine, and your answers save as you go, so you can come back to this link anytime.",
