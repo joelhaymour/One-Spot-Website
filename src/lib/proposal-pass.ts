@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 /**
  * A short-lived, signed pass handed back after someone sends the enquiry form. It lets that same person
- * ask for "a proposal by tomorrow" (their project questions) without anyone else being able to request
+ * ask for "a demo by tomorrow" (their quick questions) without anyone else being able to request
  * forms for arbitrary addresses. Signed with HUD_LEADS_SECRET; good for two days.
  */
 const MAX_AGE_MS = 2 * 24 * 60 * 60 * 1000;

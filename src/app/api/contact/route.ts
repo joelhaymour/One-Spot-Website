@@ -1,4 +1,4 @@
-import { MAX_BODY_BYTES, readContact, validateContact, type ContactResponse, type ContactValues } from "@/components/sections/validate";
+import { MAX_BODY_BYTES, readContact, validateContact, type ContactExtras, type ContactResponse, type ContactValues } from "@/components/sections/validate";
 import { makePass } from "@/lib/proposal-pass";
 
 const WINDOW_MS = 10 * 60 * 1000;
@@ -69,7 +69,20 @@ async function readCapped(request: Request, cap: number): Promise<string | null>
 
 const oneLine = (s: string) => s.replace(/[\r\n\t]+/g, " ").trim();
 
-async function sendWithResend(values: ContactValues, apiKey: string, to: string): Promise<boolean> {
+/** What they asked for, as text: their own words, or for a website redesign the boxes they ticked and anything they added. */
+function request(values: ContactValues, extras: ContactExtras): string {
+  if (extras.kind !== "website") return values.stuck;
+  return [
+    `Website redesign for ${oneLine(values.site)}`,
+    "",
+    extras.changes.length ? `They'd like to change:\n${extras.changes.map((c) => `- ${c}`).join("\n")}` : "They didn't tick any of the usual changes.",
+    "",
+    values.stuck ? `Anything specific:\n${values.stuck}` : "Nothing specific added.",
+  ].join("\n");
+}
+
+async function sendWithResend(values: ContactValues, extras: ContactExtras, apiKey: string, to: string): Promise<boolean> {
+  const website = extras.kind === "website";
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -77,15 +90,15 @@ async function sendWithResend(values: ContactValues, apiKey: string, to: string)
       from: process.env.CONTACT_FROM_EMAIL || "One Spot <onboarding@resend.dev>",
       to: [to],
       reply_to: values.email,
-      subject: `New enquiry: ${oneLine(values.name)}, ${oneLine(values.company)}`.slice(0, 160),
+      subject: `${website ? "New website redesign enquiry" : "New enquiry"}: ${oneLine(values.name)}, ${oneLine(values.company)}`.slice(0, 160),
       text: [
         `Name: ${oneLine(values.name)}`,
         `Email: ${values.email}`,
         `Company: ${oneLine(values.company)}`,
         `Website: ${values.site ? oneLine(values.site) : "(not given)"}`,
         "",
-        "What they'd like help with:",
-        values.stuck,
+        website ? "What they'd like:" : "What they'd like help with:",
+        request(values, extras),
       ].join("\n"),
     }),
     signal: AbortSignal.timeout(OUTBOUND_TIMEOUT_MS),
@@ -94,11 +107,11 @@ async function sendWithResend(values: ContactValues, apiKey: string, to: string)
   return res.ok;
 }
 
-async function sendToWebhook(values: ContactValues, url: string): Promise<boolean> {
+async function sendToWebhook(values: ContactValues, extras: ContactExtras, url: string): Promise<boolean> {
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ source: "one-spot-contact", receivedAt: new Date().toISOString(), ...values }),
+    body: JSON.stringify({ source: "one-spot-contact", receivedAt: new Date().toISOString(), ...values, ...extras }),
     signal: AbortSignal.timeout(OUTBOUND_TIMEOUT_MS),
   });
   if (!res.ok) console.error(`[contact] Webhook responded ${res.status}`);
@@ -106,7 +119,7 @@ async function sendToWebhook(values: ContactValues, url: string): Promise<boolea
 }
 
 /** The One Spot HUD: every enquiry becomes (or updates) an account there, with a to-do to reply. */
-async function sendToHud(values: ContactValues, url: string, secret: string): Promise<boolean> {
+async function sendToHud(values: ContactValues, extras: ContactExtras, url: string, secret: string): Promise<boolean> {
   const res = await fetch(url, {
     method: "POST",
     headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/json" },
@@ -114,8 +127,8 @@ async function sendToHud(values: ContactValues, url: string, secret: string): Pr
       name: oneLine(values.company),
       contact: { name: oneLine(values.name), email: values.email },
       ...(values.site ? { website: oneLine(values.site) } : {}),
-      message: values.stuck,
-      source: "Website enquiry form",
+      message: request(values, extras),
+      source: extras.kind === "website" ? "Website enquiry form (website redesign)" : "Website enquiry form",
     }),
     signal: AbortSignal.timeout(OUTBOUND_TIMEOUT_MS),
   });
@@ -137,12 +150,12 @@ async function attempt(send: () => Promise<boolean>): Promise<boolean> {
  * The email (or, failing that, the webhook) and the HUD, at the same time. The enquiry counts as
  * delivered if either reached us, so a HUD outage never costs an email and vice versa.
  */
-async function deliver(values: ContactValues): Promise<"sent" | "failed" | "unconfigured"> {
+async function deliver(values: ContactValues, extras: ContactExtras): Promise<"sent" | "failed" | "unconfigured"> {
   const { RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_WEBHOOK_URL, HUD_LEADS_URL, HUD_LEADS_SECRET } = process.env;
   const channels: (() => Promise<boolean>)[] = [];
-  if (RESEND_API_KEY && CONTACT_TO_EMAIL) channels.push(() => sendWithResend(values, RESEND_API_KEY, CONTACT_TO_EMAIL));
-  if (CONTACT_WEBHOOK_URL) channels.push(() => sendToWebhook(values, CONTACT_WEBHOOK_URL));
-  const hud = HUD_LEADS_URL && HUD_LEADS_SECRET ? () => sendToHud(values, HUD_LEADS_URL, HUD_LEADS_SECRET) : null;
+  if (RESEND_API_KEY && CONTACT_TO_EMAIL) channels.push(() => sendWithResend(values, extras, RESEND_API_KEY, CONTACT_TO_EMAIL));
+  if (CONTACT_WEBHOOK_URL) channels.push(() => sendToWebhook(values, extras, CONTACT_WEBHOOK_URL));
+  const hud = HUD_LEADS_URL && HUD_LEADS_SECRET ? () => sendToHud(values, extras, HUD_LEADS_URL, HUD_LEADS_SECRET) : null;
   if (channels.length === 0 && !hud) return "unconfigured";
 
   // Try each channel in order; the first that accepts the enquiry wins.
@@ -200,17 +213,19 @@ export async function POST(request: Request): Promise<Response> {
   // A filled honeypot gets a convincing success and no delivery, so the script learns nothing.
   if (contact.honeypot) return json({ ok: true }, 200);
 
-  const fields = validateContact(contact.values);
+  const fields = validateContact(contact.values, contact.extras);
   if (Object.keys(fields).length > 0) return json({ ok: false, error: "Some fields need attention.", fields }, 422);
 
-  const outcome = await deliver(contact.values);
-  // With the HUD connected, they can go on to ask for a proposal by tomorrow (see /api/contact/proposal).
+  const outcome = await deliver(contact.values, contact.extras);
+  // With the HUD connected, a general enquiry can go on to ask for a demo by tomorrow (see
+  // /api/contact/proposal). Not a website redesign: those questions are about how work gets done.
   const secret = process.env.HUD_LEADS_SECRET;
-  if (outcome === "sent") return json(secret ? { ok: true, proposal: makePass(contact.values.email, contact.values.name, secret) } : { ok: true }, 200);
+  const offer = secret && contact.extras.kind === "general";
+  if (outcome === "sent") return json(offer ? { ok: true, proposal: makePass(contact.values.email, contact.values.name, secret) } : { ok: true }, 200);
   if (outcome === "failed") return json({ ok: false, error: "The message could not be delivered." }, 502);
 
   if (process.env.NODE_ENV !== "production") {
-    console.info("[contact] No delivery channel configured. Development only, logging the enquiry:", contact.values);
+    console.info("[contact] No delivery channel configured. Development only, logging the enquiry:", contact.values, contact.extras);
     return json({ ok: true }, 200);
   }
   // Production without a channel must fail loudly: the form shows its error instead of dropping an enquiry.

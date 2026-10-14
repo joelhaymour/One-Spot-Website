@@ -29,14 +29,14 @@ async function emailLink(to: string, name: string, url: string): Promise<boolean
       from: CONTACT_FROM_EMAIL || "One Spot <onboarding@resend.dev>",
       to: [to],
       ...(CONTACT_TO_EMAIL ? { reply_to: CONTACT_TO_EMAIL } : {}),
-      subject: "Your proposal questions from One Spot",
+      subject: "A few quick questions for your demo from One Spot",
       text: [
         `Hi ${firstName(name)},`,
         "",
         "Thanks for reaching out to One Spot. Here are a few quick questions for you (about 2 minutes, mostly taps):",
         url,
         "",
-        "Once you send them back, we'll email you a tailored proposal by tomorrow. Rough answers are fine, and your answers save as you go, so you can come back to this link anytime.",
+        "Once you send them back, we'll build a working demo of the idea and email it to you by tomorrow. Rough answers are fine, and your answers save as you go, so you can come back to this link anytime.",
         "",
         "Joel",
         "One Spot",
@@ -49,8 +49,8 @@ async function emailLink(to: string, name: string, url: string): Promise<boolean
 }
 
 /**
- * "Want a proposal by tomorrow?" after the enquiry: the HUD makes their project questions (and notes the
- * promise), we email them the link, and the page opens it. Only someone holding the pass from their own
+ * "Want a demo by tomorrow?" after the enquiry: the HUD makes their quick questions (and notes what was
+ * offered), we email them the link, and the page opens it. When the answers come back the HUD builds the demo. Only someone holding the pass from their own
  * enquiry can ask.
  */
 export async function POST(request: Request): Promise<Response> {
@@ -80,7 +80,7 @@ export async function POST(request: Request): Promise<Response> {
     const res = await fetch(`${HUD_LEADS_URL.replace(/\/$/, "")}/request`, {
       method: "POST",
       headers: { Authorization: `Bearer ${HUD_LEADS_SECRET}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ email: pass.email, name: pass.name }),
+      body: JSON.stringify({ email: pass.email, name: pass.name, offer: "demo" }),
       signal: AbortSignal.timeout(OUTBOUND_TIMEOUT_MS),
     });
     const hud = (await res.json().catch(() => null)) as { ok?: boolean; url?: string } | null;

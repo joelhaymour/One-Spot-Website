@@ -333,6 +333,14 @@ export const CONTACT = {
     { title: "We talk, and mostly listen", body: "About how work moves, not what software you run." },
     { title: "You get a few honest ideas", body: "Yours to keep, whether we work together or not." },
   ],
+  /** The choice at the top of the form: general help, or only a website redesign. */
+  kinds: {
+    label: "What can we help with?",
+    options: [
+      { key: "general", label: "My business" },
+      { key: "website", label: "Website redesign" },
+    ],
+  },
   fields: {
     name: "Your name",
     email: "Email",
@@ -347,15 +355,36 @@ export const CONTACT = {
     site: "harborhome.com",
     stuck: "We copy every order from email into a spreadsheet by hand, and invoices go out a week late.",
   },
+  /** What changes when they pick "Website redesign": the address is needed, and boxes replace most of the typing. */
+  website: {
+    fields: { site: "Your website", stuck: "Anything specific? (optional)" },
+    placeholders: { stuck: "The booking button is hard to find on a phone, and our photos are out of date." },
+    changes: {
+      label: "What would you like to change?",
+      help: "Tick any that fit.",
+      options: [
+        "A fresh, modern look",
+        "Works better on phones",
+        "Clearer menu and pages",
+        "Online booking or quote requests",
+        "Online store or checkout",
+        "Faster loading",
+        "Show up better on Google",
+        "Easier for us to update",
+      ],
+    },
+  },
   submit: "Send",
   sending: "Sending",
   success: {
     title: "Thank you. We've got it.",
     body: "Your message is on its way to us. We'll look into your business and be in touch soon.",
+    websiteBody: "Your message is on its way to us. We'll take a good look at your website and come back with ideas for it.",
   },
-  proposal: {
-    title: "Want a proposal by tomorrow?",
-    body: "Answer a few quick questions (about 2 minutes, mostly taps) and we'll email you a tailored proposal by tomorrow.",
+  /** After a general enquiry: a few quick questions, and we build them a working demo. */
+  demo: {
+    title: "Want a demo by tomorrow?",
+    body: "Answer a few quick questions (about 2 minutes, mostly taps) and we'll build a working demo of the idea and email it to you by tomorrow.",
     button: "Answer the questions",
     opening: "Opening",
     emailed: "We'll also email you the link, so you can finish later.",

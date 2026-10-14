@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type FormEvent, type HTMLAttributes } from "react";
+import { Fragment, useEffect, useId, useRef, useState, type FormEvent, type HTMLAttributes } from "react";
 import { CONTACT } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/Icons";
@@ -9,11 +9,13 @@ import {
   CONTACT_LIMITS,
   EMPTY_CONTACT,
   HONEYPOT_FIELD,
-  OPTIONAL_FIELDS,
+  isOptional,
   validateContact,
   validateField,
   type ContactErrors,
+  type ContactExtras,
   type ContactField,
+  type ContactKind,
   type ContactResponse,
   type ContactValues,
 } from "./validate";
@@ -46,6 +48,7 @@ const controlClass =
 
 interface FieldProps extends FieldSpec {
   id: string;
+  extras: ContactExtras;
   value: string;
   error?: string;
   locked: boolean;
@@ -53,17 +56,21 @@ interface FieldProps extends FieldSpec {
   onBlur: (field: ContactField) => void;
 }
 
-function Field({ id, field, multiline, type = "text", autoComplete, inputMode, className, value, error, locked, onChange, onBlur }: FieldProps) {
+function Field({ id, field, multiline, type = "text", autoComplete, inputMode, className, extras, value, error, locked, onChange, onBlur }: FieldProps) {
   const errorId = `${id}-error`;
+  // A website redesign words two of the fields its own way.
+  const website = extras.kind === "website" ? CONTACT.website : null;
+  const label = (website?.fields as Partial<Record<ContactField, string>> | undefined)?.[field] ?? CONTACT.fields[field];
+  const placeholder = (website?.placeholders as Partial<Record<ContactField, string>> | undefined)?.[field] ?? CONTACT.placeholders[field];
   const shared = {
     id,
     name: field,
     value,
-    required: !OPTIONAL_FIELDS.has(field),
+    required: !isOptional(field, extras),
     readOnly: locked,
     maxLength: CONTACT_LIMITS[field],
     autoComplete,
-    placeholder: CONTACT.placeholders[field],
+    placeholder,
     "aria-invalid": error ? true : undefined,
     "aria-describedby": error ? errorId : undefined,
     onBlur: () => onBlur(field),
@@ -73,7 +80,7 @@ function Field({ id, field, multiline, type = "text", autoComplete, inputMode, c
   return (
     <div className={className}>
       <label htmlFor={id} className="mb-2 block text-[0.85rem] font-medium text-[var(--ink-2)]">
-        {CONTACT.fields[field]}
+        {label}
       </label>
       {multiline ? (
         <textarea {...shared} rows={4} onChange={(event) => onChange(field, event.target.value)} className={cn(controlClass, tone, "min-h-[7.5rem] resize-y py-3.5 leading-[1.5]")} />
@@ -96,6 +103,9 @@ export function ContactForm() {
   const requestRef = useRef<AbortController | null>(null);
 
   const [values, setValues] = useState<ContactValues>(EMPTY_CONTACT);
+  const [kind, setKind] = useState<ContactKind>("general");
+  const [changes, setChanges] = useState<string[]>([]);
+  const extras: ContactExtras = { kind, changes: kind === "website" ? changes : [] };
   const [errors, setErrors] = useState<ContactErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   const [busy, setBusy] = useState(false);
@@ -113,19 +123,33 @@ export function ContactForm() {
 
   const onChange = (field: ContactField, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
-    if (errors[field]) setErrors((current) => ({ ...current, [field]: validateField(field, value) ?? undefined }));
+    if (errors[field]) setErrors((current) => ({ ...current, [field]: validateField(field, value, extras) ?? undefined }));
+  };
+
+  // Switching what it's about keeps what they've typed; only the messages tied to the other form go.
+  const pickKind = (next: ContactKind) => {
+    if (pending || next === kind) return;
+    setKind(next);
+    setErrors((current) => ({ ...current, site: undefined, stuck: undefined }));
+  };
+
+  const toggleChange = (option: string) => {
+    if (pending) return;
+    setChanges((current) => (current.includes(option) ? current.filter((c) => c !== option) : [...current, option]));
+    // A ticked box is enough: the "tell us what to change" message no longer applies.
+    setErrors((current) => (current.stuck ? { ...current, stuck: undefined } : current));
   };
 
   const onBlur = (field: ContactField) => {
     if (!values[field].trim()) return;
-    setErrors((current) => ({ ...current, [field]: validateField(field, values[field]) ?? undefined }));
+    setErrors((current) => ({ ...current, [field]: validateField(field, values[field], extras) ?? undefined }));
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (pending) return;
 
-    const found = validateContact(values);
+    const found = validateContact(values, extras);
     setErrors(found);
     const firstInvalid = CONTACT_FIELDS.find((field) => found[field]);
     if (firstInvalid) {
@@ -142,7 +166,7 @@ export function ContactForm() {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, [HONEYPOT_FIELD]: typeof trap === "string" ? trap : "" }),
+        body: JSON.stringify({ ...values, ...extras, [HONEYPOT_FIELD]: typeof trap === "string" ? trap : "" }),
         signal: controller.signal,
       });
       const result = (await response.json().catch(() => null)) as ContactResponse | null;
@@ -175,26 +199,83 @@ export function ContactForm() {
           {CONTACT.success.title}
         </h3>
         <p id={`${uid}-received`} className="t-lead max-w-[26rem]">
-          {CONTACT.success.body}
+          {kind === "website" ? CONTACT.success.websiteBody : CONTACT.success.body}
         </p>
-        {proposal ? <ProposalOffer pass={proposal} /> : null}
+        {proposal ? <DemoOffer pass={proposal} /> : null}
       </div>
     );
   }
 
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate aria-busy={pending} className="relative grid gap-x-4 gap-y-5 sm:grid-cols-2">
+      {/* what it's about: the business in general, or only a website redesign */}
+      <div className="sm:col-span-2">
+        <p id={`${uid}-kind`} className="mb-2 block text-[0.85rem] font-medium text-[var(--ink-2)]">
+          {CONTACT.kinds.label}
+        </p>
+        <div role="radiogroup" aria-labelledby={`${uid}-kind`} className="relative grid grid-cols-2 rounded-full bg-[var(--paper-2)] p-1 text-[0.92rem] font-medium">
+          <span
+            aria-hidden
+            className={cn(
+              "absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-[var(--ink)] shadow-[var(--shadow-card)] transition-transform duration-500 ease-[var(--ease-out)]",
+              kind === "website" && "translate-x-full",
+            )}
+          />
+          {CONTACT.kinds.options.map((option) => (
+            <button
+              key={option.key}
+              type="button"
+              role="radio"
+              aria-checked={kind === option.key}
+              onClick={() => pickKind(option.key)}
+              className={cn("relative z-10 rounded-full py-2.5 transition-colors duration-300", kind === option.key ? "text-[var(--paper)]" : "text-[var(--ink-3)] hover:text-[var(--ink)]")}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {FIELD_SPECS.map((spec) => (
-        <Field
-          key={spec.field}
-          {...spec}
-          id={`${uid}-${spec.field}`}
-          value={values[spec.field]}
-          error={errors[spec.field]}
-          locked={pending}
-          onChange={onChange}
-          onBlur={onBlur}
-        />
+        <Fragment key={spec.field}>
+          {/* a website redesign: the usual changes as boxes to tick, above the box for anything else */}
+          {spec.field === "stuck" && kind === "website" ? (
+            <fieldset className="story-fade sm:col-span-2">
+              <legend className="mb-1 block text-[0.85rem] font-medium text-[var(--ink-2)]">{CONTACT.website.changes.label}</legend>
+              <p className="mb-3 text-[0.82rem] text-[var(--ink-3)]">{CONTACT.website.changes.help}</p>
+              <div className="flex flex-wrap gap-2">
+                {CONTACT.website.changes.options.map((option) => {
+                  const on = changes.includes(option);
+                  return (
+                    <label
+                      key={option}
+                      className={cn(
+                        "flex cursor-pointer select-none items-center gap-2 rounded-full border px-3.5 py-2 text-[0.9rem] transition-[background-color,border-color,color,box-shadow] duration-300 has-[:focus-visible]:shadow-[0_0_0_4px_rgba(45,74,224,0.18)]",
+                        on ? "border-[var(--spot)] bg-[var(--spot-soft)] text-[var(--ink)]" : "border-[var(--line-strong)] bg-[var(--paper)] text-[var(--ink-2)] hover:border-[var(--ink-4)]",
+                      )}
+                    >
+                      <input type="checkbox" name="changes" value={option} checked={on} disabled={pending} onChange={() => toggleChange(option)} className="sr-only" />
+                      <span aria-hidden className={cn("grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[6px] border transition-colors duration-300", on ? "border-[var(--spot)] bg-[var(--spot)] text-white" : "border-[var(--line-strong)] bg-[var(--card)] text-transparent")}>
+                        <Icon name="check" size={12} strokeWidth={3} />
+                      </span>
+                      {option}
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
+          ) : null}
+          <Field
+            {...spec}
+            id={`${uid}-${spec.field}`}
+            extras={extras}
+            value={values[spec.field]}
+            error={errors[spec.field]}
+            locked={pending}
+            onChange={onChange}
+            onBlur={onBlur}
+          />
+        </Fragment>
       ))}
 
       {/* Honeypot: off-screen rather than display:none, out of the tab order, hidden from assistive tech. */}
@@ -233,10 +314,10 @@ export function ContactForm() {
 type OfferStatus = "idle" | "pending" | "error";
 
 /**
- * After the enquiry: "want a proposal by tomorrow?" One click makes their project questions (and emails
- * them the link), then opens them here.
+ * After a general enquiry: "want a demo by tomorrow?" One click makes their quick questions (and emails
+ * them the link), then opens them here. Their answers are what the demo is built from.
  */
-function ProposalOffer({ pass }: { pass: string }) {
+function DemoOffer({ pass }: { pass: string }) {
   const [status, setStatus] = useState<OfferStatus>("idle");
   const pending = status === "pending";
 
@@ -262,14 +343,14 @@ function ProposalOffer({ pass }: { pass: string }) {
 
   return (
     <div className="mt-2 max-w-[30rem] rounded-2xl border border-[var(--line-strong)] bg-[var(--card)] p-5">
-      <p className="text-[1.05rem] font-medium text-[var(--ink)]">{CONTACT.proposal.title}</p>
-      <p className="mt-1.5 text-[0.95rem] leading-[1.5] text-[var(--ink-2)]">{CONTACT.proposal.body}</p>
+      <p className="text-[1.05rem] font-medium text-[var(--ink)]">{CONTACT.demo.title}</p>
+      <p className="mt-1.5 text-[0.95rem] leading-[1.5] text-[var(--ink-2)]">{CONTACT.demo.body}</p>
       <button type="button" onClick={open} aria-disabled={pending} className="btn btn-primary mt-4 aria-disabled:pointer-events-none aria-disabled:opacity-60">
-        {pending ? CONTACT.proposal.opening : CONTACT.proposal.button}
+        {pending ? CONTACT.demo.opening : CONTACT.demo.button}
         {!pending && <Icon name="arrow" size={17} strokeWidth={1.8} className="btn-arrow" />}
       </button>
       <p aria-live="polite" className="mt-3 text-[0.82rem] leading-[1.45] text-[var(--ink-3)]">
-        {status === "error" ? <span className="text-[var(--wait)]">{CONTACT.proposal.error}</span> : CONTACT.proposal.emailed}
+        {status === "error" ? <span className="text-[var(--wait)]">{CONTACT.demo.error}</span> : CONTACT.demo.emailed}
       </p>
     </div>
   );
