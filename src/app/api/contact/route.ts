@@ -129,6 +129,8 @@ async function sendToHud(values: ContactValues, extras: ContactExtras, url: stri
       ...(values.site ? { website: oneLine(values.site) } : {}),
       message: request(values, extras),
       source: extras.kind === "website" ? "Website enquiry form (website redesign)" : "Website enquiry form",
+      // A website redesign: the HUD designs two style concepts of their site and drafts the email that sends them.
+      kind: extras.kind,
     }),
     signal: AbortSignal.timeout(OUTBOUND_TIMEOUT_MS),
   });

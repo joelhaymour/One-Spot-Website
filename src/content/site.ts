@@ -379,7 +379,7 @@ export const CONTACT = {
   success: {
     title: "Thank you. We've got it.",
     body: "Your message is on its way to us. We'll look into your business and be in touch soon.",
-    websiteBody: "Your message is on its way to us. We'll take a good look at your website and come back with ideas for it.",
+    websiteBody: "Your message is on its way to us. We'll take a good look at your website and send you two fresh design ideas for it, usually by tomorrow.",
   },
   /** After a general enquiry: a few quick questions, and we build them a working demo. */
   demo: {
