@@ -31,13 +31,17 @@
   --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   --sig:"Mrs Saint Delafield","Snell Roundhand","Brush Script MT",cursive;
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
   color-scheme:light;
 }
 *{box-sizing:border-box}
 body{background:var(--page);color:var(--text);font:13px/1.45 var(--ui);-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit}
 a{color:var(--brand);text-decoration:none}
-a:hover{text-decoration:underline}
+a:hover{text-decoration:underline;color:var(--brand-dk)}
+::selection{background:#cfe2fb;color:var(--text)}
+.doc-stage,.flist,.modal-b,.rec-body{scrollbar-width:thin;scrollbar-color:#b9bec6 transparent}
+.fv,.hl-fields dd,.cmp .v,.snip-r span:last-child,.timeline time{font-variant-numeric:tabular-nums}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .mono{font-family:var(--mono)}
 svg{display:block}
@@ -45,7 +49,7 @@ svg{display:block}
 /* ---------- demo bar ---------- */
 .demobar{background:var(--demo);color:#fff;padding-inline:16px}
 .demobar-in{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding-block:8px;max-width:1680px;margin:0 auto}
-.demo-tag{font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.14);padding:3px 7px;border-radius:3px;font-weight:600}
+.demo-tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.14);padding:3px 7px;border-radius:3px;font-weight:600}
 .demo-title{font-weight:600;font-size:14px}
 .seg{display:flex;background:rgba(255,255,255,.1);border-radius:6px;padding:3px;gap:3px;flex-wrap:wrap}
 .seg button{border:0;background:transparent;color:#d6e4f7;padding:6px 12px;border-radius:4px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:7px}
@@ -57,6 +61,7 @@ svg{display:block}
 .dbtn:hover{background:rgba(255,255,255,.1)}
 .demo-credit{color:#d6e4f7;font-size:12px;white-space:nowrap;border-left:1px solid rgba(255,255,255,.2);padding-left:14px}
 .demo-credit b{color:#fff;font-weight:600}
+.demo-credit svg{display:inline-block;width:10px;height:10px;vertical-align:0;margin-left:2px}
 .demo-credit:hover{color:#fff}
 
 /* ---------- global header ---------- */
@@ -69,7 +74,7 @@ svg{display:block}
 .gh-icons svg{width:18px;height:18px}
 .bell{position:relative}
 .bell b{position:absolute;top:-6px;right:-7px;background:#ea001e;color:#fff;font-size:9px;border-radius:8px;padding:0 4px;line-height:14px}
-.avatar{width:30px;height:30px;border-radius:50%;background:#7f8de1;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600}
+.avatar{width:30px;height:30px;border-radius:50%;background:#5867e8;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600}
 
 /* ---------- app nav ---------- */
 .appnav{background:#fff;border-bottom:3px solid var(--brand);padding-inline:16px;box-shadow:0 2px 3px rgba(0,0,0,.06)}
@@ -86,7 +91,10 @@ svg{display:block}
 .card{background:var(--card);border:1px solid var(--line);border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line-2);background:#fff;color:var(--brand);border-radius:4px;padding:0 14px;min-height:32px;cursor:pointer;font-weight:500;white-space:nowrap;text-decoration:none}
-.btn:hover{background:var(--hover);text-decoration:none}
+.btn{transition:background-color .15s ease,border-color .15s ease,transform 160ms var(--ease-out)}
+.btn:hover{background:var(--hover);color:var(--brand-dk);text-decoration:none}
+.btn:active:not(:disabled),.dbtn:active,.seg button:active,.dtab:active,.sfile:active,.fix:active,.vstate:not(.none):active,.side-all:active{transform:scale(.97)}
+.dbtn,.seg button,.dtab,.sfile,.fix,.vstate,.side-all{transition:background-color .15s ease,border-color .15s ease,transform 160ms var(--ease-out)}
 .btn svg{width:14px;height:14px;flex:none}
 .btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}
 .btn.brand:hover{background:var(--brand-dk);border-color:var(--brand-dk)}
@@ -256,8 +264,16 @@ button.ptab:hover{border-bottom-color:var(--line-2)}
 /* ---------- modals ---------- */
 .backdrop{position:fixed;inset:0;background:rgba(8,7,7,.55);z-index:50;display:grid;place-items:center;padding:16px;overflow:auto}
 .backdrop.top{z-index:80}
-.modal{background:#fff;border-radius:6px;width:min(760px,100%);box-shadow:0 10px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;max-height:calc(100vh - 32px);animation:mIn .22s ease}
-@keyframes mIn{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+.modal{background:#fff;border-radius:6px;width:min(760px,100%);box-shadow:0 10px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;max-height:calc(100vh - 32px);animation:mIn .24s var(--ease-out)}
+.modal:focus{outline:none}
+@keyframes mIn{from{opacity:0;translate:0 10px;scale:.98}to{opacity:1;translate:0 0;scale:1}}
+@keyframes popIn{from{opacity:0;scale:.96}to{opacity:1;scale:1}}
+@keyframes rowIn{from{opacity:0;translate:0 6px}to{opacity:1;translate:0 0}}
+.fresh .fixes li,.fresh .wins li{animation:rowIn 320ms var(--ease-out) both}
+.fresh .fixes li:nth-child(2),.fresh .wins li:nth-child(2){animation-delay:60ms}
+.fresh .fixes li:nth-child(3),.fresh .wins li:nth-child(3){animation-delay:120ms}
+.fresh .fixes li:nth-child(4),.fresh .wins li:nth-child(4){animation-delay:180ms}
+.fresh .fixes li:nth-child(n+5){animation-delay:220ms}
 .modal-h{padding:14px 48px 14px 18px;border-bottom:1px solid var(--line);position:relative;display:flex;gap:12px;align-items:center}
 .modal-h.center{justify-content:center;text-align:center;flex-direction:column;gap:2px;padding-inline:48px}
 .modal-h h2{margin:0;font-size:18px;font-weight:400}
@@ -326,7 +342,8 @@ button.ptab:hover{border-bottom-color:var(--line-2)}
 .wins svg{width:14px;height:14px;color:var(--ok);flex:none;margin-top:2px}
 
 /* "where is it wrong" popover */
-.pop{position:fixed;z-index:70;width:340px;max-width:calc(100vw - 24px);background:#fff;border:1px solid var(--line-2);border-radius:8px;box-shadow:0 12px 32px rgba(3,45,96,.25);padding:12px;display:flex;flex-direction:column;gap:10px;animation:mIn .15s ease}
+.pop{position:fixed;z-index:70;width:340px;max-width:calc(100vw - 24px);background:#fff;border:1px solid var(--line-2);border-radius:8px;box-shadow:0 12px 32px rgba(3,45,96,.25);padding:12px;display:flex;flex-direction:column;gap:10px;transform-origin:var(--origin,top left);animation:popIn 160ms var(--ease-out)}
+.pop.instant{animation:none}
 .pop-file{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);min-width:0}
 .pop-file b{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pop-t{font-weight:700;font-size:13.5px;color:var(--bad)}
@@ -401,7 +418,7 @@ button.ptab:hover{border-bottom-color:var(--line-2)}
     <div class="demo-ctrls">
       <button class="dbtn" id="btn-reset">Reset</button>
     </div>
-    <a class="demo-credit" href="https://www.onespotgroup.com" target="_blank" rel="noopener">Built by <b>One Spot</b> ↗</a>
+    <a class="demo-credit" href="https://www.onespotgroup.com" target="_blank" rel="noopener">Built by <b>One Spot</b><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M3 2h5v5M8 2L2.5 7.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </div>
 </div>
 
@@ -779,6 +796,7 @@ const TPL = {
 };
 
 /* ---------------- state ---------------- */
+let lastFocus = null, emailFocus = null;
 let S = BAD, curDoc = 'invoice', result = null, verifying = false, submitted = false, runId = 0;
 
 /* ---------------- render: record + files ---------------- */
@@ -868,9 +886,10 @@ function computeResult() {
 
 function openVerify(rerun) {
   closePop();
+  lastFocus = document.activeElement;
   $('#verify-root').innerHTML = `
     <div class="backdrop" id="v-bd">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="v-title">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="v-title" tabindex="-1" id="v-modal">
         <div class="modal-h">
           <span class="ag-ico">${I.shield}</span>
           <div><h2 id="v-title">Contract Verification</h2><p>Doc Request DR-01482 · Ridgeline Excavation – 2024 CAT 320 Excavator</p></div>
@@ -880,12 +899,17 @@ function openVerify(rerun) {
         <div class="modal-f" id="v-foot"></div>
       </div>
     </div>`;
-  $('#v-x').onclick = closeVerify;
+  $('#v-x').onclick = () => closeVerify();
   $('#v-bd').addEventListener('mousedown', e => { if (e.target.id === 'v-bd') closeVerify(); });
   $('#v-body').addEventListener('scroll', closePop);
+  $('#v-modal').focus({preventScroll:true});
   if (rerun || !result) runVerify(); else renderVerifyDone(false);
 }
-function closeVerify() { runId++; verifying = false; closePop(); $('#verify-root').innerHTML = ''; renderStageBar(); }
+function closeVerify(keepFocus) {
+  const wasOpen = !!$('#verify-root').firstChild;
+  runId++; verifying = false; closePop(); $('#verify-root').innerHTML = ''; renderStageBar();
+  if (wasOpen && !keepFocus && lastFocus && document.contains(lastFocus)) lastFocus.focus({preventScroll:true});
+}
 
 function rowsHTML(st) {
   return CHECKS.map(c => {
@@ -947,6 +971,7 @@ function renderVerifyDone(fresh) {
       <li>${I.check}<span>The void check matches the bank account on file for payments.</span></li>
     </ul>
     <div><div class="vsec-h"><span>Checklist</span><span>${CHECKS.length} of ${CHECKS.length} match</span></div><ul class="vlist" id="v-list">${rowsHTML('wait')}</ul></div>`;
+  $('#v-body').classList.toggle('fresh', fresh && !reduce);
   // fill the checklist in its finished state
   r.rows.forEach(row => {
     const li = $(`.vrow[data-id="${row.c.id}"]`);
@@ -970,7 +995,7 @@ function renderVerifyDone(fresh) {
       ? `<div class="hint">${I.check}Submitted to the funding team.</div><button class="btn" id="v-close">Close</button>`
       : `<div class="hint">${I.info}Sends the Doc Request to the contract specialist, who builds the contract and sends it to the customer to sign.</div>
          <button class="btn" id="v-close">Not now</button><button class="btn brand" id="v-submit">${I.send}Submit Doc Request</button>`;
-    $('#v-close').onclick = closeVerify;
+    $('#v-close').onclick = () => closeVerify();
     const vs = $('#v-submit'); if (vs) vs.onclick = () => submitDocRequest(vs);
   }
 }
@@ -992,7 +1017,7 @@ function markPage() {
 }
 
 /* ---------------- "where is it wrong" popover ---------------- */
-let popFor = null, pinned = false, hideT;
+let popFor = null, pinned = false, hideT, lastPopClose = 0;
 function popHTML(f) {
   const d = DOC[f.doc], data = S[f.doc], badKeys = new Set(f.fails.map(x => x.s.k));
   return `
@@ -1011,10 +1036,11 @@ function popHTML(f) {
 }
 function placePop(pop, anchor) {
   const a = anchor.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight, vw = innerWidth, vh = innerHeight, m = 12;
-  let x, y;
-  if (a.right + m + w <= vw - 8) { x = a.right + m; y = a.top + a.height / 2 - h / 2; }
-  else if (a.left - m - w >= 8) { x = a.left - m - w; y = a.top + a.height / 2 - h / 2; }
-  else { x = a.right - w; y = a.bottom + 6; if (y + h > vh - 8) y = a.top - h - 6; }
+  let x, y, origin;
+  if (a.right + m + w <= vw - 8) { x = a.right + m; y = a.top + a.height / 2 - h / 2; origin = 'left center'; }
+  else if (a.left - m - w >= 8) { x = a.left - m - w; y = a.top + a.height / 2 - h / 2; origin = 'right center'; }
+  else { x = a.right - w; y = a.bottom + 6; origin = 'top right'; if (y + h > vh - 8) { y = a.top - h - 6; origin = 'bottom right'; } }
+  pop.style.setProperty('--origin', origin);
   pop.style.left = Math.max(8, Math.min(vw - w - 8, x)) + 'px';
   pop.style.top = Math.max(8, Math.min(vh - h - 8, y)) + 'px';
 }
@@ -1026,6 +1052,7 @@ function showPop(anchor, f, pin) {
   if (pin) anchor.classList.add('pinned');
   $('#pop-root').innerHTML = `<div class="pop" id="pop" role="tooltip">${popHTML(f)}</div>`;
   const pop = $('#pop');
+  if (performance.now() - lastPopClose < 300) pop.classList.add('instant');
   placePop(pop, anchor);
   pop.addEventListener('mouseenter', () => clearTimeout(hideT));
   pop.addEventListener('mouseleave', () => { if (!pinned) hideSoon(); });
@@ -1034,7 +1061,7 @@ function showPop(anchor, f, pin) {
 function hideSoon() { clearTimeout(hideT); hideT = setTimeout(closePop, 180); }
 function closePop() {
   clearTimeout(hideT);
-  if (popFor) popFor.classList.remove('pinned');
+  if (popFor) { popFor.classList.remove('pinned'); lastPopClose = performance.now(); }
   popFor = null; pinned = false; $('#pop-root').innerHTML = '';
 }
 function bindPop(el, f) {
@@ -1049,7 +1076,7 @@ document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (
 addEventListener('resize', closePop);
 
 function jumpTo(f) {
-  closeVerify();
+  closeVerify(true);
   showTab('files'); showDoc(f.doc);
   const s = f.fails[0].s, el = $(`[data-k="${s.doc}.${s.k}"]`);
   if (!el) return;
@@ -1093,6 +1120,7 @@ function buildEmail(kind) {
 }
 function openEmail(kind) {
   closePop();
+  emailFocus = document.activeElement;
   const e = buildEmail(kind), who = kind === 'dealer' ? 'Dealership' : 'Customer';
   $('#email-root').innerHTML = `
     <div class="backdrop top" id="e-bd">
@@ -1121,7 +1149,7 @@ function openEmail(kind) {
   };
   sync();
   $$('#email-root input, #email-root textarea').forEach(el => el.addEventListener('input', sync));
-  $('#e-x').onclick = closeEmail;
+  $('#e-x').onclick = () => closeEmail();
   $('#e-bd').addEventListener('mousedown', ev => { if (ev.target.id === 'e-bd') closeEmail(); });
   $('#m-copy').onclick = () => {
     const v = vals(), text = `To: ${v.to}\nCc: ${v.cc}\nSubject: ${v.subject}\n\n${v.body}`;
@@ -1130,7 +1158,11 @@ function openEmail(kind) {
   };
   $('#m-to').focus();
 }
-function closeEmail() { $('#email-root').innerHTML = ''; }
+function closeEmail() {
+  const wasOpen = !!$('#email-root').firstChild;
+  $('#email-root').innerHTML = '';
+  if (wasOpen && emailFocus && document.contains(emailFocus)) emailFocus.focus({preventScroll:true});
+}
 
 /* ---------------- scenario / reset ---------------- */
 function resetAll() {
