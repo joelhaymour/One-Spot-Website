@@ -468,6 +468,11 @@ button {
   html[data-motion="on"] .stamp-press {
     animation: stamp-press 260ms var(--ease-out) both;
   }
+  /* the routing slip: each step box is stamped once as the reader reaches it */
+  html[data-motion="on"] .p-step.is-on .p-box {
+    --stamp-rot: rotate(0deg);
+    animation: stamp-press 260ms var(--ease-out) both;
+  }
 
   /* ---------------------------------------------------------------- */
   /* Split headline reveal                                            */

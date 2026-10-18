@@ -274,14 +274,17 @@ export const TOOLS = {
   before: { clicks: 47, retyped: 9, label: "Today: every app on its own" },
   after: { clicks: 6, retyped: 0, label: "With One Spot: connected" },
   close: "Same tools you use today. We just connect them, so the work moves by itself.",
+  note: "Illustrative",
+  /** The one job the scene follows. */
+  job: { number: "Job #1042", details: "Patel · 14 Elm St · parts", once: "Filled in once", by: "Set up by One\u00a0Spot", filled: "Filled in" },
   apps: [
-    { name: "Email", icon: "mail", color: "#c4533d" },
-    { name: "Accounting", icon: "invoice", color: "#2b7a57" },
-    { name: "CRM", icon: "users", color: "#7b5cd6" },
-    { name: "Shared drive", icon: "file", color: "#2f8aa0" },
-    { name: "Spreadsheet", icon: "sheet", color: "#3f8f4f" },
-    { name: "Calendar", icon: "calendar", color: "#d08a1e" },
-    { name: "Field app", icon: "phone", color: "#2d4ae0" },
+    { name: "Email", icon: "mail" },
+    { name: "Accounting", icon: "invoice" },
+    { name: "CRM", icon: "users" },
+    { name: "Shared drive", icon: "file" },
+    { name: "Spreadsheet", icon: "sheet" },
+    { name: "Calendar", icon: "calendar" },
+    { name: "Field app", icon: "phone" },
   ],
 } as const;
 

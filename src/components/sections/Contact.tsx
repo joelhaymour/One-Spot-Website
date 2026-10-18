@@ -26,8 +26,7 @@ export function Contact() {
           </ol>
         </div>
 
-        <div className="ticket px-5 pb-6 pt-14 sm:px-8 sm:pb-8" data-reveal style={{ "--reveal-delay": "0.15s" } as CSSProperties}>
-          <span aria-hidden className="eyelet" />
+        <div className="ticket px-5 pb-6 pt-6 sm:px-8 sm:pb-8" data-reveal style={{ "--reveal-delay": "0.15s" } as CSSProperties}>
           <div className="mb-6 flex items-baseline justify-between border-b-2 border-[var(--ink)] pb-2">
             <span className="t-label">{CONTACT.ticket}</span>
             <span className="t-label text-[var(--ink-3)]">{CONTACT.ticketNote}</span>

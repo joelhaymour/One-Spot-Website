@@ -101,13 +101,13 @@ export function Nav() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-transform duration-300 ease-[var(--ease-out)]",
+        "fixed inset-x-0 top-0 z-50 transition-transform duration-[var(--t-ui)] ease-[var(--ease-out)]",
         hidden && !open && "-translate-y-full",
       )}
     >
       <div
         className={cn(
-          "absolute inset-0 border-b transition-[background-color,border-color] duration-300",
+          "absolute inset-0 border-b transition-[background-color,border-color] duration-[var(--t-ui)]",
           solid || open ? "border-[var(--line-strong)] bg-[rgba(232,213,163,0.97)]" : "border-transparent bg-transparent",
         )}
       />
@@ -127,7 +127,7 @@ export function Nav() {
                   href={item.href}
                   aria-current={isActive ? "true" : undefined}
                   className={cn(
-                    "relative rounded-[4px] px-3.5 py-2 text-[0.92rem] font-medium tracking-[-0.01em] transition-colors duration-200",
+                    "relative rounded-[4px] px-3.5 py-2 text-[0.92rem] font-medium tracking-[-0.01em] transition-colors duration-[var(--t-ui)]",
                     isActive ? "text-[var(--ink)]" : "text-[var(--ink-2)] hover:text-[var(--ink)]",
                   )}
                 >
@@ -135,7 +135,7 @@ export function Nav() {
                   <span
                     aria-hidden
                     className={cn(
-                      "absolute inset-x-3.5 bottom-[4px] h-[2px] origin-left bg-[var(--ink)] transition-transform duration-200 ease-[var(--ease-out)]",
+                      "absolute inset-x-3.5 bottom-[4px] h-[2px] origin-left bg-[var(--ink)] transition-transform duration-[var(--t-ui)] ease-[var(--ease-out)]",
                       isActive ? "scale-x-100" : "scale-x-0",
                     )}
                   />

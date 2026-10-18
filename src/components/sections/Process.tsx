@@ -8,8 +8,8 @@ import { Mark } from "@/components/ui/Mark";
 
 /**
  * 01 · How we work, as the routing slip that travels with a job: five steps on ruled rows, each with
- * when it happens, what happens and what you get. As the reader reaches a row its step box inks in,
- * the way a slip gets initialled at each station.
+ * when it happens, what happens and what you get. As the reader reaches a row its step box is stamped
+ * in ink with one press, the way a slip gets initialled at each station.
  */
 export function Process() {
   const listRef = useRef<HTMLOListElement>(null);
@@ -60,7 +60,7 @@ export function Process() {
                 className="p-step group grid gap-x-6 gap-y-2 border-b border-[var(--line-strong)] px-5 py-6 last:border-b-0 sm:px-8 md:grid-cols-[4.5rem_11rem_minmax(0,1fr)_minmax(0,17rem)] md:items-baseline md:py-7"
               >
                 <span className="flex items-center gap-4 md:block">
-                  <span className="t-num grid h-12 w-12 place-items-center rounded-[4px] border-2 border-[var(--ink)] font-[family-name:var(--font-display)] text-[1.35rem] font-black transition-colors duration-[var(--t-ui)] group-[.is-on]:bg-[var(--ink)] group-[.is-on]:text-[var(--card)]">
+                  <span className="p-box t-num grid h-12 w-12 place-items-center rounded-[4px] border-2 border-[var(--ink)] font-[family-name:var(--font-display)] text-[1.35rem] font-black transition-colors duration-[var(--t-ui)] group-[.is-on]:bg-[var(--ink)] group-[.is-on]:text-[var(--card)]">
                     {i + 1}
                   </span>
                   <span className="t-h3 md:hidden">{step.name}</span>

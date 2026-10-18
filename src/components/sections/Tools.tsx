@@ -14,7 +14,7 @@ const HUB: Spot = { x: 50, y: 52 };
 /** Where each app ends up: a calm ring around One Spot. This is also the no-motion layout. */
 const RING: Spot[] = TOOLS.apps.map((_, i) => {
   const a = -Math.PI / 2 + (i / TOOLS.apps.length) * Math.PI * 2;
-  return { x: HUB.x + Math.cos(a) * 35, y: HUB.y + Math.sin(a) * 31 };
+  return { x: HUB.x + Math.cos(a) * 34, y: HUB.y + Math.sin(a) * 31 };
 });
 
 /** Where each app starts: piled on the desk, overlapping, a little crooked. Same order as TOOLS.apps. */
@@ -31,29 +31,32 @@ const SCATTER: Spot[] = [
 /** One job, hopping from app to app (indexes into TOOLS.apps). */
 const HOPS = [6, 0, 4, 1, 2, 3, 0, 5, 1, 2, 0];
 
-function AppWindow({ name, icon, color }: { name: string; icon: string; color: string }) {
+function AppWindow({ name, icon }: { name: string; icon: string }) {
   return (
-    <div className="w-[104px] rounded-[4px] border border-[var(--line-strong)] bg-[var(--card)] shadow-[var(--shadow-lift)] sm:w-[150px]">
+    <div className="relative w-[88px] rounded-[4px] border border-[var(--line-strong)] bg-[var(--card)] shadow-[var(--shadow-lift)] sm:w-[150px]">
       <div className="flex items-center gap-1 border-b border-[var(--line)] px-1.5 py-1.5 sm:gap-1.5 sm:px-2.5 sm:py-2">
-        <span className="grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[3px] text-white sm:h-6 sm:w-6" style={{ background: color }}>
+        <span className="hidden h-6 w-6 shrink-0 place-items-center rounded-[3px] border border-[var(--line-strong)] text-[var(--ink)] sm:grid">
           <Icon name={icon as IconName} size={12} strokeWidth={1.9} />
         </span>
-        <span className="whitespace-nowrap text-[0.6rem] font-semibold tracking-[-0.01em] text-[var(--ink)] sm:text-[0.78rem]">{name}</span>
+        <span className="whitespace-nowrap text-[0.69rem] font-semibold tracking-[-0.01em] text-[var(--ink)] sm:text-[0.78rem]">{name}</span>
       </div>
-      {/* the same job, typed into every one of them */}
-      <div className="grid gap-1 px-2 py-2 sm:px-2.5 sm:py-2.5">
-        <span className="t-num text-[0.62rem] font-semibold text-[var(--ink)] sm:text-[0.74rem]">Job #1042</span>
-        <span className="h-1 w-[78%] rounded-[1px] bg-[var(--paper-2)]" />
-        <span className="hidden h-1 w-[55%] rounded-[1px] bg-[var(--paper-2)] sm:block" />
+      {/* the same job, typed into every one of them: its number, and the details carried with it */}
+      <div className="grid gap-0.5 px-2 py-2 sm:px-2.5 sm:py-2.5">
+        <span className="t-num text-[0.7rem] font-semibold text-[var(--ink)] sm:text-[0.78rem]">{TOOLS.job.number}</span>
+        <span className="hidden text-[0.72rem] leading-snug text-[var(--ink-2)] sm:block">{TOOLS.job.details}</span>
       </div>
+      {/* once connected: filled in from the one ticket, not typed again */}
+      <span aria-hidden className="t-filled absolute -top-4 left-1 rotate-[-6deg] sm:-right-2 sm:-top-2.5 sm:left-auto rounded-[3px] border-2 border-[var(--spot)] bg-[var(--card)] px-1 font-[family-name:var(--font-display)] text-[0.72rem] font-extrabold uppercase leading-[1.25] tracking-[0.04em] text-[var(--spot)] sm:text-[0.8rem]">
+        {TOOLS.job.filled}
+      </span>
     </div>
   );
 }
 
 /**
  * 02 · Your tools. One job moving through a typical office: the cursor hops between seven apps that
- * don't talk to each other while the click count climbs. Then One Spot arrives in the middle, the apps
- * settle into a ring around it, and the count falls. Scrubbed by scroll through a CSS-sticky track.
+ * don't talk to each other while the click count climbs. Then the job's own ticket lands in the middle,
+ * filled in once, the apps settle around it and each is stamped "filled in" from it, and the count falls. Scrubbed by scroll through a CSS-sticky track.
  *
  * The connected ring is the natural layout, so without motion that is what a visitor sees.
  */
@@ -107,6 +110,7 @@ export function Tools() {
         .fromTo(q(".t-trail"), { strokeDashoffset: 1, opacity: 1 }, { strokeDashoffset: 1, opacity: 1, duration: 0.001, immediateRender: true }, 0)
         .fromTo(q(".t-cursor"), { left: `${SCATTER[HOPS[0]].x}%`, top: `${SCATTER[HOPS[0]].y}%`, opacity: 0 }, { opacity: 1, duration: 0.03, immediateRender: true }, 0.01)
         .fromTo(q(".t-close"), { opacity: 0, y: 12 }, { opacity: 0, y: 12, duration: 0.001, immediateRender: true }, 0)
+        .fromTo(q(".t-filled"), { opacity: 0, scale: 1.4 }, { opacity: 0, scale: 1.4, duration: 0.001, immediateRender: true }, 0)
 ;
       paint();
 
@@ -139,6 +143,7 @@ export function Tools() {
         tl.to(app, { left: `${RING[i].x}%`, top: `${RING[i].y}%`, rotation: 0, duration: 0.16, ease: "power2.inOut" }, p2 + 0.04 + i * 0.008);
       });
       tl.to(q(".t-spoke"), { strokeDashoffset: 0, duration: 0.08, stagger: 0.012 }, p2 + 0.18)
+        .to(q(".t-filled"), { opacity: 1, scale: 1, duration: 0.03, stagger: 0.014, ease: "back.out(2)" }, p2 + 0.22)
         .fromTo(count, { c: TOOLS.before.clicks, r: TOOLS.before.retyped }, { c: TOOLS.after.clicks, r: TOOLS.after.retyped, duration: 0.2, ease: "power1.inOut", onUpdate: paint, immediateRender: false }, p2 + 0.08)
         .to(q(".t-close"), { opacity: 1, y: 0, duration: 0.05 }, p2 + 0.3)
         .to({}, { duration: 0.08 });
@@ -184,6 +189,7 @@ export function Tools() {
                   <p className="ruled mt-1 hidden justify-between gap-3 border-b-0 border-t pt-1.5 text-[0.75rem] text-[var(--ink-2)] sm:flex">
                     {TOOLS.retyped} <span className="t-retyped t-num font-semibold text-[var(--ink)]">{TOOLS.after.retyped}</span>
                   </p>
+                  <p className="mt-1 text-right text-[0.72rem] text-[var(--ink-3)]">{TOOLS.note}</p>
                 </div>
               </div>
 
@@ -196,25 +202,27 @@ export function Tools() {
                 })}
               </svg>
 
-              {/* One Spot, in the middle */}
+              {/* the job's own ticket in the middle: filled in once, set up by One Spot */}
               <div className="t-hub absolute z-[40] -translate-x-1/2 -translate-y-1/2" style={{ left: `${HUB.x}%`, top: `${HUB.y}%` }}>
                 <span className="tools-pulse absolute inset-0 rounded-[4px]" />
-                <span className="relative flex items-center gap-2 rounded-[4px] bg-[var(--spot)] py-2 pl-2 pr-3.5 font-[family-name:var(--font-display)] text-[1rem] font-extrabold uppercase tracking-[0.02em] text-white shadow-[var(--shadow-float)] sm:py-2.5 sm:pl-2.5 sm:pr-4 sm:text-[1.15rem]">
-                  <span className="grid h-6 w-6 place-items-center rounded-full bg-[var(--card)] text-[var(--ink)] sm:h-7 sm:w-7">
-                    <Mark size={16} />
+                <span className="ticket relative flex max-w-[118px] flex-col items-center px-2 pb-1.5 pt-1.5 text-center shadow-[var(--shadow-float)] sm:max-w-none sm:px-4 sm:pb-2.5 sm:pt-2">
+                  <span className="t-label t-num border-b-2 border-[var(--ink)] pb-1 text-[0.95rem] sm:text-[1.1rem]">{TOOLS.job.number}</span>
+                  <span className="mt-1 hidden text-[0.8rem] font-semibold text-[var(--ink)] sm:block">{TOOLS.job.once}</span>
+                  <span className="mt-1 flex items-center gap-1 text-center text-[0.69rem] font-medium leading-tight text-[var(--spot)] sm:text-[0.75rem]">
+                    <Mark size={12} className="text-[var(--spot)]" />
+                    {TOOLS.job.by}
                   </span>
-                  One Spot
                 </span>
               </div>
 
               {TOOLS.apps.map((a, i) => (
                 <div key={a.name} className="t-app absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${RING[i].x}%`, top: `${RING[i].y}%`, zIndex: 2 + i }}>
-                  <AppWindow name={a.name} icon={a.icon} color={a.color} />
+                  <AppWindow name={a.name} icon={a.icon} />
                 </div>
               ))}
 
               <span className="t-ripple pointer-events-none absolute z-[70] h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--risk)] opacity-0" />
-              <span className="t-cursor pointer-events-none absolute z-[80] opacity-0 drop-shadow-[0_4px_8px_rgba(21,23,27,0.3)]" style={{ left: "50%", top: "50%" }}>
+              <span className="t-cursor pointer-events-none absolute z-[80] opacity-0 drop-shadow-[0_4px_8px_rgba(60,42,8,0.35)]" style={{ left: "50%", top: "50%" }}>
                 <Icon name="cursor" size={26} strokeWidth={1.4} className="fill-[var(--ink)] text-white" />
               </span>
 

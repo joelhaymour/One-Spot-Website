@@ -28,7 +28,7 @@ export function Hero() {
           </p>
         </div>
 
-        <div className="relative mx-auto w-full min-w-0 max-w-[500px] lg:mr-0 lg:mt-6" data-reveal style={{ "--reveal-delay": "0.25s", "--reveal-y": "28px" } as CSSProperties}>
+        <div className="relative mx-auto w-full min-w-0 max-w-[500px] lg:mr-0 lg:mt-6">
           <WorthCalculator />
         </div>
       </div>

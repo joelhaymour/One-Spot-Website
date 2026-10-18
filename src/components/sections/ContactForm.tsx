@@ -256,15 +256,15 @@ export function ContactForm() {
             <fieldset className="story-fade sm:col-span-2">
               <legend className="mb-1 block text-[0.85rem] font-medium text-[var(--ink-2)]">{CONTACT.website.changes.label}</legend>
               <p className="mb-3 text-[0.82rem] text-[var(--ink-2)]">{CONTACT.website.changes.help}</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid border-t border-[var(--line-strong)] sm:grid-cols-2 sm:gap-x-5">
                 {CONTACT.website.changes.options.map((option) => {
                   const on = changes.includes(option);
                   return (
                     <label
                       key={option}
                       className={cn(
-                        "flex cursor-pointer select-none items-center gap-2 rounded-[4px] border-[1.5px] px-3 py-2 text-[0.9rem] transition-[background-color,border-color,color,box-shadow] duration-[var(--t-ui)] active:translate-y-px has-[:focus-visible]:shadow-[0_0_0_3px_rgba(45,74,224,0.25)]",
-                        on ? "border-[var(--ink)] bg-[var(--carbon-canary)] text-[var(--ink)]" : "border-[var(--line-strong)] bg-[#fffdf7] text-[var(--ink-2)] hover:border-[var(--ink-2)]",
+                        "ruled flex cursor-pointer select-none items-center gap-2.5 px-1.5 py-2.5 text-[0.92rem] transition-[background-color,color,box-shadow] duration-[var(--t-ui)] has-[:focus-visible]:shadow-[inset_0_0_0_2px_rgba(45,74,224,0.5)]",
+                        on ? "bg-[var(--carbon-canary)] text-[var(--ink)]" : "text-[var(--ink-2)] hover:bg-[var(--paper-2)]",
                       )}
                     >
                       <input type="checkbox" name="changes" value={option} checked={on} disabled={pending} onChange={() => toggleChange(option)} className="sr-only" />

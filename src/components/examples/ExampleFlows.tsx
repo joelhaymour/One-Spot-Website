@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { EXAMPLES, TOOLS, type ExampleActor, type ExampleStep, type HeroExample } from "@/content/site";
+import { EXAMPLES, type ExampleActor, type ExampleStep, type HeroExample } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/Icons";
 import { Mark } from "@/components/ui/Mark";
@@ -21,8 +21,6 @@ const CARBON: Record<string, string> = {
   finance: "var(--carbon-green)",
   hvac: "var(--carbon-blue)",
 };
-
-const APP_COLOR: Record<string, string> = Object.fromEntries(TOOLS.apps.map((a) => [a.name, a.color]));
 
 function Actor({ actor }: { actor: ExampleActor }) {
   const base = "grid h-8 w-8 shrink-0 place-items-center rounded-[4px]";
@@ -69,13 +67,13 @@ function Row({ step, mode, i }: { step: ExampleStep; mode: Mode; i: number }) {
         <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[0.78rem] text-[var(--ink-2)]">
           <span>{step.who}</span>
           {step.flag ? (
-            <span className={cn("rounded-[3px] border-[1.5px] px-1.5 py-[1px] font-[family-name:var(--font-display)] text-[0.78rem] font-extrabold uppercase tracking-[0.04em]", mode === "before" ? "border-[var(--risk)] text-[var(--risk)]" : "border-[var(--spot)] text-[var(--spot)]")}>
+            <span className={cn("rounded-[3px] border-[1.5px] bg-[var(--card)] px-1.5 py-[1px] font-[family-name:var(--font-display)] text-[0.78rem] font-extrabold uppercase tracking-[0.04em]", mode === "before" ? "border-[var(--risk)] text-[var(--risk)]" : "border-[var(--spot)] text-[var(--spot)]")}>
               {step.flag}
             </span>
           ) : null}
           {step.apps?.map((app) => (
             <span key={app} className="inline-flex items-center gap-1 rounded-[3px] border border-[var(--line-strong)] px-1.5 py-[1px] text-[0.7rem] font-medium text-[var(--ink-2)]">
-              <span className="h-1.5 w-1.5 rounded-[1px]" style={{ background: APP_COLOR[app] ?? "var(--ink-3)" }} />
+              <span className="h-1.5 w-1.5 rounded-[1px] bg-[var(--ink-2)]" />
               {app}
             </span>
           ))}
@@ -257,8 +255,8 @@ export function ExampleFlows({ className }: { className?: string }) {
         </div>
 
         <div className="mt-5 grid gap-5 lg:mt-6 lg:grid-cols-2 lg:gap-6">
-          <Ticket ex={ex} mode="before" className={cn("lg:-rotate-[0.6deg]", mode === "before" ? "flex" : "max-lg:hidden")} />
-          <Ticket ex={ex} mode="after" className={cn("lg:rotate-[0.4deg]", mode === "after" ? "flex" : "max-lg:hidden")} />
+          <Ticket ex={ex} mode="before" className={cn(mode === "before" ? "flex" : "max-lg:hidden")} />
+          <Ticket ex={ex} mode="after" className={cn(mode === "after" ? "flex" : "max-lg:hidden")} />
         </div>
       </div>
     </div>

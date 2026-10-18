@@ -1,0 +1,657 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-18T05:18:18+00:00",
+  "title": "Design System: One Spot",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Manila Stock",
+        "canonical": "oklch(87.7% 0.068 89.7)",
+        "tonalRamp": [
+          "#110a00",
+          "#2d2409",
+          "#4c4123",
+          "#6d603e",
+          "#90815a",
+          "#b4a478",
+          "#dac898",
+          "#ffedbd"
+        ]
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "Manila Fold",
+        "canonical": "oklch(82.7% 0.078 87.4)",
+        "tonalRamp": [
+          "#130900",
+          "#302302",
+          "#4f401b",
+          "#705f36",
+          "#948052",
+          "#b8a370",
+          "#dfc78f",
+          "#ffecb8"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Ticket White",
+        "canonical": "oklch(97.6% 0.015 90.2)",
+        "tonalRamp": [
+          "#0c0b08",
+          "#272520",
+          "#44423c",
+          "#63615a",
+          "#85827b",
+          "#a8a59c",
+          "#ccc9bf",
+          "#f2eee4"
+        ]
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "Form White",
+        "canonical": "oklch(99.4% 0.008 91.5)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262523",
+          "#43423f",
+          "#62615e",
+          "#84827e",
+          "#a6a5a0",
+          "#cbc9c4",
+          "#f0eee9"
+        ],
+        "note": "Not a css custom property in the build; written as a literal (#fffdf7) on inputs and checkboxes."
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(22.2% 0.006 91.6)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#43423f",
+          "#62615e",
+          "#83827f",
+          "#a6a5a2",
+          "#cac9c6",
+          "#efeeec"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "oklch(34.9% 0.013 87.6)",
+        "tonalRamp": [
+          "#0d0b06",
+          "#27251f",
+          "#45423b",
+          "#64615a",
+          "#85827b",
+          "#a7a59e",
+          "#cbc9c3",
+          "#f1eee9"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "oklch(44.7% 0.023 87.6)",
+        "tonalRamp": [
+          "#0f0b03",
+          "#292519",
+          "#474135",
+          "#676153",
+          "#888274",
+          "#aaa598",
+          "#cec9bc",
+          "#f3eee2"
+        ]
+      },
+      "ink-4": {
+        "role": "neutral",
+        "displayName": "Ink 4 (never text)",
+        "canonical": "oklch(62.2% 0.035 89.2)",
+        "tonalRamp": [
+          "#0f0b02",
+          "#2a2415",
+          "#484130",
+          "#69614c",
+          "#8b826b",
+          "#ada48e",
+          "#d1c9b3",
+          "#f6eeda"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "note": "Ink at 16% over whatever sheet it sits on; css var --line."
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Rule",
+        "note": "Ink at 32%; ruled-field underlines, row dividers, perforations; css var --line-strong."
+      },
+      "spot": {
+        "role": "primary",
+        "displayName": "One Spot Blue",
+        "canonical": "oklch(49.4% 0.228 267.7)",
+        "tonalRamp": [
+          "#0d0056",
+          "#0d0082",
+          "#1824b0",
+          "#2d4ae0",
+          "#4c73ff",
+          "#709bff",
+          "#96c2ff",
+          "#bee9ff"
+        ]
+      },
+      "on-spot": {
+        "role": "primary",
+        "displayName": "On Blue",
+        "note": "Literal #fff in the build."
+      },
+      "spot-deep": {
+        "role": "primary",
+        "displayName": "Pressed Blue",
+        "canonical": "oklch(41.4% 0.197 267.6)",
+        "tonalRamp": [
+          "#0a0050",
+          "#0b007a",
+          "#1a2ca6",
+          "#3453ca",
+          "#5579e9",
+          "#799fff",
+          "#9fc5ff",
+          "#c7ebff"
+        ]
+      },
+      "spot-light": {
+        "role": "primary",
+        "displayName": "Counter Blue",
+        "canonical": "oklch(74.3% 0.133 274.7)",
+        "tonalRamp": [
+          "#06022e",
+          "#191d52",
+          "#333b78",
+          "#4f5aa1",
+          "#6d7bcb",
+          "#8d9df7",
+          "#b1c3ff",
+          "#d7e9ff"
+        ]
+      },
+      "risk": {
+        "role": "secondary",
+        "displayName": "Stamp Red",
+        "canonical": "oklch(51.0% 0.170 30.9)",
+        "tonalRamp": [
+          "#300000",
+          "#580000",
+          "#810000",
+          "#ac2b1a",
+          "#d15542",
+          "#f47e6a",
+          "#ffa692",
+          "#ffcfbb"
+        ]
+      },
+      "wait": {
+        "role": "secondary",
+        "displayName": "Clock Amber",
+        "canonical": "oklch(46.5% 0.095 71.3)",
+        "tonalRamp": [
+          "#1d0200",
+          "#3d1b00",
+          "#5f3800",
+          "#82571a",
+          "#a37945",
+          "#c59d6c",
+          "#e8c295",
+          "#ffe8be"
+        ]
+      },
+      "carbon-canary": {
+        "role": "tertiary",
+        "displayName": "Canary Copy",
+        "canonical": "oklch(91.7% 0.110 98.6)",
+        "tonalRamp": [
+          "#120a00",
+          "#2e2500",
+          "#4c4206",
+          "#6d6224",
+          "#90833f",
+          "#b4a65b",
+          "#daca78",
+          "#fff09a"
+        ]
+      },
+      "carbon-pink": {
+        "role": "tertiary",
+        "displayName": "Pink Copy",
+        "canonical": "oklch(88.5% 0.047 9.8)",
+        "tonalRamp": [
+          "#140709",
+          "#321f22",
+          "#523b3e",
+          "#74595d",
+          "#98797d",
+          "#be9b9f",
+          "#e5bec2",
+          "#ffe3e8"
+        ]
+      },
+      "carbon-green": {
+        "role": "tertiary",
+        "displayName": "Green Copy",
+        "canonical": "oklch(91.7% 0.042 140.8)",
+        "tonalRamp": [
+          "#060e05",
+          "#1e281d",
+          "#3a4638",
+          "#586655",
+          "#788875",
+          "#99ab96",
+          "#bcd0b8",
+          "#e0f6dc"
+        ]
+      },
+      "carbon-blue": {
+        "role": "tertiary",
+        "displayName": "Blue-White Copy",
+        "canonical": "oklch(93.3% 0.019 263.0)",
+        "tonalRamp": [
+          "#090b10",
+          "#22252b",
+          "#3e4249",
+          "#5d616a",
+          "#7d828c",
+          "#a0a5b0",
+          "#c3c9d5",
+          "#e8effc"
+        ]
+      },
+      "counter": {
+        "role": "neutral",
+        "displayName": "Shop Counter",
+        "canonical": "oklch(22.2% 0.006 91.6)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262522",
+          "#43423f",
+          "#62615e",
+          "#83827f",
+          "#a6a5a2",
+          "#cac9c6",
+          "#efeeec"
+        ]
+      },
+      "counter-text": {
+        "role": "neutral",
+        "displayName": "Counter Text",
+        "canonical": "oklch(97.6% 0.015 90.2)",
+        "tonalRamp": [
+          "#0c0b08",
+          "#272520",
+          "#44423c",
+          "#63615a",
+          "#85827b",
+          "#a8a59c",
+          "#ccc9bf",
+          "#f2eee4"
+        ]
+      },
+      "counter-text-2": {
+        "role": "neutral",
+        "displayName": "Counter Text 2",
+        "canonical": "oklch(82.8% 0.032 88.4)",
+        "tonalRamp": [
+          "#0e0b04",
+          "#292519",
+          "#474234",
+          "#676151",
+          "#898270",
+          "#ada490",
+          "#d1c8b3",
+          "#f7eed9"
+        ]
+      },
+      "string": {
+        "role": "neutral",
+        "displayName": "Tag String",
+        "note": "Literal in the build (hanging ticket only), not a css custom property."
+      },
+      "eyelet-ring": {
+        "role": "neutral",
+        "displayName": "Eyelet Ring",
+        "note": "Literal in the build (hanging ticket only), not a css custom property."
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline only. Uppercase, text-wrap balance."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headlines and the footer statement. Uppercase."
+      },
+      "headline-sm": {
+        "displayName": "Headline Small",
+        "purpose": "Slip step names, example moment line, received confirmation, mobile menu links. Uppercase."
+      },
+      "stamp": {
+        "displayName": "Stamp",
+        "purpose": "The number inside a rubber stamp. Uppercase, tabular."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "A value in a ruled field, ticket stats and result lines (1.35-1.45rem), the Tools tally (2.2-3rem, 900)."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Ticket heads, slip column heads, flags, footer column heads. Uppercase, inside tickets and stamps."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "FAQ questions and the calculator question."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "The paragraph beside each headline, 30-34rem measure."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Step bodies and FAQ answers, 38-40rem measure."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Reassurance lines and footnotes, ink-3."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button text."
+      }
+    },
+    "shadows": [
+      {
+        "name": "carbon",
+        "value": "0 1px 1px rgba(60, 42, 8, 0.08), 0 6px 14px -8px rgba(60, 42, 8, 0.3)",
+        "purpose": "The carbon sheet beneath a ticket (--shadow-card)."
+      },
+      {
+        "name": "lying-flat",
+        "value": "0 2px 3px rgba(60, 42, 8, 0.1), 0 18px 34px -18px rgba(60, 42, 8, 0.45)",
+        "purpose": "Every ticket, slip and app window (--shadow-lift)."
+      },
+      {
+        "name": "floating",
+        "value": "0 3px 6px rgba(60, 42, 8, 0.12), 0 30px 50px -24px rgba(60, 42, 8, 0.55)",
+        "purpose": "Only the job ticket at the centre of Your tools (--shadow-float)."
+      },
+      {
+        "name": "primary-drop",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 8px 18px -10px rgba(32, 55, 180, 0.8)",
+        "purpose": "The primary button only."
+      },
+      {
+        "name": "eyelet",
+        "value": "0 0 0 6px #d7bd7d, 0 0 0 7px rgba(60, 42, 8, 0.25), inset 0 2px 3px rgba(60, 42, 8, 0.35)",
+        "purpose": "The reinforced eyelet on the hanging ticket."
+      },
+      {
+        "name": "field-focus",
+        "value": "0 0 0 3px rgba(45, 74, 224, 0.18)",
+        "purpose": "Text field focus halo, with a blue stroke."
+      },
+      {
+        "name": "slider-focus",
+        "value": "0 0 0 3px var(--card), 0 0 0 5px var(--spot)",
+        "purpose": "Slider tab focus ring."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The page curve: every press, state change, entrance and stamp."
+      },
+      {
+        "name": "t-press",
+        "value": "160ms",
+        "purpose": "Button and slider-tab press."
+      },
+      {
+        "name": "t-ui",
+        "value": "220ms",
+        "purpose": "Colour and state changes: hover, toggles, step-box fill, stamp lift."
+      },
+      {
+        "name": "t-enter",
+        "value": "600ms",
+        "purpose": "Reveal entrances (22px rise and fade), story fades."
+      },
+      {
+        "name": "stamp-press",
+        "value": "260ms ease-out; opacity 0 + scale 1.35 -> scale 0.96 at 60% -> scale 1, rotation held",
+        "purpose": "The signature: one press when a value settles, then still. Also stamps routing-slip step boxes unrotated."
+      },
+      {
+        "name": "settle",
+        "value": "280ms",
+        "purpose": "How long a number must be still before its stamp lands; while moving the stamp sits at 30% opacity."
+      },
+      {
+        "name": "split-headline",
+        "value": "700ms ease-out, 40ms per word",
+        "purpose": "Headline words rise out of a clip mask once."
+      },
+      {
+        "name": "story-row",
+        "value": "380ms ease-out, 45ms per row (+40ms)",
+        "purpose": "Example ticket rows arrive in order when the business or side changes."
+      },
+      {
+        "name": "examples-dwell",
+        "value": "16000ms wide; 9000ms today / 10000ms with One Spot on phones",
+        "purpose": "Examples autoplay only on screen, with pause; any pick stops it."
+      },
+      {
+        "name": "tools-scrub",
+        "value": "ScrollTrigger scrub 0.5 over a 320vh track, 100svh sticky stage",
+        "purpose": "Your tools: hops, then the connected ring."
+      },
+      {
+        "name": "tools-pulse",
+        "value": "2.2s ease-out, 2 iterations, 0 -> 22px spot ring at 35% fading to 0",
+        "purpose": "The job ticket announces itself twice when it lands, then stops."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "all animation and transition durations 0.001ms",
+        "purpose": "Every state kept, every journey dropped; motion only arms under html[data-motion=\"on\"]."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The action is One Spot's, so it is the one filled blue control.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#contact\">Start with a conversation <svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:0.6rem;height:3.25rem;padding:0 1.4rem;border-radius:4px;font-family:var(--font-inter), ui-sans-serif, system-ui, sans-serif;font-size:1rem;font-weight:600;letter-spacing:-0.005em;white-space:nowrap;cursor:pointer;transition:background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),color 220ms cubic-bezier(0.16, 1, 0.3, 1),transform 160ms cubic-bezier(0.16, 1, 0.3, 1);border:0;text-decoration:none;background:var(--spot,#2d4ae0);color:#fff;box-shadow:0 1px 0 rgba(255,255,255,0.14) inset,0 8px 18px -10px rgba(32,55,180,0.8);} .ds-btn-primary svg{transition:transform 320ms cubic-bezier(0.16, 1, 0.3, 1);} .ds-btn-primary:hover{background:var(--spot-deep,#2037b4);} .ds-btn-primary:hover svg{transform:translateX(3px);} .ds-btn-primary:focus-visible{outline:2px solid var(--spot,#2d4ae0);outline-offset:3px;} .ds-btn-primary:active{transform:translateY(1px) scale(0.98);}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action: an ink-stroked stamped rectangle that fills with ink on hover.",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#process\">See how we work <svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14M6 13l6 6 6-6\"/></svg></a>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:0.6rem;height:3.25rem;padding:0 1.4rem;border-radius:4px;font-family:var(--font-inter), ui-sans-serif, system-ui, sans-serif;font-size:1rem;font-weight:600;letter-spacing:-0.005em;white-space:nowrap;cursor:pointer;transition:background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),color 220ms cubic-bezier(0.16, 1, 0.3, 1),transform 160ms cubic-bezier(0.16, 1, 0.3, 1);text-decoration:none;background:transparent;color:var(--ink,#1c1b18);border:1.5px solid var(--ink,#1c1b18);} .ds-btn-ghost:hover{background:var(--ink,#1c1b18);color:var(--card,#fbf7ec);} .ds-btn-ghost:focus-visible{outline:2px solid var(--spot,#2d4ae0);outline-offset:3px;} .ds-btn-ghost:active{transform:translateY(1px) scale(0.98);}"
+    },
+    {
+      "name": "Job Ticket",
+      "kind": "card",
+      "refersTo": "ticket",
+      "description": "Paper-white ticket on manila: eyelet, label row on a 2px ink rule, ruled lines, and a perforated tear-off stub.",
+      "html": "<div class=\"ds-ticket\"><span class=\"ds-eyelet\" aria-hidden=\"true\"></span><div class=\"ds-ticket-head\"><span>Job ticket</span><span class=\"ds-muted\">No. 0001</span></div><p class=\"ds-ticket-q\">What could a better way of working be worth?</p><div class=\"ds-ruled\"><span>potential value*</span><b>$81,900</b></div><div class=\"ds-ruled\"><span>workweeks recovered</span><b>58.5</b></div><div class=\"ds-stub\"><p>You don't always need more people.</p></div></div>",
+      "css": ".ds-ticket{position:relative;max-width:420px;background:var(--card,#fbf7ec);color:var(--ink,#1c1b18);border-radius:6px;padding:48px 28px 0;box-shadow:0 2px 3px rgba(60,42,8,0.1),0 18px 34px -18px rgba(60,42,8,0.45);font-family:var(--font-inter), ui-sans-serif, system-ui, sans-serif;} .ds-eyelet{position:absolute;left:50%;top:18px;width:30px;height:30px;margin-left:-15px;border-radius:50%;background:var(--paper,#e8d5a3);box-shadow:0 0 0 6px #d7bd7d,0 0 0 7px rgba(60,42,8,0.25),inset 0 2px 3px rgba(60,42,8,0.35);} .ds-ticket-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink,#1c1b18);padding-bottom:8px;font-family:var(--font-big-shoulders), 'Arial Narrow', sans-serif;font-weight:800;font-size:0.95rem;letter-spacing:0.06em;text-transform:uppercase;line-height:1;} .ds-muted{color:var(--ink-3,#5a5446);} .ds-ticket-q{margin:12px 0 4px;font-size:1.3rem;font-weight:600;line-height:1.2;letter-spacing:-0.02em;} .ds-ruled{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid rgba(28,27,24,0.32);font-size:0.92rem;color:var(--ink-2,#3d3a33);} .ds-ruled b{font-family:var(--font-big-shoulders), 'Arial Narrow', sans-serif;font-weight:800;font-size:1.45rem;line-height:1;color:var(--ink,#1c1b18);font-variant-numeric:tabular-nums;} .ds-stub{position:relative;margin:16px -28px 0;padding:16px 28px;background:var(--paper-2,#dcc48c);border-top:2px dashed rgba(28,27,24,0.32);border-radius:0 0 6px 6px;} .ds-stub::before,.ds-stub::after{content:'';position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--paper,#e8d5a3);} .ds-stub::before{left:-10px;} .ds-stub::after{right:-10px;} .ds-stub p{margin:0;font-family:var(--font-big-shoulders), 'Arial Narrow', sans-serif;font-weight:800;font-size:1.2rem;line-height:0.95;text-transform:uppercase;}"
+    },
+    {
+      "name": "Rubber Stamp",
+      "kind": "custom",
+      "refersTo": "stamp-risk",
+      "description": "The signature: a number stamped once in red (today) or blue (One Spot), angled, noise-masked, landing with one press.",
+      "html": "<span class=\"ds-stamp\"><span class=\"ds-stamp-n\">2,340</span><span class=\"ds-stamp-l\">Hours back a year</span></span> <span class=\"ds-stamp ds-stamp-spot\"><span class=\"ds-stamp-l\">Received</span></span>",
+      "css": "@keyframes ds-stamp-press{0%{opacity:0;transform:rotate(-4deg) scale(1.35);}60%{opacity:1;transform:rotate(-4deg) scale(0.96);}100%{opacity:1;transform:rotate(-4deg) scale(1);}} .ds-stamp{display:inline-flex;flex-direction:column;align-items:center;border:3px solid currentColor;border-radius:4px;padding:0.35em 0.6em 0.3em;font-family:var(--font-big-shoulders), 'Arial Narrow', sans-serif;font-weight:900;text-transform:uppercase;line-height:0.9;color:var(--risk,#b3301f);transform:rotate(-4deg);animation:ds-stamp-press 260ms cubic-bezier(0.16, 1, 0.3, 1) both;-webkit-mask-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E\");mask-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E\");-webkit-mask-size:160px 160px;mask-size:160px 160px;} .ds-stamp-n{font-size:3.2rem;line-height:0.85;font-variant-numeric:tabular-nums;} .ds-stamp-l{margin-top:4px;font-size:0.82rem;letter-spacing:0.06em;} .ds-stamp-spot{color:var(--spot,#2d4ae0);} .ds-stamp-spot .ds-stamp-l{font-size:1.6rem;margin:0;} @media (prefers-reduced-motion: reduce){.ds-stamp{animation:none;}}"
+    },
+    {
+      "name": "Ruled Field",
+      "kind": "input",
+      "refersTo": "numeral",
+      "description": "A calculator field: label left, numeral and unit right, an ink-filled slider on a ruled line.",
+      "html": "<div class=\"ds-field\"><div class=\"ds-field-row\"><label for=\"ds-r\">People on your team</label><span><b>15</b> <small>people</small></span></div><input id=\"ds-r\" class=\"ds-range\" type=\"range\" min=\"1\" max=\"50\" value=\"15\" style=\"--fill:28%\"></div>",
+      "css": ".ds-field{max-width:420px;padding:10px 0 6px;border-bottom:1px solid rgba(28,27,24,0.32);font-family:var(--font-inter), ui-sans-serif, system-ui, sans-serif;} .ds-field-row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;} .ds-field label{padding-bottom:4px;font-size:0.88rem;color:var(--ink-2,#3d3a33);} .ds-field b{font-family:var(--font-big-shoulders), 'Arial Narrow', sans-serif;font-weight:800;font-size:1.7rem;line-height:1;color:var(--ink,#1c1b18);font-variant-numeric:tabular-nums;} .ds-field small{font-size:0.78rem;color:var(--ink-3,#5a5446);} .ds-range{-webkit-appearance:none;appearance:none;width:100%;height:28px;margin-top:4px;background:transparent;cursor:pointer;} .ds-range:focus-visible{outline:none;} .ds-range::-webkit-slider-runnable-track{height:4px;border-radius:1px;background:linear-gradient(to right,var(--ink,#1c1b18) var(--fill),var(--paper-2,#dcc48c) var(--fill));} .ds-range::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:26px;margin-top:-11px;border-radius:3px;background:var(--card,#fbf7ec);border:2px solid var(--ink,#1c1b18);box-shadow:0 2px 4px rgba(60,42,8,0.3);transition:transform 160ms cubic-bezier(0.16, 1, 0.3, 1),background-color 220ms cubic-bezier(0.16, 1, 0.3, 1);} .ds-range:active::-webkit-slider-thumb{transform:scale(1.08);background:var(--carbon-canary,#f6e58d);} .ds-range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--card,#fbf7ec),0 0 0 5px var(--spot,#2d4ae0);} .ds-range::-moz-range-track{height:4px;background:var(--paper-2,#dcc48c);} .ds-range::-moz-range-progress{height:4px;background:var(--ink,#1c1b18);} .ds-range::-moz-range-thumb{width:14px;height:24px;border-radius:3px;background:var(--card,#fbf7ec);border:2px solid var(--ink,#1c1b18);}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field-input",
+      "description": "Contact form field: form-white fill, strong-rule stroke, blue stroke and halo on focus, amber on error.",
+      "html": "<label class=\"ds-input-wrap\"><span>Your name</span><input class=\"ds-input\" placeholder=\"Dana Reyes\"></label><label class=\"ds-input-wrap\"><span>Email</span><input class=\"ds-input ds-input-error\" value=\"dana@\" aria-invalid=\"true\"><em>Check the email address.</em></label>",
+      "css": ".ds-input-wrap{display:block;max-width:320px;margin-bottom:16px;font-family:var(--font-inter), ui-sans-serif, system-ui, sans-serif;} .ds-input-wrap span{display:block;margin-bottom:8px;font-size:0.85rem;font-weight:500;color:var(--ink-2,#3d3a33);} .ds-input{display:block;width:100%;height:3.25rem;padding:0 16px;border-radius:4px;border:1.5px solid rgba(28,27,24,0.32);background:#fffdf7;font:inherit;font-size:1rem;letter-spacing:-0.006em;color:var(--ink,#1c1b18);caret-color:var(--spot,#2d4ae0);transition:border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);} .ds-input::placeholder{color:var(--ink-3,#5a5446);} .ds-input:hover{border-color:var(--ink-2,#3d3a33);} .ds-input:focus{outline:none;border-color:var(--spot,#2d4ae0);box-shadow:0 0 0 3px rgba(45,74,224,0.18);} .ds-input-error{border-color:var(--wait,#7a4f0c);} .ds-input-wrap em{display:block;margin-top:8px;font-style:normal;font-size:0.82rem;color:var(--wait,#7a4f0c);}"
+    },
+    {
+      "name": "Segmented Toggle",
+      "kind": "chip",
+      "refersTo": "segmented-on",
+      "description": "Two tabs on a ticket: ink frame, the chosen side solid ink.",
+      "html": "<div class=\"ds-seg\" role=\"radiogroup\" aria-label=\"Whose time\"><button role=\"radio\" aria-checked=\"true\">My Team's Time</button><button role=\"radio\" aria-checked=\"false\">My Time</button></div>",
+      "css": ".ds-seg{display:grid;grid-template-columns:1fr 1fr;max-width:420px;border:1.5px solid var(--ink,#1c1b18);font-family:var(--font-inter), ui-sans-serif, system-ui, sans-serif;font-size:0.9rem;font-weight:600;} .ds-seg button{padding:8px 0;border:0;background:transparent;color:var(--ink-2,#3d3a33);font:inherit;cursor:pointer;transition:background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),color 220ms cubic-bezier(0.16, 1, 0.3, 1);} .ds-seg button:hover{background:var(--paper-2,#dcc48c);} .ds-seg button[aria-checked=true]{background:var(--ink,#1c1b18);color:var(--card,#fbf7ec);} .ds-seg button:focus-visible{outline:2px solid var(--spot,#2d4ae0);outline-offset:3px;}"
+    },
+    {
+      "name": "Flags and App Chips",
+      "kind": "chip",
+      "refersTo": "flag-risk",
+      "description": "Stamp-ink flags (red today, blue with One Spot) and ink-on-paper app chips.",
+      "html": "<p class=\"ds-meta\">Estimator <span class=\"ds-flag\">Part no longer required</span></p><p class=\"ds-meta\">One Spot <span class=\"ds-flag ds-flag-spot\">Unused part detected</span> <span class=\"ds-app\"><i></i>Accounting</span></p>",
+      "css": ".ds-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;font-family:var(--font-inter), ui-sans-serif, system-ui, sans-serif;font-size:0.78rem;color:var(--ink-2,#3d3a33);} .ds-flag{border:1.5px solid var(--risk,#b3301f);border-radius:3px;padding:1px 6px;font-family:var(--font-big-shoulders), 'Arial Narrow', sans-serif;font-weight:800;font-size:0.78rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--risk,#b3301f);} .ds-flag-spot{border-color:var(--spot,#2d4ae0);color:var(--spot,#2d4ae0);} .ds-app{display:inline-flex;align-items:center;gap:4px;border:1px solid rgba(28,27,24,0.32);border-radius:3px;padding:1px 6px;font-size:0.7rem;font-weight:500;color:var(--ink-2,#3d3a33);} .ds-app i{width:6px;height:6px;border-radius:1px;background:var(--ink-2,#3d3a33);}"
+    },
+    {
+      "name": "Routing Slip Row",
+      "kind": "custom",
+      "refersTo": "step-box",
+      "description": "A slip row: an ink step box stamped and filled as the reader reaches it, the step in condensed caps, the body in Inter.",
+      "html": "<ol class=\"ds-slip\"><li class=\"is-on\"><span class=\"ds-box\">1</span><span class=\"ds-when\">Week one</span><span><b>Listen</b><span class=\"ds-body\">We spend time with you and your team.</span></span></li><li><span class=\"ds-box\">2</span><span class=\"ds-when\">Week two</span><span><b>Map</b><span class=\"ds-body\">We draw your whole business on one page.</span></span></li></ol>",
+      "css": ".ds-slip{list-style:none;margin:0;padding:0;max-width:640px;background:var(--card,#fbf7ec);border-radius:6px;box-shadow:0 2px 3px rgba(60,42,8,0.1),0 18px 34px -18px rgba(60,42,8,0.45);font-family:var(--font-inter), ui-sans-serif, system-ui, sans-serif;} .ds-slip li{display:grid;grid-template-columns:4.5rem 8rem 1fr;gap:24px;align-items:baseline;padding:24px 32px;border-bottom:1px solid rgba(28,27,24,0.32);} .ds-slip li:last-child{border-bottom:0;} .ds-box{display:grid;place-items:center;width:48px;height:48px;border:2px solid var(--ink,#1c1b18);border-radius:4px;font-family:var(--font-big-shoulders), 'Arial Narrow', sans-serif;font-weight:900;font-size:1.35rem;font-variant-numeric:tabular-nums;color:var(--ink,#1c1b18);transition:background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),color 220ms cubic-bezier(0.16, 1, 0.3, 1);} .ds-slip li.is-on .ds-box,.ds-slip li:hover .ds-box{background:var(--ink,#1c1b18);color:var(--card,#fbf7ec);} .ds-when{font-size:0.92rem;font-weight:500;color:var(--ink-2,#3d3a33);} .ds-slip b{display:block;font-family:var(--font-big-shoulders), 'Arial Narrow', sans-serif;font-weight:800;font-size:2.2rem;line-height:0.95;text-transform:uppercase;} .ds-body{display:block;margin-top:8px;font-size:1.02rem;line-height:1.6;color:var(--ink-2,#3d3a33);}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "button-sm",
+      "description": "Lockup left, Inter links with an ink underline for the section in view, small primary action right, on solid manila once scrolled.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-lockup\" href=\"#top\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\"/><circle cx=\"12\" cy=\"12\" r=\"3.6\" fill=\"#2d4ae0\"/></svg><span>One Spot</span></a><ul><li><a href=\"#process\" aria-current=\"true\">How we work</a></li><li><a href=\"#tools\">Your tools</a></li><li><a href=\"#examples\">Examples</a></li><li><a href=\"#faq\">FAQ</a></li></ul><a class=\"ds-nav-cta\" href=\"#contact\">Talk to us</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:24px;height:72px;padding:0 24px;background:rgba(232,213,163,0.97);border-bottom:1px solid rgba(28,27,24,0.32);font-family:var(--font-inter), ui-sans-serif, system-ui, sans-serif;color:var(--ink,#1c1b18);} .ds-lockup{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;font-size:1.0625rem;font-weight:600;letter-spacing:-0.03em;} .ds-nav ul{display:flex;gap:4px;margin:0;padding:0;list-style:none;} .ds-nav ul a{position:relative;display:block;padding:8px 14px;border-radius:4px;font-size:0.92rem;font-weight:500;letter-spacing:-0.01em;color:var(--ink-2,#3d3a33);text-decoration:none;transition:color 200ms;} .ds-nav ul a::after{content:'';position:absolute;left:14px;right:14px;bottom:4px;height:2px;background:var(--ink,#1c1b18);transform:scaleX(0);transform-origin:left;transition:transform 200ms cubic-bezier(0.16, 1, 0.3, 1);} .ds-nav ul a:hover,.ds-nav ul a[aria-current]{color:var(--ink,#1c1b18);} .ds-nav ul a[aria-current]::after{transform:scaleX(1);} .ds-nav a:focus-visible{outline:2px solid var(--spot,#2d4ae0);outline-offset:3px;} .ds-nav-cta{display:inline-flex;align-items:center;height:2.625rem;padding:0 1rem;border-radius:4px;background:var(--spot,#2d4ae0);color:#fff;font-size:0.92rem;font-weight:600;text-decoration:none;box-shadow:0 1px 0 rgba(255,255,255,0.14) inset,0 8px 18px -10px rgba(32,55,180,0.8);transition:background-color 220ms cubic-bezier(0.16, 1, 0.3, 1);} .ds-nav-cta:hover{background:var(--spot-deep,#2037b4);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Job Ticket",
+    "overview": "The page is the paperwork that follows a job through a shop. Manila tag stock is the ground, paper-white tickets lie on it with a real paper shadow, and every number sits in a ruled field beside its unit. Things that go wrong today are marked in red stamp ink; what One Spot changes is marked in One Spot blue, and blue goes nowhere else. Kinds of business are told apart by carbon-copy tints, the way a shop tells the white, canary and pink copies of one form apart. The densest passage is laid out on the shop counter, a near-black ground with tickets set down on it.\n\nThe lettering is the lettering of tags, bins and work orders: Big Shoulders in heavy condensed capitals for headlines, labels, numbers and stamps, over Inter for everything a person reads at length. Corners are square-ish (3px chips, 4px controls and stamps, 6px tickets). Rules are drawn in ink: a 2px ink rule heads every ticket, 1px ink rules sit under every field, dashed perforations mark where a stub tears off. Apps are drawn in ink on paper, never in their own brand colours, and the job's own ticket, not a product node, sits at the centre of a connected picture.\n\nMotion runs on one clock and has one signature: the stamp. When a result settles it comes down with a single press and then never moves. Everything else enters once and holds still. Reduced-motion and no-JS visitors get the finished state of every scene, never an empty one.",
+    "keyCharacteristics": [
+      "Manila ground with a faint fixed fibre grain; paper-white tickets on top; carbon tints beneath as depth.",
+      "Ink does nearly all the work: text, rules, step boxes, active toggles, slider fill.",
+      "Red stamp ink for today's problems, One Spot blue for what One Spot changes, nothing else in colour.",
+      "Heavy condensed capitals for anything that would be printed on a form; Inter for anything you read.",
+      "Every number in a ruled field with its unit, set in tabular figures.",
+      "The shop counter (near-black) for the densest passage and the footer only.",
+      "One press per stamp, one motion clock, finished states without motion."
+    ],
+    "rules": [
+      {
+        "name": "The Rationed Blue Rule",
+        "body": "One Spot blue appears only on the primary action, the mark, focus, and things One Spot does or changes. Headline emphasis, slider fills, active tabs, step boxes and dividers are ink. If removing the blue would not change the meaning, it should not be blue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Inks Rule",
+        "body": "Red is stamp ink for today's problems; blue is One Spot's ink for the after state. A comparison always puts red on the \"today\" ticket and blue on the \"with One Spot\" ticket, at the same size.",
+        "section": "colors"
+      },
+      {
+        "name": "The Carbon Copy Rule",
+        "body": "Each kind of business keeps one carbon tint (body shop canary, dental pink, financing green, HVAC blue-white) on its tab and its \"today\" ticket. Tints never carry text colour and never mean status.",
+        "section": "colors"
+      },
+      {
+        "name": "The Same Ink Rule",
+        "body": "A headline's emphasis is never colour. Its second line is the same ink as the first; `em` inside a display headline renders upright and uncoloured.",
+        "section": "typography"
+      },
+      {
+        "name": "The Printed Blank Rule",
+        "body": "Anything that would be pre-printed on a form (headlines, labels, ticket numbers, stamps, values) is Big Shoulders in capitals. Anything a person would write or read in sentences is Inter in sentence case. Never set Inter in capitals, never set paragraphs in Big Shoulders.",
+        "section": "typography"
+      },
+      {
+        "name": "The Unit Rule",
+        "body": "Every number sits in a ruled field with its unit beside it in small Inter (\"15 people\", \"3 hrs / wk\", \"$35 / hr\"), in tabular figures.",
+        "section": "typography"
+      },
+      {
+        "name": "The Paper Shadow Rule",
+        "body": "Shadows under sheets are warm brown and belong to paper. No grey or black shadows and no hard offset shadows; a sheet is lifted by laying it on another sheet, not by lighting it. The one tinted shadow is the short blue drop under the primary action (see Buttons).",
+        "section": "elevation"
+      },
+      {
+        "name": "The Top Sheet Rule",
+        "body": "Content lives on the top sheet, upright and sharp. Tilt belongs to the copies beneath and to stamps; a sheet carrying text a visitor must read stays square.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** put every number in a ruled field with its unit, in tabular figures.",
+      "**Do** keep One Spot blue to the primary action, the mark, focus, and what One Spot does; draw everything else in ink.",
+      "**Do** mark today's problems in stamp red and the after state in One Spot blue, at the same size on both sides of a comparison.",
+      "**Do** give each kind of business its own carbon tint (canary, pink, green, blue-white) and keep it on that business's tab and \"today\" ticket.",
+      "**Do** open every ticket with a label row on a 2px ink rule, and separate rows with 1px strong rules.",
+      "**Do** land a stamp once, on a settled value, with the 260ms press, and leave it still.",
+      "**Do** run motion on the page clock: 160ms press, 220ms state change, 600ms entrance, all on cubic-bezier(0.16, 1, 0.3, 1).",
+      "**Do** give reduced-motion and no-JS visitors the finished state of every scene.",
+      "**Do** mark form errors in clock amber."
+    ],
+    "donts": [
+      "**Don't** colour a headline's emphasis; the second line is the same ink.",
+      "**Don't** draw apps in their own brand colours or with their logos; name them in ink on paper.",
+      "**Don't** put a product node at the centre of a connected picture; the job's own ticket goes there.",
+      "**Don't** put grey, black or hard-offset shadows under sheets; sheets cast warm brown paper shadows.",
+      "**Don't** round past 6px or use pills; circles are for holes, notches and the mark only.",
+      "**Don't** tilt a sheet whose text must be read; tilt the copy beneath it or the stamp on it.",
+      "**Don't** use ink-4 or the carbon tints for text.",
+      "**Don't** use pure white as a surface; ticket white and form white are the lightest sheets, and white is reserved for text on One Spot blue.",
+      "**Don't** put the counter's near-black anywhere but the densest passage and the footer."
+    ]
+  }
+}

@@ -108,7 +108,10 @@ export function WorthCalculator({ className }: { className?: string }) {
         <path d="M30 0 C 26 40, 40 70, 30 108" fill="none" stroke="#8a6a2a" strokeWidth="2.2" strokeLinecap="round" />
       </svg>
 
-      <div className="ticket px-5 pb-0 pt-12 sm:px-7 lg:rotate-[1.2deg]">
+      {/* the carbon copy beneath the top sheet: tilted, so the text on top can stay upright and sharp */}
+      <div aria-hidden className="absolute inset-x-2 bottom-1 top-3 hidden rotate-[2.6deg] rounded-[6px] bg-[var(--carbon-canary)] shadow-[var(--shadow-card)] lg:block" />
+
+      <div className="ticket px-5 pb-0 pt-12 sm:px-7">
         <span aria-hidden className="eyelet" />
 
         <div className="flex items-baseline justify-between border-b-2 border-[var(--ink)] pb-2">

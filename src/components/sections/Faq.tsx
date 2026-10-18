@@ -37,11 +37,11 @@ export function Faq() {
                     <span className="text-[1.15rem] font-semibold tracking-[-0.018em] text-[var(--ink)] md:text-[1.3rem]">{item.q}</span>
                     <span
                       className={cn(
-                        "grid h-9 w-9 shrink-0 place-items-center rounded-[4px] border-[1.5px] transition-[transform,background-color,border-color,color] duration-[var(--t-ui)] ease-[var(--ease-out)] group-active:translate-y-px",
-                        isOpen ? "rotate-45 border-[var(--ink)] bg-[var(--ink)] text-[var(--card)]" : "border-[var(--ink)] text-[var(--ink)] group-hover:bg-[var(--paper-2)]",
+                        "grid h-9 w-9 shrink-0 place-items-center rounded-[4px] border-[1.5px] transition-[background-color,border-color,color] duration-[var(--t-ui)] ease-[var(--ease-out)] group-active:translate-y-px",
+                        isOpen ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--card)]" : "border-[var(--ink)] text-[var(--ink)] group-hover:bg-[var(--paper-2)]",
                       )}
                     >
-                      <Icon name="plus" size={16} strokeWidth={1.8} />
+                      <Icon name="plus" size={16} strokeWidth={1.8} className={cn("transition-transform duration-[var(--t-ui)] ease-[var(--ease-out)]", isOpen && "rotate-45")} />
                     </span>
                   </button>
                 </h3>
@@ -49,7 +49,7 @@ export function Faq() {
                   id={panelId}
                   role="region"
                   aria-labelledby={buttonId}
-                  className={cn("grid transition-[grid-template-rows] duration-300 ease-[var(--ease-out)]", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}
+                  className={cn("grid transition-[grid-template-rows] duration-[var(--t-ui)] ease-[var(--ease-out)]", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}
                 >
                   <div className="overflow-hidden" inert={!isOpen}>
                     <p className="t-body max-w-[40rem] pb-7 text-[1.05rem] text-[var(--ink-2)]">{item.a}</p>
