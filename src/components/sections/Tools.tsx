@@ -9,12 +9,12 @@ import { Mark } from "@/components/ui/Mark";
 
 type Spot = { x: number; y: number; r?: number };
 
-const HUB: Spot = { x: 50, y: 54 };
+const HUB: Spot = { x: 50, y: 52 };
 
 /** Where each app ends up: a calm ring around One Spot. This is also the no-motion layout. */
 const RING: Spot[] = TOOLS.apps.map((_, i) => {
   const a = -Math.PI / 2 + (i / TOOLS.apps.length) * Math.PI * 2;
-  return { x: HUB.x + Math.cos(a) * 35, y: HUB.y + Math.sin(a) * 33 };
+  return { x: HUB.x + Math.cos(a) * 35, y: HUB.y + Math.sin(a) * 31 };
 });
 
 /** Where each app starts: piled on the desk, overlapping, a little crooked. Same order as TOOLS.apps. */
@@ -33,17 +33,18 @@ const HOPS = [6, 0, 4, 1, 2, 3, 0, 5, 1, 2, 0];
 
 function AppWindow({ name, icon, color }: { name: string; icon: string; color: string }) {
   return (
-    <div className="w-[104px] rounded-[12px] border border-[var(--line)] bg-[var(--card)] shadow-[var(--shadow-float)] sm:w-[150px] sm:rounded-[14px]">
-      <div className="flex items-center gap-1 border-b border-[var(--line-soft)] px-1.5 py-1.5 sm:gap-1.5 sm:px-2.5 sm:py-2">
-        <span className="grid h-[18px] w-[18px] shrink-0 place-items-center rounded-md text-white sm:h-6 sm:w-6" style={{ background: color }}>
+    <div className="w-[104px] rounded-[4px] border border-[var(--line-strong)] bg-[var(--card)] shadow-[var(--shadow-lift)] sm:w-[150px]">
+      <div className="flex items-center gap-1 border-b border-[var(--line)] px-1.5 py-1.5 sm:gap-1.5 sm:px-2.5 sm:py-2">
+        <span className="grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[3px] text-white sm:h-6 sm:w-6" style={{ background: color }}>
           <Icon name={icon as IconName} size={12} strokeWidth={1.9} />
         </span>
         <span className="whitespace-nowrap text-[0.6rem] font-semibold tracking-[-0.01em] text-[var(--ink)] sm:text-[0.78rem]">{name}</span>
       </div>
-      <div className="grid gap-1.5 px-2 py-2 sm:px-2.5 sm:py-2.5">
-        <span className="h-1.5 w-[80%] rounded-full bg-[var(--paper-3)]" />
-        <span className="h-1.5 w-[55%] rounded-full bg-[var(--paper-3)]" />
-        <span className="hidden h-1.5 w-[68%] rounded-full bg-[var(--paper-3)] sm:block" />
+      {/* the same job, typed into every one of them */}
+      <div className="grid gap-1 px-2 py-2 sm:px-2.5 sm:py-2.5">
+        <span className="t-num text-[0.62rem] font-semibold text-[var(--ink)] sm:text-[0.74rem]">Job #1042</span>
+        <span className="h-1 w-[78%] rounded-[1px] bg-[var(--paper-2)]" />
+        <span className="hidden h-1 w-[55%] rounded-[1px] bg-[var(--paper-2)] sm:block" />
       </div>
     </div>
   );
@@ -152,14 +153,9 @@ export function Tools() {
   const hub = px(HUB);
 
   return (
-    <section id="tools" aria-labelledby="tools-title" className="relative bg-[var(--paper)] pt-[clamp(96px,13vw,184px)]">
+    <section id="tools" aria-labelledby="tools-title" className="relative pt-[clamp(88px,11vw,160px)]">
       <div className="wrap grid gap-8 lg:grid-cols-[1fr_minmax(0,32rem)] lg:items-end lg:gap-16">
-        <div>
-          <p className="t-eyebrow" data-reveal>
-            {TOOLS.eyebrow}
-          </p>
-          <Split id="tools-title" lines={TOOLS.headline} className="t-h2 mt-6" />
-        </div>
+        <Split id="tools-title" lines={TOOLS.headline} className="t-h2" />
         <p className="t-lead" data-reveal style={{ "--reveal-delay": "0.2s" } as CSSProperties}>
           {TOOLS.lead}
         </p>
@@ -168,26 +164,25 @@ export function Tools() {
       <div ref={trackRef} className="tools-track relative">
         <div className="tools-stage flex items-center">
           <div className="wrap h-full">
-            <div ref={frameRef} aria-hidden className="tools-frame relative h-full select-none overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--paper-2)]">
-              <div className="dot-grid absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_85%)]" />
+            <div ref={frameRef} aria-hidden className="tools-frame relative h-full select-none overflow-hidden rounded-[6px] border-2 border-[var(--ink)] bg-[var(--paper-2)]">
 
               {/* where we are, and the count */}
               <div className="absolute inset-x-0 top-0 z-[60] flex items-start justify-between gap-4 p-4 sm:p-6">
                 <span className="relative inline-grid text-[0.72rem] font-medium sm:text-[0.8rem]">
-                  <span className="t-before col-start-1 row-start-1 inline-flex items-center gap-2 rounded-full bg-[var(--card)] px-3 py-1.5 text-[var(--ink-2)] opacity-0 shadow-[var(--shadow-card)]">
-                    <span className="h-2 w-2 rounded-full bg-[var(--risk)]" />
+                  <span className="t-before col-start-1 row-start-1 inline-flex items-center gap-2 rounded-[3px] border-2 border-[var(--risk)] bg-[var(--card)] px-3 py-1.5 font-semibold text-[var(--risk)] opacity-0">
                     {TOOLS.before.label}
                   </span>
-                  <span className="t-after col-start-1 row-start-1 inline-flex items-center gap-2 rounded-full bg-[var(--spot)] px-3 py-1.5 text-white shadow-[var(--shadow-card)]">
+                  <span className="t-after col-start-1 row-start-1 inline-flex items-center gap-2 rounded-[3px] bg-[var(--spot)] px-3 py-1.5 font-semibold text-white">
                     <Mark size={13} spot="#fff" />
                     {TOOLS.after.label}
                   </span>
                 </span>
-                <div className="rounded-2xl bg-[var(--card)] px-3.5 py-2.5 text-right shadow-[var(--shadow-card)] sm:px-4 sm:py-3">
-                  <p className="whitespace-nowrap text-[0.62rem] font-medium text-[var(--ink-3)] sm:text-[0.72rem]">{TOOLS.counter}</p>
-                  <p className="t-clicks t-num text-[1.8rem] font-semibold leading-none tracking-[-0.04em] text-[var(--ink)] sm:text-[2.4rem]">{TOOLS.after.clicks}</p>
-                  <p className="mt-1 hidden text-[0.72rem] text-[var(--ink-3)] sm:block">
-                    {TOOLS.retyped}: <span className="t-retyped t-num font-semibold text-[var(--ink)]">{TOOLS.after.retyped}</span>
+                {/* the tally: a ruled ticket kept on the desk */}
+                <div className="ticket min-w-[9.5rem] px-3.5 pb-2 pt-2.5 sm:min-w-[12rem] sm:px-4">
+                  <p className="t-label whitespace-nowrap border-b-2 border-[var(--ink)] pb-1.5 text-[0.72rem] sm:text-[0.82rem]">{TOOLS.counter}</p>
+                  <p className="t-clicks t-num pt-1.5 text-right font-[family-name:var(--font-display)] text-[2.2rem] font-black leading-none text-[var(--ink)] sm:text-[3rem]">{TOOLS.after.clicks}</p>
+                  <p className="ruled mt-1 hidden justify-between gap-3 border-b-0 border-t pt-1.5 text-[0.75rem] text-[var(--ink-2)] sm:flex">
+                    {TOOLS.retyped} <span className="t-retyped t-num font-semibold text-[var(--ink)]">{TOOLS.after.retyped}</span>
                   </p>
                 </div>
               </div>
@@ -203,9 +198,9 @@ export function Tools() {
 
               {/* One Spot, in the middle */}
               <div className="t-hub absolute z-[40] -translate-x-1/2 -translate-y-1/2" style={{ left: `${HUB.x}%`, top: `${HUB.y}%` }}>
-                <span className="tools-pulse absolute inset-0 rounded-full" />
-                <span className="relative flex items-center gap-2 rounded-full bg-[var(--ink)] py-2 pl-2 pr-3.5 text-[0.8rem] font-semibold text-[var(--paper)] shadow-[var(--shadow-float)] sm:py-2.5 sm:pl-2.5 sm:pr-4 sm:text-[0.9rem]">
-                  <span className="grid h-6 w-6 place-items-center rounded-full bg-[var(--paper)] text-[var(--ink)] sm:h-7 sm:w-7">
+                <span className="tools-pulse absolute inset-0 rounded-[4px]" />
+                <span className="relative flex items-center gap-2 rounded-[4px] bg-[var(--spot)] py-2 pl-2 pr-3.5 font-[family-name:var(--font-display)] text-[1rem] font-extrabold uppercase tracking-[0.02em] text-white shadow-[var(--shadow-float)] sm:py-2.5 sm:pl-2.5 sm:pr-4 sm:text-[1.15rem]">
+                  <span className="grid h-6 w-6 place-items-center rounded-full bg-[var(--card)] text-[var(--ink)] sm:h-7 sm:w-7">
                     <Mark size={16} />
                   </span>
                   One Spot
@@ -218,12 +213,12 @@ export function Tools() {
                 </div>
               ))}
 
-              <span className="t-ripple pointer-events-none absolute z-[70] h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--ink)] opacity-0" />
+              <span className="t-ripple pointer-events-none absolute z-[70] h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--risk)] opacity-0" />
               <span className="t-cursor pointer-events-none absolute z-[80] opacity-0 drop-shadow-[0_4px_8px_rgba(21,23,27,0.3)]" style={{ left: "50%", top: "50%" }}>
                 <Icon name="cursor" size={26} strokeWidth={1.4} className="fill-[var(--ink)] text-white" />
               </span>
 
-              <p className="t-close absolute inset-x-0 bottom-0 z-[60] p-5 text-center text-[0.9rem] font-medium text-[var(--ink)] sm:p-7 sm:text-[1.05rem]">{TOOLS.close}</p>
+              <p className="t-close absolute inset-x-0 bottom-0 z-[60] px-4 pb-3 pt-2 text-center font-[family-name:var(--font-display)] text-[0.98rem] font-extrabold uppercase leading-tight tracking-[0.01em] text-[var(--ink)] sm:p-7 sm:text-[1.45rem]">{TOOLS.close}</p>
             </div>
           </div>
         </div>

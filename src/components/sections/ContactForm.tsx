@@ -1,9 +1,10 @@
 "use client";
 
-import { Fragment, useEffect, useId, useRef, useState, type FormEvent, type HTMLAttributes } from "react";
+import { Fragment, useEffect, useId, useRef, useState, type CSSProperties, type FormEvent, type HTMLAttributes } from "react";
 import { CONTACT } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/Icons";
+import { clearPrefill, onPrefill } from "@/lib/prefill";
 import {
   CONTACT_FIELDS,
   CONTACT_LIMITS,
@@ -44,7 +45,7 @@ const FIELD_SPECS: FieldSpec[] = [
 
 // 16px on phones so iOS does not zoom the page when a field takes focus.
 const controlClass =
-  "block w-full rounded-2xl border bg-[var(--paper)] px-4 text-[1rem] tracking-[-0.006em] text-[var(--ink)] caret-[var(--spot)] placeholder:text-[var(--ink-4)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-[var(--ink-4)] focus:border-[var(--spot)] focus:bg-[var(--card)] focus:shadow-[0_0_0_4px_rgba(45,74,224,0.12)] focus:outline-none read-only:opacity-60 autofill:shadow-[inset_0_0_0_100px_var(--card)] autofill:[-webkit-text-fill-color:var(--ink)]";
+  "block w-full rounded-[4px] border-[1.5px] bg-[#fffdf7] px-4 text-[1rem] tracking-[-0.006em] text-[var(--ink)] caret-[var(--spot)] placeholder:text-[var(--ink-3)] transition-[border-color,background-color,box-shadow] duration-[var(--t-ui)] hover:border-[var(--ink-2)] focus:border-[var(--spot)] focus:shadow-[0_0_0_3px_rgba(45,74,224,0.18)] focus:outline-none read-only:opacity-60 autofill:shadow-[inset_0_0_0_100px_#fffdf7] autofill:[-webkit-text-fill-color:var(--ink)]";
 
 interface FieldProps extends FieldSpec {
   id: string;
@@ -114,6 +115,17 @@ export function ContactForm() {
 
   useEffect(() => () => requestRef.current?.abort(), []);
 
+  // "Talk these numbers through" on the calculator: their figures land in the help box, but only while
+  // it's empty, and the form switches back to general help if it was on a website redesign.
+  useEffect(
+    () =>
+      onPrefill((text) => {
+        setValues((current) => (current.stuck.trim() ? current : { ...current, stuck: text }));
+        setKind("general");
+      }),
+    [],
+  );
+
   // The form is gone once it has sent; put keyboard and screen-reader focus on what replaced it.
   useEffect(() => {
     if (status === "success") receivedRef.current?.focus();
@@ -173,6 +185,7 @@ export function ContactForm() {
 
       if (response.ok && result?.ok) {
         setProposal(typeof result.proposal === "string" ? result.proposal : null);
+        clearPrefill();
         setStatus("success");
       } else if (response.status === 422 && result?.fields) {
         const fields = result.fields;
@@ -192,8 +205,8 @@ export function ContactForm() {
   if (status === "success") {
     return (
       <div className="story-fade flex min-h-[26rem] flex-col justify-center gap-5">
-        <span className="grid h-12 w-12 place-items-center rounded-full bg-[var(--done)] text-white">
-          <Icon name="check" size={22} strokeWidth={2.4} />
+        <span className="stamp stamp-press self-start px-3 py-1.5 text-[1.6rem] text-[var(--spot)]" style={{ "--stamp-rot": "rotate(-3deg)", transform: "rotate(-3deg)" } as CSSProperties}>
+          {CONTACT.success.stamp}
         </span>
         <h3 ref={receivedRef} tabIndex={-1} aria-describedby={`${uid}-received`} className="t-h3 outline-none">
           {CONTACT.success.title}
@@ -213,14 +226,7 @@ export function ContactForm() {
         <p id={`${uid}-kind`} className="mb-2 block text-[0.85rem] font-medium text-[var(--ink-2)]">
           {CONTACT.kinds.label}
         </p>
-        <div role="radiogroup" aria-labelledby={`${uid}-kind`} className="relative grid grid-cols-2 rounded-full bg-[var(--paper-2)] p-1 text-[0.92rem] font-medium">
-          <span
-            aria-hidden
-            className={cn(
-              "absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-[var(--ink)] shadow-[var(--shadow-card)] transition-transform duration-500 ease-[var(--ease-out)]",
-              kind === "website" && "translate-x-full",
-            )}
-          />
+        <div role="radiogroup" aria-labelledby={`${uid}-kind`} className="grid grid-cols-2 border-[1.5px] border-[var(--ink)] text-[0.92rem] font-semibold">
           {CONTACT.kinds.options.map((option) => (
             <button
               key={option.key}
@@ -228,7 +234,14 @@ export function ContactForm() {
               role="radio"
               aria-checked={kind === option.key}
               onClick={() => pickKind(option.key)}
-              className={cn("relative z-10 rounded-full py-2.5 transition-colors duration-300", kind === option.key ? "text-[var(--paper)]" : "text-[var(--ink-3)] hover:text-[var(--ink)]")}
+              onKeyDown={(e) => {
+                if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) {
+                  e.preventDefault();
+                  pickKind(kind === "general" ? "website" : "general");
+                }
+              }}
+              tabIndex={kind === option.key ? 0 : -1}
+              className={cn("py-2.5 transition-colors duration-[var(--t-ui)]", kind === option.key ? "bg-[var(--ink)] text-[var(--card)]" : "text-[var(--ink-2)] hover:bg-[var(--paper-2)]")}
             >
               {option.label}
             </button>
@@ -242,7 +255,7 @@ export function ContactForm() {
           {spec.field === "stuck" && kind === "website" ? (
             <fieldset className="story-fade sm:col-span-2">
               <legend className="mb-1 block text-[0.85rem] font-medium text-[var(--ink-2)]">{CONTACT.website.changes.label}</legend>
-              <p className="mb-3 text-[0.82rem] text-[var(--ink-3)]">{CONTACT.website.changes.help}</p>
+              <p className="mb-3 text-[0.82rem] text-[var(--ink-2)]">{CONTACT.website.changes.help}</p>
               <div className="flex flex-wrap gap-2">
                 {CONTACT.website.changes.options.map((option) => {
                   const on = changes.includes(option);
@@ -250,12 +263,12 @@ export function ContactForm() {
                     <label
                       key={option}
                       className={cn(
-                        "flex cursor-pointer select-none items-center gap-2 rounded-full border px-3.5 py-2 text-[0.9rem] transition-[background-color,border-color,color,box-shadow] duration-300 has-[:focus-visible]:shadow-[0_0_0_4px_rgba(45,74,224,0.18)]",
-                        on ? "border-[var(--spot)] bg-[var(--spot-soft)] text-[var(--ink)]" : "border-[var(--line-strong)] bg-[var(--paper)] text-[var(--ink-2)] hover:border-[var(--ink-4)]",
+                        "flex cursor-pointer select-none items-center gap-2 rounded-[4px] border-[1.5px] px-3 py-2 text-[0.9rem] transition-[background-color,border-color,color,box-shadow] duration-[var(--t-ui)] active:translate-y-px has-[:focus-visible]:shadow-[0_0_0_3px_rgba(45,74,224,0.25)]",
+                        on ? "border-[var(--ink)] bg-[var(--carbon-canary)] text-[var(--ink)]" : "border-[var(--line-strong)] bg-[#fffdf7] text-[var(--ink-2)] hover:border-[var(--ink-2)]",
                       )}
                     >
                       <input type="checkbox" name="changes" value={option} checked={on} disabled={pending} onChange={() => toggleChange(option)} className="sr-only" />
-                      <span aria-hidden className={cn("grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[6px] border transition-colors duration-300", on ? "border-[var(--spot)] bg-[var(--spot)] text-white" : "border-[var(--line-strong)] bg-[var(--card)] text-transparent")}>
+                      <span aria-hidden className={cn("grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[3px] border-[1.5px] transition-colors duration-[var(--t-ui)]", on ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--card)]" : "border-[var(--ink-2)] bg-[#fffdf7] text-transparent")}>
                         <Icon name="check" size={12} strokeWidth={3} />
                       </span>
                       {option}
@@ -342,7 +355,7 @@ function DemoOffer({ pass }: { pass: string }) {
   };
 
   return (
-    <div className="mt-2 max-w-[30rem] rounded-2xl border border-[var(--line-strong)] bg-[var(--card)] p-5">
+    <div className="mt-2 max-w-[30rem] rounded-[6px] border-2 border-[var(--ink)] bg-[var(--carbon-canary)] p-5">
       <p className="text-[1.05rem] font-medium text-[var(--ink)]">{CONTACT.demo.title}</p>
       <p className="mt-1.5 text-[0.95rem] leading-[1.5] text-[var(--ink-2)]">{CONTACT.demo.body}</p>
       <button type="button" onClick={open} aria-disabled={pending} className="btn btn-primary mt-4 aria-disabled:pointer-events-none aria-disabled:opacity-60">

@@ -101,18 +101,18 @@ export function Nav() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-transform duration-500 ease-[var(--ease-out)]",
+        "fixed inset-x-0 top-0 z-50 transition-transform duration-300 ease-[var(--ease-out)]",
         hidden && !open && "-translate-y-full",
       )}
     >
       <div
         className={cn(
-          "absolute inset-0 border-b transition-[background-color,border-color,backdrop-filter] duration-500",
-          solid || open ? "border-[var(--line)] bg-[rgba(245,242,236,0.82)] backdrop-blur-xl backdrop-saturate-150" : "border-transparent bg-transparent",
+          "absolute inset-0 border-b transition-[background-color,border-color] duration-300",
+          solid || open ? "border-[var(--line-strong)] bg-[rgba(232,213,163,0.97)]" : "border-transparent bg-transparent",
         )}
       />
       <nav aria-label="Main" className="wrap relative flex h-[var(--nav-h)] items-center justify-between gap-6">
-        <AnchorLink href="#top" aria-label="One Spot, back to the top" className="-m-2 rounded-lg p-2 text-[var(--ink)]" onNavigate={close}>
+        <AnchorLink href="#top" aria-label="One Spot, back to the top" className="-m-2 rounded-[4px] p-2 text-[var(--ink)]" onNavigate={close}>
           <span data-logo className="block">
             <Lockup />
           </span>
@@ -127,7 +127,7 @@ export function Nav() {
                   href={item.href}
                   aria-current={isActive ? "true" : undefined}
                   className={cn(
-                    "relative rounded-full px-3.5 py-2 text-[0.9rem] tracking-[-0.01em] transition-colors duration-300",
+                    "relative rounded-[4px] px-3.5 py-2 text-[0.92rem] font-medium tracking-[-0.01em] transition-colors duration-200",
                     isActive ? "text-[var(--ink)]" : "text-[var(--ink-2)] hover:text-[var(--ink)]",
                   )}
                 >
@@ -135,8 +135,8 @@ export function Nav() {
                   <span
                     aria-hidden
                     className={cn(
-                      "absolute bottom-[3px] left-1/2 h-[5px] w-[5px] -translate-x-1/2 rounded-full bg-[var(--spot)] transition-[opacity,transform] duration-300",
-                      isActive ? "scale-100 opacity-100" : "scale-50 opacity-0",
+                      "absolute inset-x-3.5 bottom-[4px] h-[2px] origin-left bg-[var(--ink)] transition-transform duration-200 ease-[var(--ease-out)]",
+                      isActive ? "scale-x-100" : "scale-x-0",
                     )}
                   />
                 </AnchorLink>
@@ -146,7 +146,7 @@ export function Nav() {
         </ul>
 
         <div className="flex items-center gap-2">
-          <AnchorButton href={NAV_CTA.href} size="sm" className="max-sm:hidden">
+          <AnchorButton href={NAV_CTA.href} size="sm" arrow={false} className="max-[359px]:hidden">
             {NAV_CTA.label}
           </AnchorButton>
           <button
@@ -155,7 +155,7 @@ export function Nav() {
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
             onClick={() => setOpen((v) => !v)}
-            className="grid h-11 w-11 place-items-center rounded-full border border-[var(--line-strong)] bg-[rgba(255,253,249,0.6)] text-[var(--ink)] lg:hidden"
+            className="grid h-11 w-11 place-items-center rounded-[4px] border-[1.5px] border-[var(--ink)] text-[var(--ink)] lg:hidden"
           >
             <Icon name={open ? "close" : "menu"} size={18} />
           </button>
@@ -169,11 +169,10 @@ export function Nav() {
         className="relative h-[calc(100svh-var(--nav-h))] overflow-y-auto bg-[var(--paper)] lg:hidden"
       >
         <ul className="wrap flex flex-col pt-6">
-          {NAV.map((item, i) => (
+          {NAV.map((item) => (
             <li key={item.href} className="border-b border-[var(--line)]">
-              <AnchorLink href={item.href} onNavigate={close} className="flex items-baseline justify-between py-5 text-[2rem] font-[650] leading-none tracking-[-0.04em]">
+              <AnchorLink href={item.href} onNavigate={close} className="t-h3 flex items-baseline justify-between py-5 text-[2.4rem]">
                 {item.label}
-                <span className="t-num text-[0.8rem] font-normal tracking-normal text-[var(--ink-3)]">0{i + 1}</span>
               </AnchorLink>
             </li>
           ))}

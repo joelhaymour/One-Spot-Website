@@ -1,65 +1,81 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ */
-/* One Spot design tokens                                              */
-/* Warm paper, ink, and one blue spot. A consultancy's desk, not a     */
-/* control room: calm surfaces, editorial type, color used for meaning */
-/* (done, routed, needs you) and almost nowhere else.                  */
+/* One Spot: the job ticket                                            */
+/* Manila tag stock is the ground; paper-white tickets sit on it; ink  */
+/* rules and ruled fields carry every number with its unit. Red stamp  */
+/* ink marks what goes wrong today. One Spot blue is rationed to what  */
+/* One Spot changes: its stamp, the action, the after state.           */
 /* ------------------------------------------------------------------ */
 
 :root {
-  /* paper */
-  --paper: #f5f2ec;
-  --paper-2: #eeeae2;
-  --paper-3: #e5e0d6;
-  --card: #fffdf9;
+  /* the ground: manila stock, and the deeper manila of its folds */
+  --paper: #e8d5a3;
+  --paper-2: #dcc48c;
+  --paper-3: #cdb170;
+  /* the ticket: paper-white stock that sits on the manila */
+  --card: #fbf7ec;
 
   /* ink */
-  --ink: #15171b;
-  --ink-2: #4a4f57;
-  --ink-3: #7f848c;
-  --ink-4: #b2b4b8;
+  --ink: #1c1b18;
+  --ink-2: #3d3a33;
+  --ink-3: #5a5446;
+  /* never for text: rules, idle tracks, faint marks */
+  --ink-4: #8f866f;
 
   /* lines */
-  --line-soft: rgba(21, 23, 27, 0.06);
-  --line: rgba(21, 23, 27, 0.1);
-  --line-strong: rgba(21, 23, 27, 0.18);
+  --line-soft: rgba(28, 27, 24, 0.08);
+  --line: rgba(28, 27, 24, 0.16);
+  --line-strong: rgba(28, 27, 24, 0.32);
 
   /* the spot */
   --spot: #2d4ae0;
   --spot-rgb: 45, 74, 224;
   --spot-deep: #2037b4;
-  --spot-soft: #e4e8fb;
+  --spot-soft: #e2e8fb;
   --spot-light: #93a4ff;
 
   /* meaning */
-  --done: #2b7a57;
-  --done-soft: #dfeee5;
-  --wait: #a86d14;
-  --wait-soft: #f5e8d0;
-  --risk: #b4412f;
-  --risk-soft: #f6e1db;
+  --done: #22664a;
+  --done-soft: #d5ebd1;
+  --wait: #7a4f0c;
+  --wait-soft: #f6e58d;
+  --risk: #b3301f;
+  --risk-soft: #f6cdd2;
 
+  /* carbon copies: one tint per kind of business */
+  --carbon-canary: #f6e58d;
+  --carbon-pink: #f6cdd2;
+  --carbon-green: #d5ebd1;
+  --carbon-blue: #e2e9f6;
 
-  /* motion */
+  /* the shop counter, for the darkest passage */
+  --counter: #1c1b18;
+  --counter-text: #fbf7ec;
+  --counter-text-2: #cfc6b0;
+
+  /* motion: one clock for the whole page */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --t-press: 160ms;
+  --t-ui: 220ms;
+  --t-enter: 600ms;
 
   /* layout */
   --gutter: clamp(20px, 4.4vw, 64px);
   --nav-h: 72px;
   --maxw: 1280px;
 
-  /* shadows */
-  --shadow-card: 0 1px 1px rgba(21, 23, 27, 0.04), 0 8px 24px -12px rgba(21, 23, 27, 0.12);
-  --shadow-lift: 0 2px 4px rgba(21, 23, 27, 0.04), 0 24px 48px -20px rgba(21, 23, 27, 0.22);
-  --shadow-float: 0 2px 6px rgba(21, 23, 27, 0.05), 0 30px 60px -24px rgba(21, 23, 27, 0.28);
+  /* shadows: paper lying on paper */
+  --shadow-card: 0 1px 1px rgba(60, 42, 8, 0.08), 0 6px 14px -8px rgba(60, 42, 8, 0.3);
+  --shadow-lift: 0 2px 3px rgba(60, 42, 8, 0.1), 0 18px 34px -18px rgba(60, 42, 8, 0.45);
+  --shadow-float: 0 3px 6px rgba(60, 42, 8, 0.12), 0 30px 50px -24px rgba(60, 42, 8, 0.55);
 }
 
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-display: var(--font-big-shoulders), "Arial Narrow", sans-serif;
 
   --color-paper: var(--paper);
   --color-paper-2: var(--paper-2);
@@ -82,6 +98,7 @@
   --color-wait-soft: var(--wait-soft);
   --color-risk: var(--risk);
   --color-risk-soft: var(--risk-soft);
+  --color-counter: var(--counter);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -110,7 +127,9 @@ html.lenis body {
 }
 
 body {
-  background: var(--paper);
+  background-color: var(--paper);
+  /* the tag stock's fibre: a faint, fixed grain, so the manila reads as material, not a flat fill */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .08 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -121,14 +140,23 @@ body {
 }
 
 ::selection {
-  background: rgba(var(--spot-rgb), 0.18);
+  background: var(--carbon-canary);
   color: var(--ink);
 }
 
 :focus-visible {
   outline: 2px solid var(--spot);
   outline-offset: 3px;
-  border-radius: 8px;
+  border-radius: 4px;
+}
+/* fields draw their own focus ring; no second outline on top of it */
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
+html {
+  scrollbar-color: var(--ink-4) var(--paper-2);
 }
 
 button {
@@ -140,31 +168,35 @@ button {
   /* Type                                                             */
   /* ---------------------------------------------------------------- */
 
-  /* The HUD's type: Inter, set heavy and tight. Emphasis is the spot, never italic. */
+  /* Display: industrial condensed caps, the lettering on tags, bins and work orders. Emphasis is
+     never colour (blue is rationed); a headline's second line is the same ink. */
   .t-hero {
-    font-family: var(--font-sans);
-    font-weight: 650;
-    font-size: clamp(2.6rem, 5.6vw, 5.4rem);
-    line-height: 1;
-    letter-spacing: -0.045em;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(3.6rem, 8.4vw, 7.6rem);
+    line-height: 0.86;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
     text-wrap: balance;
   }
 
   .t-h2 {
-    font-family: var(--font-sans);
-    font-weight: 650;
-    font-size: clamp(2.2rem, 4.2vw, 3.9rem);
-    line-height: 1.02;
-    letter-spacing: -0.04em;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(2.8rem, 5.6vw, 5.4rem);
+    line-height: 0.9;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
     text-wrap: balance;
   }
 
   .t-h3 {
-    font-family: var(--font-sans);
-    font-weight: 620;
-    font-size: clamp(1.55rem, 2.2vw, 2.05rem);
-    line-height: 1.12;
-    letter-spacing: -0.03em;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 2.6vw, 2.5rem);
+    line-height: 0.95;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
     text-wrap: balance;
   }
 
@@ -172,7 +204,16 @@ button {
   .t-h2 em,
   .t-h3 em {
     font-style: normal;
-    color: var(--spot);
+  }
+
+  /* small industrial caps: field labels, ticket numbers, stamps */
+  .t-label {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.95rem;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
   .t-title {
@@ -206,26 +247,6 @@ button {
     color: var(--ink-3);
   }
 
-  .t-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 0.75rem;
-    line-height: 1;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-  }
-  .t-eyebrow::before {
-    content: "";
-    width: 7px;
-    height: 7px;
-    border-radius: 999px;
-    background: var(--spot);
-    box-shadow: 0 0 0 3px rgba(var(--spot-rgb), 0.14);
-  }
-
   .t-num {
     font-variant-numeric: tabular-nums;
   }
@@ -243,7 +264,7 @@ button {
 
   .section {
     position: relative;
-    padding-block: clamp(96px, 13vw, 184px);
+    padding-block: clamp(88px, 11vw, 160px);
   }
 
 
@@ -251,6 +272,7 @@ button {
   /* Buttons                                                          */
   /* ---------------------------------------------------------------- */
 
+  /* Buttons are stamped rectangles: square-ish corners, a press you can feel. */
   .btn {
     position: relative;
     display: inline-flex;
@@ -258,44 +280,44 @@ button {
     justify-content: center;
     gap: 0.6rem;
     height: 3.25rem;
-    padding-inline: 1.5rem;
-    border-radius: 999px;
-    font-size: 0.975rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    padding-inline: 1.4rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
     white-space: nowrap;
     transition:
-      background-color 260ms var(--ease-out),
-      color 260ms var(--ease-out),
-      border-color 260ms var(--ease-out),
-      transform 260ms var(--ease-out),
-      box-shadow 260ms var(--ease-out);
+      background-color var(--t-ui) var(--ease-out),
+      color var(--t-ui) var(--ease-out),
+      border-color var(--t-ui) var(--ease-out),
+      transform var(--t-press) var(--ease-out),
+      box-shadow var(--t-ui) var(--ease-out);
   }
   .btn:active {
-    transform: scale(0.98);
+    transform: translateY(1px) scale(0.98);
   }
   .btn-sm {
     height: 2.625rem;
-    padding-inline: 1.15rem;
-    font-size: 0.9rem;
+    padding-inline: 1rem;
+    font-size: 0.92rem;
   }
+  /* the action is One Spot's: it gets the blue */
   .btn-primary {
-    background: var(--ink);
-    color: var(--paper);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 10px 24px -12px rgba(21, 23, 27, 0.5);
+    background: var(--spot);
+    color: #fff;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 8px 18px -10px rgba(32, 55, 180, 0.8);
   }
   .btn-primary:hover {
-    background: var(--spot);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 14px 30px -12px rgba(var(--spot-rgb), 0.6);
+    background: var(--spot-deep);
   }
   .btn-ghost {
     color: var(--ink);
-    border: 1px solid var(--line-strong);
-    background: rgba(255, 253, 249, 0.5);
+    border: 1.5px solid var(--ink);
+    background: transparent;
   }
   .btn-ghost:hover {
-    border-color: var(--ink);
-    background: var(--card);
+    background: var(--ink);
+    color: var(--card);
   }
   .btn .btn-arrow {
     transition: transform 320ms var(--ease-out);
@@ -314,7 +336,7 @@ button {
   .card {
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 24px;
+    border-radius: 6px;
     box-shadow: var(--shadow-card);
   }
 
@@ -325,9 +347,9 @@ button {
     gap: 0.3rem;
     height: 1.5rem;
     padding-inline: 0.6rem;
-    border-radius: 999px;
+    border-radius: 3px;
     font-size: 0.75rem;
-    font-weight: 550;
+    font-weight: 600;
     white-space: nowrap;
     border: 1px solid var(--line);
     color: var(--ink-2);
@@ -361,11 +383,90 @@ button {
     display: none;
   }
 
-  /* the planning-table dot grid behind the hero */
-  .dot-grid {
-    background-image: radial-gradient(rgba(21, 23, 27, 0.13) 1px, transparent 1.2px);
-    background-size: 28px 28px;
-    background-position: center;
+  /* ---------------------------------------------------------------- */
+  /* The ticket world                                                  */
+  /* ---------------------------------------------------------------- */
+
+  /* A ticket: paper-white stock on the manila, square-ish corners, lying flat with a real shadow. */
+  .ticket {
+    position: relative;
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 6px;
+    box-shadow: var(--shadow-lift);
+  }
+  /* the reinforced eyelet a tag hangs from */
+  .eyelet {
+    position: absolute;
+    left: 50%;
+    top: 18px;
+    width: 30px;
+    height: 30px;
+    margin-left: -15px;
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow:
+      0 0 0 6px #d7bd7d,
+      0 0 0 7px rgba(60, 42, 8, 0.25),
+      inset 0 2px 3px rgba(60, 42, 8, 0.35);
+  }
+  /* a ruled field: label left, value right, ink rule beneath */
+  .ruled {
+    border-bottom: 1px solid var(--line-strong);
+  }
+  /* the perforation a stub tears along */
+  .perf {
+    position: relative;
+    border-top: 2px dashed var(--line-strong);
+  }
+  .perf::before,
+  .perf::after {
+    content: "";
+    position: absolute;
+    top: -11px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--paper);
+  }
+  .perf::before {
+    left: -10px;
+  }
+  .perf::after {
+    right: -10px;
+  }
+  /* A rubber stamp: industrial caps inside a ruled box, ink that didn't take everywhere. */
+  .stamp {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid currentColor;
+    border-radius: 4px;
+    padding: 0.35em 0.6em 0.3em;
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.9;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+    mask-size: 160px 160px;
+  }
+  /* one press: the stamp comes down, then never moves again */
+  @keyframes stamp-press {
+    0% {
+      opacity: 0;
+      transform: var(--stamp-rot, rotate(-4deg)) scale(1.35);
+    }
+    60% {
+      opacity: 1;
+      transform: var(--stamp-rot, rotate(-4deg)) scale(0.96);
+    }
+    100% {
+      opacity: 1;
+      transform: var(--stamp-rot, rotate(-4deg)) scale(1);
+    }
+  }
+  html[data-motion="on"] .stamp-press {
+    animation: stamp-press 260ms var(--ease-out) both;
   }
 
   /* ---------------------------------------------------------------- */
@@ -403,8 +504,8 @@ html[data-motion="on"] [data-reveal]:not([data-shown]) {
 }
 [data-reveal] {
   transition:
-    opacity 1000ms var(--ease-out),
-    transform 1000ms var(--ease-out);
+    opacity var(--t-enter) var(--ease-out),
+    transform var(--t-enter) var(--ease-out);
   transition-delay: var(--reveal-delay, 0s);
 }
 
@@ -412,8 +513,8 @@ html[data-motion="on"] [data-split]:not([data-shown]) .split-word > span {
   transform: translate3d(0, 108%, 0);
 }
 [data-split] .split-word > span {
-  transition: transform 1100ms var(--ease-out);
-  transition-delay: calc(var(--split-delay, 0s) + var(--i, 0) * 55ms);
+  transition: transform 700ms var(--ease-out);
+  transition-delay: calc(var(--split-delay, 0s) + var(--i, 0) * 40ms);
 }
 
 /* ------------------------------------------------------------------ */
@@ -440,21 +541,22 @@ html[data-motion="on"] [data-split]:not([data-shown]) .split-word > span {
   }
 }
 html[data-motion="on"] .story-row {
-  animation: story-row-in 700ms var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * 90ms + 60ms);
+  animation: story-row-in 380ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms + 40ms);
 }
 html[data-motion="on"] .story-fade {
   animation: story-fade-in 600ms var(--ease-out) both;
 }
 
 /* ------------------------------------------------------------------ */
-/* Worth calculator: quiet sliders, and the year chart                 */
+/* Ruled-field sliders: an ink rule that fills as you go, and a tab    */
+/* you can grab                                                         */
 /* ------------------------------------------------------------------ */
 
 .worth-range {
   -webkit-appearance: none;
   appearance: none;
-  height: 24px;
+  height: 28px;
   background: transparent;
   cursor: pointer;
   touch-action: pan-y;
@@ -463,64 +565,50 @@ html[data-motion="on"] .story-fade {
   outline: none;
 }
 .worth-range::-webkit-slider-runnable-track {
-  height: 6px;
-  border-radius: 999px;
-  background: linear-gradient(to right, var(--spot) var(--fill), var(--paper-3) var(--fill));
+  height: 4px;
+  border-radius: 1px;
+  background: linear-gradient(to right, var(--ink) var(--fill), var(--paper-2) var(--fill));
 }
 .worth-range::-moz-range-track {
-  height: 6px;
-  border-radius: 999px;
-  background: var(--paper-3);
+  height: 4px;
+  border-radius: 1px;
+  background: var(--paper-2);
 }
 .worth-range::-moz-range-progress {
-  height: 6px;
-  border-radius: 999px;
-  background: var(--spot);
+  height: 4px;
+  background: var(--ink);
 }
 .worth-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 22px;
-  height: 22px;
-  margin-top: -8px;
-  border-radius: 999px;
-  background: #fff;
-  border: 1px solid var(--line-strong);
-  box-shadow: 0 2px 6px rgba(21, 23, 27, 0.16);
+  width: 16px;
+  height: 26px;
+  margin-top: -11px;
+  border-radius: 3px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  box-shadow: 0 2px 4px rgba(60, 42, 8, 0.3);
   transition:
-    transform 200ms var(--ease-out),
-    box-shadow 200ms var(--ease-out);
+    transform var(--t-press) var(--ease-out),
+    background-color var(--t-ui) var(--ease-out);
 }
 .worth-range::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  background: #fff;
-  border: 1px solid var(--line-strong);
-  box-shadow: 0 2px 6px rgba(21, 23, 27, 0.16);
+  width: 14px;
+  height: 24px;
+  border-radius: 3px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  box-shadow: 0 2px 4px rgba(60, 42, 8, 0.3);
 }
 .worth-range:active::-webkit-slider-thumb {
-  transform: scale(1.12);
-  box-shadow: 0 0 0 6px rgba(var(--spot-rgb), 0.14), 0 2px 6px rgba(21, 23, 27, 0.16);
+  transform: scale(1.08);
+  background: var(--carbon-canary);
 }
 .worth-range:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--spot);
+  box-shadow: 0 0 0 3px var(--card), 0 0 0 5px var(--spot);
 }
 .worth-range:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--spot);
-}
-
-.worth-bar {
-  transform-origin: bottom;
-  transition:
-    height 600ms var(--ease-out),
-    opacity 700ms var(--ease-out),
-    transform 900ms var(--ease-out),
-    background-color 400ms var(--ease-out);
-}
-html[data-motion="on"] .worth-chart:not([data-seen]) .worth-bar {
-  opacity: 0 !important;
-  transform: scaleY(0);
+  box-shadow: 0 0 0 3px var(--card), 0 0 0 5px var(--spot);
 }
 
 /* ------------------------------------------------------------------ */
@@ -570,7 +658,7 @@ html[data-motion="on"] .tools-stage {
   }
 }
 .tools-pulse {
-  animation: tools-pulse 2.2s ease-out infinite;
+  animation: tools-pulse 2.2s ease-out 2;
 }
 
 /* ------------------------------------------------------------------ */
