@@ -101,13 +101,13 @@ export function Nav() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-transform duration-300 ease-[var(--ease-out)]",
+        "fixed inset-x-0 top-0 z-50 transition-transform duration-500 ease-[var(--ease-out)]",
         hidden && !open && "-translate-y-full",
       )}
     >
       <div
         className={cn(
-          "absolute inset-0 border-b transition-[background-color,border-color,backdrop-filter] duration-300",
+          "absolute inset-0 border-b transition-[background-color,border-color,backdrop-filter] duration-500",
           solid || open ? "border-[var(--line)] bg-[rgba(245,242,236,0.82)] backdrop-blur-xl backdrop-saturate-150" : "border-transparent bg-transparent",
         )}
       />
@@ -135,7 +135,7 @@ export function Nav() {
                   <span
                     aria-hidden
                     className={cn(
-                      "absolute bottom-[3px] left-1/2 h-[5px] w-[5px] -translate-x-1/2 rounded-full bg-[var(--ink)] transition-[opacity,transform] duration-300",
+                      "absolute bottom-[3px] left-1/2 h-[5px] w-[5px] -translate-x-1/2 rounded-full bg-[var(--spot)] transition-[opacity,transform] duration-300",
                       isActive ? "scale-100 opacity-100" : "scale-50 opacity-0",
                     )}
                   />
@@ -146,7 +146,7 @@ export function Nav() {
         </ul>
 
         <div className="flex items-center gap-2">
-          <AnchorButton href={NAV_CTA.href} size="sm" arrow={false} className="max-[359px]:hidden">
+          <AnchorButton href={NAV_CTA.href} size="sm" className="max-sm:hidden">
             {NAV_CTA.label}
           </AnchorButton>
           <button
@@ -169,11 +169,12 @@ export function Nav() {
         className="relative h-[calc(100svh-var(--nav-h))] overflow-y-auto bg-[var(--paper)] lg:hidden"
       >
         <ul className="wrap flex flex-col pt-6">
-          {NAV.map((item) => (
+          {NAV.map((item, i) => (
             <li key={item.href} className="border-b border-[var(--line)]">
               <AnchorLink href={item.href} onNavigate={close} className="flex items-baseline justify-between py-5 text-[2rem] font-[650] leading-none tracking-[-0.04em]">
                 {item.label}
-                              </AnchorLink>
+                <span className="t-num text-[0.8rem] font-normal tracking-normal text-[var(--ink-3)]">0{i + 1}</span>
+              </AnchorLink>
             </li>
           ))}
         </ul>

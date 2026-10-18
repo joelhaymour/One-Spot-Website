@@ -10,7 +10,7 @@ export default function RouteError({ error, reset }: { error: Error & { digest?:
 
   return (
     <main id="content" className="wrap flex min-h-svh flex-col items-start justify-center gap-7">
-      <p className="text-[0.9rem] font-semibold text-[var(--ink-2)]">Something stopped</p>
+      <p className="t-eyebrow">Something stopped</p>
       <h1 className="t-h3 max-w-[36rem]">This page hit a problem it couldn&rsquo;t recover from.</h1>
       <p className="t-lead max-w-[32rem]">Nothing you did. Try again, and if it keeps happening, reload the page.</p>
       <button type="button" onClick={reset} className="btn btn-primary">

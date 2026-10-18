@@ -27,11 +27,12 @@ export const NAV_CTA = { label: "Talk to us", href: "#contact" } as const;
 /* ------------------------------------------------------------------ */
 
 export const HERO = {
+  eyebrow: "Consulting for small and mid-sized businesses",
   headline: ["Modern workflows.", "Made simple."],
   lead: "In a world with endless tools and new technology, knowing where to start is the hard part. We cut through the noise, find what actually fits your business, and put it to work.",
   primary: { label: "Start with a conversation", href: "#contact" },
   secondary: { label: "See how we work", href: "#process" },
-  reassurance: "Consulting for small and mid-sized businesses. No jargon, and no ripping out the tools you already use.",
+  reassurance: "No jargon. No ripping out the tools you already use.",
 } as const;
 
 /* ------------------------------------------------------------------ */
@@ -53,6 +54,7 @@ export interface WorthSlider {
 
 export const WORTH = {
   headline: "What could a better way of working be worth?",
+  lead: "Small improvements add up. See what getting time back and getting more done could mean for your business.",
   modes: [
     { key: "team", label: "My Team's Time" },
     { key: "you", label: "My Time" },
@@ -62,34 +64,30 @@ export const WORTH = {
   weekHours: 40,
   team: {
     sliders: [
-      { key: "people", label: "Number of employees", min: 1, max: 100, step: 1, value: 15, unit: "people" },
-      { key: "hours", label: "Hours saved per employee each week", min: 0.5, max: 8, step: 0.5, value: 3, unit: "hours" },
-      { key: "rate", label: "Average hourly cost", min: 15, max: 120, step: 1, value: 35, unit: "money" },
+      { key: "people", label: "Number of employees", min: 1, max: 150, step: 1, value: 15, unit: "people" },
+      { key: "hours", label: "Hours saved per employee each week", min: 0.5, max: 10, step: 0.5, value: 3, unit: "hours" },
+      { key: "rate", label: "Average hourly cost", min: 15, max: 150, step: 1, value: 35, unit: "money" },
     ] satisfies WorthSlider[],
     weeks: 52,
     hoursLabel: "hours your team gets back every year",
     valueLabel: "Potential value of that time",
     weeksLabel: "Workweeks recovered",
     statement: "Imagine what your team could accomplish with that time back.",
-    prefill: (people: number, hours: number, total: string) =>
-      `We're a team of about ${people}. I think each person could get back around ${hours} hours a week (your calculator says about ${total} hours a year). Where would you start?`,
   },
   you: {
     sliders: [
-      { key: "hours", label: "Hours you'd get back each week", min: 1, max: 15, step: 1, value: 5, unit: "hours" },
-      { key: "rate", label: "What an hour of your time is worth", min: 25, max: 300, step: 5, value: 100, unit: "money" },
+      { key: "hours", label: "Hours you'd get back each week", min: 1, max: 25, step: 1, value: 5, unit: "hours" },
+      { key: "rate", label: "What an hour of your time is worth", min: 25, max: 500, step: 5, value: 100, unit: "money" },
       { key: "weeks", label: "Weeks you work in a year", min: 30, max: 52, step: 1, value: 48, unit: "weeks" },
     ] satisfies WorthSlider[],
     hoursLabel: "hours of your own time back every year",
     valueLabel: "Potential value of your time",
     weeksLabel: "Workweeks back",
     statement: "Imagine what you could do if you had that time back.",
-    prefill: (hours: number, total: string) =>
-      `I think I could get back around ${hours} hours a week myself (your calculator says about ${total} hours a year). Where would you start?`,
   },
+  yearLabel: { start: "Week 1", end: "Week 52" },
   footnote: "Potential value at the hourly figure above. Actual savings depend on how the time is used.",
   close: ["You don't always need more people.", "Sometimes you just need a better way of working."],
-  action: "Talk these numbers through",
 };
 
 /* ------------------------------------------------------------------ */
@@ -121,8 +119,10 @@ export interface HeroExample {
 }
 
 export const EXAMPLES = {
-  headline: ["A job like yours.", "Two ways."],
-  lead: "Pick the kind of business closest to yours: the same ordinary job, the way it runs today and the way it runs with One Spot.",
+  eyebrow: "Examples",
+  headline: ["One job,", "two ways."],
+  lead: "Pick the kind of business closest to yours, and watch an ordinary job run the way it does today, then with One Spot.",
+  label: "One job, two ways",
   before: "Today",
   after: "With One Spot",
   note: "Illustrative examples",
@@ -223,6 +223,7 @@ export const EXAMPLES = {
 /* ------------------------------------------------------------------ */
 
 export const PROCESS = {
+  eyebrow: "How we work",
   headline: ["Business first.", "Technology second."],
   lead: "We don't show up with software to sell. We show up to listen, and we only build what will make your week noticeably easier.",
   note: "Every engagement starts the same way: a conversation about your business, not a sales pitch.",
@@ -265,14 +266,14 @@ export const PROCESS = {
 /* ------------------------------------------------------------------ */
 
 export const TOOLS = {
+  eyebrow: "Your tools",
   headline: ["One job.", "Too many clicks."],
   lead: "Most businesses don't need more software. They need the software they already have to talk to each other. Scroll to follow one job through a typical office.",
   counter: "Clicks to finish one job",
   retyped: "Details typed again",
-  before: { clicks: 47, retyped: 9, label: "Today: every app on its own", short: "Today" },
-  after: { clicks: 6, retyped: 0, label: "With One Spot: connected", short: "With One Spot" },
+  before: { clicks: 47, retyped: 9, label: "Today: every app on its own" },
+  after: { clicks: 6, retyped: 0, label: "With One Spot: connected" },
   close: "Same tools you use today. We just connect them, so the work moves by itself.",
-  note: "Illustrative",
   apps: [
     { name: "Email", icon: "mail", color: "#c4533d" },
     { name: "Accounting", icon: "invoice", color: "#2b7a57" },
@@ -289,6 +290,7 @@ export const TOOLS = {
 /* ------------------------------------------------------------------ */
 
 export const FAQ = {
+  eyebrow: "Questions",
   headline: ["Good questions,", "straight answers."],
   items: [
     {
@@ -323,6 +325,7 @@ export const FAQ = {
 /* ------------------------------------------------------------------ */
 
 export const CONTACT = {
+  eyebrow: "Start here",
   headline: ["Tell us what you'd", "like help with."],
   lead: "A few lines is plenty. We'll do our homework on your business before we talk, so the first conversation is about you, not the basics.",
   next: [

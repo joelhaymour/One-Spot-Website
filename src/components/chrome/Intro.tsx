@@ -72,13 +72,6 @@ export function Intro() {
       return;
     }
 
-    // Once a visit: a reload or a second page view in the same session skips the cover.
-    try {
-      sessionStorage.setItem("os-intro", "1");
-    } catch {
-      // private mode: it simply plays again next time
-    }
-
     let alive = true;
     let done = false;
     let timeline: gsap.core.Timeline | null = null;

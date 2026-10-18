@@ -4,7 +4,6 @@ import { Fragment, useEffect, useId, useRef, useState, type FormEvent, type HTML
 import { CONTACT } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/Icons";
-import { clearPrefill, onPrefill } from "@/lib/prefill";
 import {
   CONTACT_FIELDS,
   CONTACT_LIMITS,
@@ -45,7 +44,7 @@ const FIELD_SPECS: FieldSpec[] = [
 
 // 16px on phones so iOS does not zoom the page when a field takes focus.
 const controlClass =
-  "block w-full rounded-2xl border bg-[var(--paper)] px-4 text-[1rem] tracking-[-0.006em] text-[var(--ink)] caret-[var(--spot)] placeholder:text-[var(--ink-3)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-[var(--ink-4)] focus:border-[var(--spot)] focus:bg-[var(--card)] focus:shadow-[0_0_0_4px_rgba(45,74,224,0.12)] focus:outline-none read-only:opacity-60 autofill:shadow-[inset_0_0_0_100px_var(--card)] autofill:[-webkit-text-fill-color:var(--ink)]";
+  "block w-full rounded-2xl border bg-[var(--paper)] px-4 text-[1rem] tracking-[-0.006em] text-[var(--ink)] caret-[var(--spot)] placeholder:text-[var(--ink-4)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-[var(--ink-4)] focus:border-[var(--spot)] focus:bg-[var(--card)] focus:shadow-[0_0_0_4px_rgba(45,74,224,0.12)] focus:outline-none read-only:opacity-60 autofill:shadow-[inset_0_0_0_100px_var(--card)] autofill:[-webkit-text-fill-color:var(--ink)]";
 
 interface FieldProps extends FieldSpec {
   id: string;
@@ -115,17 +114,6 @@ export function ContactForm() {
 
   useEffect(() => () => requestRef.current?.abort(), []);
 
-  // "Talk these numbers through" on the calculator: their figures land in the help box, but only while
-  // it's empty, and the form switches back to general help if it was on a website redesign.
-  useEffect(
-    () =>
-      onPrefill((text) => {
-        setValues((current) => (current.stuck.trim() ? current : { ...current, stuck: text }));
-        setKind("general");
-      }),
-    [],
-  );
-
   // The form is gone once it has sent; put keyboard and screen-reader focus on what replaced it.
   useEffect(() => {
     if (status === "success") receivedRef.current?.focus();
@@ -185,7 +173,6 @@ export function ContactForm() {
 
       if (response.ok && result?.ok) {
         setProposal(typeof result.proposal === "string" ? result.proposal : null);
-        clearPrefill();
         setStatus("success");
       } else if (response.status === 422 && result?.fields) {
         const fields = result.fields;
@@ -230,7 +217,7 @@ export function ContactForm() {
           <span
             aria-hidden
             className={cn(
-              "absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-[var(--ink)] shadow-[var(--shadow-card)] transition-transform duration-[220ms] ease-[var(--ease-out)]",
+              "absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-[var(--ink)] shadow-[var(--shadow-card)] transition-transform duration-500 ease-[var(--ease-out)]",
               kind === "website" && "translate-x-full",
             )}
           />
@@ -241,7 +228,7 @@ export function ContactForm() {
               role="radio"
               aria-checked={kind === option.key}
               onClick={() => pickKind(option.key)}
-              className={cn("relative z-10 rounded-full py-2.5 transition-colors duration-200", kind === option.key ? "text-[var(--paper)]" : "text-[var(--ink-3)] hover:text-[var(--ink)]")}
+              className={cn("relative z-10 rounded-full py-2.5 transition-colors duration-300", kind === option.key ? "text-[var(--paper)]" : "text-[var(--ink-3)] hover:text-[var(--ink)]")}
             >
               {option.label}
             </button>
@@ -255,15 +242,15 @@ export function ContactForm() {
           {spec.field === "stuck" && kind === "website" ? (
             <fieldset className="story-fade sm:col-span-2">
               <legend className="mb-1 block text-[0.85rem] font-medium text-[var(--ink-2)]">{CONTACT.website.changes.label}</legend>
-              <p className="mb-3 text-[0.82rem] text-[var(--ink-2)]">{CONTACT.website.changes.help}</p>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <p className="mb-3 text-[0.82rem] text-[var(--ink-3)]">{CONTACT.website.changes.help}</p>
+              <div className="flex flex-wrap gap-2">
                 {CONTACT.website.changes.options.map((option) => {
                   const on = changes.includes(option);
                   return (
                     <label
                       key={option}
                       className={cn(
-                        "flex cursor-pointer select-none items-center gap-2.5 rounded-xl border px-3.5 py-2.5 text-[0.9rem] transition-[background-color,border-color,color,box-shadow,transform] duration-200 active:scale-[0.98] has-[:focus-visible]:shadow-[0_0_0_4px_rgba(45,74,224,0.18)]",
+                        "flex cursor-pointer select-none items-center gap-2 rounded-full border px-3.5 py-2 text-[0.9rem] transition-[background-color,border-color,color,box-shadow] duration-300 has-[:focus-visible]:shadow-[0_0_0_4px_rgba(45,74,224,0.18)]",
                         on ? "border-[var(--spot)] bg-[var(--spot-soft)] text-[var(--ink)]" : "border-[var(--line-strong)] bg-[var(--paper)] text-[var(--ink-2)] hover:border-[var(--ink-4)]",
                       )}
                     >
