@@ -76,7 +76,7 @@ function Side({ ex, mode, className }: { ex: HeroExample; mode: Mode; className?
   const steps = before ? ex.before : ex.after;
   return (
     <div className={cn("flex-col rounded-[22px] border p-5 sm:p-6", before ? "border-[var(--line)] bg-[var(--card)]" : "border-[rgba(45,74,224,0.22)] bg-[linear-gradient(180deg,#eef1fc,var(--card)_40%)]", className)}>
-      <p className={cn("flex items-center gap-2 text-[0.82rem] font-semibold uppercase tracking-[0.08em]", before ? "text-[var(--ink-2)]" : "text-[var(--spot)]")}>
+      <p className={cn("flex items-center gap-2 text-[0.95rem] font-semibold", before ? "text-[var(--ink-2)]" : "text-[var(--spot)]")}>
         {before ? <span aria-hidden className="h-2 w-2 rounded-full bg-[var(--risk)]" /> : <Mark size={14} spot="var(--spot)" />}
         {before ? EXAMPLES.before : EXAMPLES.after}
       </p>
@@ -90,7 +90,7 @@ function Side({ ex, mode, className }: { ex: HeroExample; mode: Mode; className?
         {ex.stats.map((s) => (
           <div key={s.label} className={cn("flex flex-col-reverse rounded-2xl px-3.5 py-3", before ? "bg-[var(--paper-2)]" : "bg-[rgba(45,74,224,0.07)]")}>
             <dt className="mt-0.5 text-[0.76rem] leading-snug text-[var(--ink-3)]">{s.label}</dt>
-            <dd className={cn("t-num text-[1rem] font-semibold leading-snug tracking-[-0.015em]", before ? "text-[var(--ink)]" : "text-[var(--done)]")}>{before ? s.before : s.after}</dd>
+            <dd className={cn("t-num text-[1rem] font-semibold leading-snug tracking-[-0.015em]", before ? "text-[var(--ink)]" : "text-[var(--spot)]")}>{before ? s.before : s.after}</dd>
           </div>
         ))}
       </dl>

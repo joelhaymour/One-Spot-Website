@@ -151,7 +151,7 @@ export function WorthCalculator({ className }: { className?: string }) {
 
         {/* the result: one number that matters, and two that support it */}
         <div className="mt-6 border-t border-[var(--line)] pt-5">
-          <p className="t-num text-[clamp(3rem,6.2vw,4.1rem)] font-semibold leading-[0.95] tracking-[-0.055em] text-[var(--spot)]">{fmtHours(shownHours)}</p>
+          <p className="t-num text-[clamp(3rem,6.2vw,4.1rem)] font-semibold leading-[0.95] tracking-[-0.04em] text-[var(--spot)]">{fmtHours(shownHours)}</p>
           <p className="mt-2 text-[0.95rem] font-medium text-[var(--ink)]">{cfg.hoursLabel}</p>
           <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-2">
             <div className="flex flex-col-reverse">
@@ -180,11 +180,11 @@ export function WorthCalculator({ className }: { className?: string }) {
       </div>
 
       {/* the close, and the action that carries their numbers to the form */}
-      <div className="flex flex-col gap-4 border-t border-[var(--line)] bg-[var(--paper)] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+      <div className="flex flex-col items-start gap-4 border-t border-[var(--line)] bg-[var(--paper)] px-5 py-5 sm:px-7">
         <p className="text-[0.98rem] font-semibold leading-snug tracking-[-0.02em] text-[var(--ink)]">
           {WORTH.close[0]} <span className="block font-medium text-[var(--ink-2)]">{WORTH.close[1]}</span>
         </p>
-        <AnchorButton href="#contact" size="sm" onNavigate={prefill} className="shrink-0">
+        <AnchorButton href="#contact" size="sm" onNavigate={prefill}>
           {WORTH.action}
         </AnchorButton>
       </div>

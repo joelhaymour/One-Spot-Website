@@ -38,7 +38,7 @@
   --done-soft: #dfeee5;
   --wait: #8a5a10;
   --wait-soft: #f5e8d0;
-  --risk: #b4412f;
+  --risk: #a63b2a;
   --risk-soft: #f6e1db;
 
 
@@ -60,7 +60,6 @@
 
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
 
   --color-paper: var(--paper);
   --color-paper-2: var(--paper-2);
@@ -93,6 +92,8 @@
 
 html {
   background: var(--paper);
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-4) var(--paper-2);
   color-scheme: light;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -152,7 +153,7 @@ button {
     font-weight: 650;
     font-size: clamp(2.6rem, 5.6vw, 5.4rem);
     line-height: 1;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.04em;
     text-wrap: balance;
   }
 
@@ -451,7 +452,7 @@ html[data-motion="on"] .story-fade {
 .worth-range::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(to right, var(--spot) var(--fill), var(--paper-3) var(--fill));
+  background: linear-gradient(to right, var(--ink) var(--fill), var(--paper-3) var(--fill));
 }
 .worth-range::-moz-range-track {
   height: 6px;
@@ -461,7 +462,7 @@ html[data-motion="on"] .story-fade {
 .worth-range::-moz-range-progress {
   height: 6px;
   border-radius: 999px;
-  background: var(--spot);
+  background: var(--ink);
 }
 .worth-range::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -471,7 +472,7 @@ html[data-motion="on"] .story-fade {
   margin-top: -8px;
   border-radius: 999px;
   background: #fff;
-  border: 1px solid var(--line-strong);
+  border: 2px solid var(--ink);
   box-shadow: 0 2px 6px rgba(21, 23, 27, 0.16);
   transition:
     transform 200ms var(--ease-out),
@@ -482,12 +483,12 @@ html[data-motion="on"] .story-fade {
   height: 22px;
   border-radius: 999px;
   background: #fff;
-  border: 1px solid var(--line-strong);
+  border: 2px solid var(--ink);
   box-shadow: 0 2px 6px rgba(21, 23, 27, 0.16);
 }
 .worth-range:active::-webkit-slider-thumb {
   transform: scale(1.12);
-  box-shadow: 0 0 0 6px rgba(var(--spot-rgb), 0.14), 0 2px 6px rgba(21, 23, 27, 0.16);
+  box-shadow: 0 0 0 6px rgba(21, 23, 27, 0.1), 0 2px 6px rgba(21, 23, 27, 0.16);
 }
 .worth-range:focus-visible::-webkit-slider-thumb {
   box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--spot);

@@ -1,0 +1,563 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-18T05:55:27+00:00",
+  "title": "Design System: One Spot",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Desk Paper",
+        "canonical": "oklch(96.2% 0.009 84.6)",
+        "tonalRamp": [
+          "#0d0b07",
+          "#26241f",
+          "#423f3b",
+          "#605d58",
+          "#83807a",
+          "#a7a49f",
+          "#cdcac4",
+          "#f1eee8"
+        ]
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "Deeper Paper",
+        "canonical": "oklch(93.8% 0.012 84.6)",
+        "tonalRamp": [
+          "#0d0b06",
+          "#27241e",
+          "#433f39",
+          "#615d56",
+          "#838079",
+          "#a8a49d",
+          "#cecac2",
+          "#f2eee6"
+        ]
+      },
+      "paper-3": {
+        "role": "neutral",
+        "displayName": "Ruled Paper",
+        "canonical": "oklch(90.8% 0.015 84.6)",
+        "tonalRamp": [
+          "#0e0b05",
+          "#27241c",
+          "#433f37",
+          "#615d55",
+          "#848077",
+          "#a9a49b",
+          "#cfcac0",
+          "#f3eee4"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "oklch(99.4% 0.006 84.6)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#252421",
+          "#413f3c",
+          "#5f5d5a",
+          "#82807c",
+          "#a6a4a1",
+          "#cccac6",
+          "#f0eeea"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(20.4% 0.009 264.4)",
+        "tonalRamp": [
+          "#090b0f",
+          "#222428",
+          "#3d4044",
+          "#5b5e63",
+          "#7e8085",
+          "#a2a5aa",
+          "#c8cbd0",
+          "#eceef4"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "oklch(42.6% 0.015 259.8)",
+        "tonalRamp": [
+          "#080b11",
+          "#20242b",
+          "#3b4048",
+          "#595e66",
+          "#7b8189",
+          "#9fa5ae",
+          "#c5cbd4",
+          "#e9eff9"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "oklch(49.8% 0.016 258.4)",
+        "tonalRamp": [
+          "#070b12",
+          "#1f242c",
+          "#3b4048",
+          "#585e67",
+          "#7a818a",
+          "#9ea5af",
+          "#c4cbd5",
+          "#e8effa"
+        ]
+      },
+      "ink-4": {
+        "role": "neutral",
+        "displayName": "Ink 4 (never text)",
+        "canonical": "oklch(77.0% 0.006 264.5)",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#222427",
+          "#3e4043",
+          "#5c5e61",
+          "#7e8084",
+          "#a3a5a8",
+          "#c8cacf",
+          "#eceef3"
+        ]
+      },
+      "spot": {
+        "role": "primary",
+        "displayName": "One Spot Blue",
+        "canonical": "oklch(49.4% 0.228 267.7)",
+        "tonalRamp": [
+          "#03003d",
+          "#0c007b",
+          "#1717b5",
+          "#2a45db",
+          "#476eff",
+          "#739cff",
+          "#a4c7ff",
+          "#d2edff"
+        ]
+      },
+      "spot-soft": {
+        "role": "primary",
+        "displayName": "Spot Wash",
+        "canonical": "oklch(93.4% 0.026 276.4)",
+        "tonalRamp": [
+          "#080a16",
+          "#212331",
+          "#3c3f4e",
+          "#595d6d",
+          "#7c7f90",
+          "#a0a4b5",
+          "#c6c9dc",
+          "#e9edff"
+        ]
+      },
+      "spot-light": {
+        "role": "primary",
+        "displayName": "Spot Haze",
+        "canonical": "oklch(74.3% 0.133 274.7)",
+        "tonalRamp": [
+          "#08003c",
+          "#171262",
+          "#2e3484",
+          "#4954a7",
+          "#6978cf",
+          "#8c9df7",
+          "#b1c3ff",
+          "#d9eaff"
+        ]
+      },
+      "done": {
+        "role": "secondary",
+        "displayName": "Ledger Green",
+        "canonical": "oklch(47.5% 0.087 161.0)",
+        "tonalRamp": [
+          "#001401",
+          "#003015",
+          "#004d30",
+          "#276d4d",
+          "#4d906f",
+          "#71b693",
+          "#97ddb8",
+          "#bbffdc"
+        ]
+      },
+      "done-soft": {
+        "role": "secondary",
+        "displayName": "Ledger Green Wash",
+        "canonical": "oklch(93.5% 0.020 159.7)",
+        "tonalRamp": [
+          "#040e08",
+          "#1c2721",
+          "#37433c",
+          "#54615a",
+          "#77847c",
+          "#9ba9a0",
+          "#c0cfc6",
+          "#e4f3ea"
+        ]
+      },
+      "wait": {
+        "role": "secondary",
+        "displayName": "Pending Amber",
+        "canonical": "oklch(50.8% 0.103 71.2)",
+        "tonalRamp": [
+          "#230000",
+          "#411600",
+          "#603300",
+          "#815200",
+          "#a77532",
+          "#cd9958",
+          "#f5bf7e",
+          "#ffe6b1"
+        ]
+      },
+      "wait-soft": {
+        "role": "secondary",
+        "displayName": "Pending Amber Wash",
+        "canonical": "oklch(93.5% 0.035 82.9)",
+        "tonalRamp": [
+          "#120900",
+          "#2c220f",
+          "#493e2a",
+          "#675c47",
+          "#8a7f69",
+          "#afa38c",
+          "#d6c9b2",
+          "#faedd5"
+        ]
+      },
+      "risk": {
+        "role": "secondary",
+        "displayName": "Brick Red",
+        "canonical": "oklch(53.3% 0.153 31.4)",
+        "tonalRamp": [
+          "#260000",
+          "#500000",
+          "#7d0000",
+          "#a2301f",
+          "#cb5643",
+          "#f57c66",
+          "#ffaf9d",
+          "#ffe1d6"
+        ]
+      },
+      "risk-soft": {
+        "role": "secondary",
+        "displayName": "Brick Red Wash",
+        "canonical": "oklch(92.5% 0.025 36.5)",
+        "tonalRamp": [
+          "#140705",
+          "#2f201c",
+          "#4c3b37",
+          "#6b5954",
+          "#8e7b76",
+          "#b3a09a",
+          "#dac5c0",
+          "#fee9e3"
+        ]
+      },
+      "line-soft": {
+        "role": "neutral",
+        "displayName": "Hairline Soft"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline"
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Hairline Strong"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "One per section."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Process steps and the footer sign-off."
+      },
+      "result-number": {
+        "displayName": "Result Number",
+        "purpose": "The hero calculator's yearly hours, in One Spot Blue. The one blue number."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "The paragraph under each headline, Ink 2."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Answers, step descriptions, footer line; Ink 2."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Reassurance and notes in Ink 3."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form labels and legends in Ink 2."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button text."
+      },
+      "pill": {
+        "displayName": "Pill",
+        "purpose": "Status and app pills."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 1px 1px rgba(21, 23, 27, 0.04), 0 8px 24px -12px rgba(21, 23, 27, 0.12)",
+        "purpose": "Resting cards, stage chips, callouts, toggle thumbs."
+      },
+      {
+        "name": "lift",
+        "value": "0 2px 4px rgba(21, 23, 27, 0.04), 0 24px 48px -20px rgba(21, 23, 27, 0.22)",
+        "purpose": "The contact form card."
+      },
+      {
+        "name": "float",
+        "value": "0 2px 6px rgba(21, 23, 27, 0.05), 0 30px 60px -24px rgba(21, 23, 27, 0.28)",
+        "purpose": "The hero calculator and floating app windows."
+      },
+      {
+        "name": "button-primary",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 10px 24px -12px rgba(21, 23, 27, 0.5)",
+        "purpose": "Primary button at rest."
+      },
+      {
+        "name": "button-primary-hover",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 14px 30px -12px rgba(45, 74, 224, 0.6)",
+        "purpose": "Primary button on hover, when it turns blue."
+      },
+      {
+        "name": "focus-field",
+        "value": "0 0 0 4px rgba(45, 74, 224, 0.12)",
+        "purpose": "Focused text field ring (with a blue border)."
+      },
+      {
+        "name": "focus-slider",
+        "value": "0 0 0 3px #f5f2ec, 0 0 0 5px #2d4ae0",
+        "purpose": "Focused slider thumb: paper gap then a blue ring."
+      },
+      {
+        "name": "focus-outline",
+        "value": "outline: 2px solid #2d4ae0; outline-offset: 3px",
+        "purpose": "Global :focus-visible outline."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The house easing for every transition and reveal."
+      },
+      {
+        "name": "toggle",
+        "value": "220ms",
+        "purpose": "Segmented toggle thumb slide."
+      },
+      {
+        "name": "state",
+        "value": "200ms",
+        "purpose": "Tab, chip, choice, FAQ icon and label colour changes."
+      },
+      {
+        "name": "field",
+        "value": "300ms",
+        "purpose": "Field border, ground and ring; nav surface and link colour."
+      },
+      {
+        "name": "button",
+        "value": "260ms",
+        "purpose": "Button colour, shadow and press; arrow nudge 320ms."
+      },
+      {
+        "name": "press",
+        "value": "scale(0.97)",
+        "purpose": "Active state for buttons and pills (0.98 for choice tiles)."
+      },
+      {
+        "name": "reveal",
+        "value": "650ms, 22px rise",
+        "purpose": "Scroll reveals, only once JS and motion are confirmed."
+      },
+      {
+        "name": "split-headline",
+        "value": "750ms, 40ms per word",
+        "purpose": "Headline words rise out of a clip mask."
+      },
+      {
+        "name": "story-row",
+        "value": "400ms, 45ms stagger",
+        "purpose": "Example rows arriving in order."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.001ms",
+        "purpose": "Reduced motion keeps every state and drops every journey."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action: ink pill that turns One Spot Blue on hover, arrow nudges right.",
+      "html": "<a class=\"ds-btn ds-btn-primary\" href=\"#\">Start with a conversation <svg class=\"ds-btn-arrow\" width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-btn { font-family: var(--font-inter, Inter), ui-sans-serif, system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; height: 3.25rem; padding-inline: 1.5rem; border-radius: 999px; font-size: 0.975rem; font-weight: 500; letter-spacing: -0.01em; white-space: nowrap; text-decoration: none; transition: background-color 260ms cubic-bezier(0.16,1,0.3,1), color 260ms cubic-bezier(0.16,1,0.3,1), border-color 260ms cubic-bezier(0.16,1,0.3,1), transform 260ms cubic-bezier(0.16,1,0.3,1), box-shadow 260ms cubic-bezier(0.16,1,0.3,1); } .ds-btn:active { transform: scale(0.97); } .ds-btn:focus-visible { outline: 2px solid var(--spot, #2d4ae0); outline-offset: 3px; } .ds-btn-primary { background: var(--ink, #15171b); color: var(--paper, #f5f2ec); box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 10px 24px -12px rgba(21,23,27,0.5); } .ds-btn-primary:hover { background: var(--spot, #2d4ae0); box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset, 0 14px 30px -12px rgba(45,74,224,0.6); } .ds-btn-arrow { transition: transform 320ms cubic-bezier(0.16,1,0.3,1); } .ds-btn:hover .ds-btn-arrow { transform: translateX(3px); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action: hairline pill on translucent card white; border darkens to ink on hover.",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#\">See how we work <svg class=\"ds-btn-ghost-arrow\" width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14M6 13l6 6 6-6\"/></svg></a>",
+      "css": ".ds-btn-ghost { font-family: var(--font-inter, Inter), ui-sans-serif, system-ui, sans-serif; display: inline-flex; align-items: center; gap: 0.6rem; height: 3.25rem; padding-inline: 1.5rem; border-radius: 999px; font-size: 0.975rem; font-weight: 500; letter-spacing: -0.01em; text-decoration: none; color: var(--ink, #15171b); border: 1px solid var(--line-strong, rgba(21,23,27,0.18)); background: rgba(255,253,249,0.5); transition: background-color 260ms cubic-bezier(0.16,1,0.3,1), border-color 260ms cubic-bezier(0.16,1,0.3,1), transform 260ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-ghost:hover { border-color: var(--ink, #15171b); background: var(--card, #fffdf9); } .ds-btn-ghost:active { transform: scale(0.97); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--spot, #2d4ae0); outline-offset: 3px; } .ds-btn-ghost-arrow { transition: transform 320ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-ghost:hover .ds-btn-ghost-arrow { transform: translateY(2px); }"
+    },
+    {
+      "name": "Status Pills",
+      "kind": "chip",
+      "refersTo": "pill",
+      "description": "Meaning pills: deep text on its own wash. Neutral, spot, done, wait, risk.",
+      "html": "<div class=\"ds-pills\"><span class=\"ds-pill\">Spreadsheet</span><span class=\"ds-pill ds-pill-spot\">One Spot</span><span class=\"ds-pill ds-pill-done\">$642 recovered</span><span class=\"ds-pill ds-pill-wait\">Waiting on you</span><span class=\"ds-pill ds-pill-risk\">Return window closing</span></div>",
+      "css": ".ds-pills { display: flex; flex-wrap: wrap; gap: 6px; } .ds-pill { font-family: var(--font-inter, Inter), ui-sans-serif, system-ui, sans-serif; display: inline-flex; align-items: center; height: 1.5rem; padding-inline: 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 550; white-space: nowrap; border: 1px solid var(--line, rgba(21,23,27,0.1)); color: var(--ink-2, #4a4f57); background: var(--card, #fffdf9); } .ds-pill-spot { background: var(--spot-soft, #e4e8fb); color: var(--spot, #2d4ae0); border-color: transparent; } .ds-pill-done { background: var(--done-soft, #dfeee5); color: var(--done, #256b4c); border-color: transparent; } .ds-pill-wait { background: var(--wait-soft, #f5e8d0); color: var(--wait, #8a5a10); border-color: transparent; } .ds-pill-risk { background: var(--risk-soft, #f6e1db); color: var(--risk, #a63b2a); border-color: transparent; }"
+    },
+    {
+      "name": "Segmented Toggle",
+      "kind": "custom",
+      "refersTo": "toggle-track",
+      "description": "Signature control: paper-2 pill track, ink thumb slides between halves in 220ms.",
+      "html": "<div class=\"ds-toggle\" role=\"radiogroup\" aria-label=\"Whose time\"><span class=\"ds-toggle-thumb\" aria-hidden=\"true\"></span><button class=\"ds-toggle-opt is-on\" role=\"radio\" aria-checked=\"true\" onclick=\"this.parentNode.classList.remove('is-right');this.classList.add('is-on');this.nextElementSibling.classList.remove('is-on')\">My Team's Time</button><button class=\"ds-toggle-opt\" role=\"radio\" aria-checked=\"false\" onclick=\"this.parentNode.classList.add('is-right');this.classList.add('is-on');this.previousElementSibling.classList.remove('is-on')\">My Time</button></div>",
+      "css": ".ds-toggle { font-family: var(--font-inter, Inter), ui-sans-serif, system-ui, sans-serif; position: relative; display: grid; grid-template-columns: 1fr 1fr; width: 320px; padding: 4px; border-radius: 999px; background: var(--paper-2, #eeeae2); font-size: 0.88rem; font-weight: 500; } .ds-toggle-thumb { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: var(--ink, #15171b); box-shadow: 0 1px 1px rgba(21,23,27,0.04), 0 8px 24px -12px rgba(21,23,27,0.12); transition: transform 220ms cubic-bezier(0.16,1,0.3,1); } .ds-toggle.is-right .ds-toggle-thumb { transform: translateX(100%); } .ds-toggle-opt { position: relative; z-index: 1; padding: 8px 0; border: 0; border-radius: 999px; background: none; font: inherit; color: var(--ink-3, #5d636c); cursor: pointer; transition: color 200ms; } .ds-toggle-opt:hover { color: var(--ink, #15171b); } .ds-toggle-opt.is-on { color: var(--paper, #f5f2ec); } .ds-toggle-opt:focus-visible { outline: 2px solid var(--spot, #2d4ae0); outline-offset: 3px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Paper field, 16px radius; focus turns the border blue, lifts to card white, adds a soft blue ring.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Company name</span><input class=\"ds-field-input\" placeholder=\"Harbor Home Services\"></label>",
+      "css": ".ds-field { font-family: var(--font-inter, Inter), ui-sans-serif, system-ui, sans-serif; display: block; width: 300px; } .ds-field-label { display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 500; color: var(--ink-2, #4a4f57); } .ds-field-input { display: block; width: 100%; box-sizing: border-box; height: 3.25rem; padding: 0 16px; border-radius: 16px; border: 1px solid var(--line-strong, rgba(21,23,27,0.18)); background: var(--paper, #f5f2ec); font: inherit; font-size: 1rem; letter-spacing: -0.006em; color: var(--ink, #15171b); caret-color: var(--spot, #2d4ae0); transition: border-color 300ms, background-color 300ms, box-shadow 300ms; } .ds-field-input::placeholder { color: var(--ink-3, #5d636c); } .ds-field-input:hover { border-color: var(--ink-4, #b2b4b8); } .ds-field-input:focus { outline: none; border-color: var(--spot, #2d4ae0); background: var(--card, #fffdf9); box-shadow: 0 0 0 4px rgba(45,74,224,0.12); }"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Lockup left, Ink 2 pill links with an ink dot under the active section, small primary button right.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-nav-logo\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\"/><circle cx=\"12\" cy=\"12\" r=\"3.6\" fill=\"#2d4ae0\"/></svg>One Spot</span><span class=\"ds-nav-links\"><a href=\"#\" class=\"ds-nav-link is-active\">How we work</a><a href=\"#\" class=\"ds-nav-link\">Your tools</a><a href=\"#\" class=\"ds-nav-link\">Examples</a><a href=\"#\" class=\"ds-nav-link\">FAQ</a></span><a href=\"#\" class=\"ds-nav-cta\">Talk to us</a></nav>",
+      "css": ".ds-nav { font-family: var(--font-inter, Inter), ui-sans-serif, system-ui, sans-serif; display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 72px; padding: 0 20px; background: rgba(245,242,236,0.82); backdrop-filter: blur(24px) saturate(1.5); border-bottom: 1px solid var(--line, rgba(21,23,27,0.1)); } .ds-nav-logo { display: flex; align-items: center; gap: 10px; font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.03em; color: var(--ink, #15171b); } .ds-nav-links { display: flex; gap: 4px; } .ds-nav-link { position: relative; padding: 8px 14px; border-radius: 999px; font-size: 0.9rem; letter-spacing: -0.01em; color: var(--ink-2, #4a4f57); text-decoration: none; transition: color 300ms; } .ds-nav-link:hover, .ds-nav-link.is-active { color: var(--ink, #15171b); } .ds-nav-link::after { content: ''; position: absolute; left: 50%; bottom: 3px; width: 5px; height: 5px; border-radius: 999px; background: var(--ink, #15171b); transform: translateX(-50%) scale(0.5); opacity: 0; transition: opacity 300ms, transform 300ms; } .ds-nav-link.is-active::after { opacity: 1; transform: translateX(-50%) scale(1); } .ds-nav-link:focus-visible, .ds-nav-cta:focus-visible { outline: 2px solid var(--spot, #2d4ae0); outline-offset: 3px; } .ds-nav-cta { display: inline-flex; align-items: center; height: 2.625rem; padding-inline: 1.15rem; border-radius: 999px; font-size: 0.9rem; font-weight: 500; color: var(--paper, #f5f2ec); background: var(--ink, #15171b); text-decoration: none; transition: background-color 260ms cubic-bezier(0.16,1,0.3,1); } .ds-nav-cta:hover { background: var(--spot, #2d4ae0); }"
+    },
+    {
+      "name": "Worth Result Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Float-shadow card with the one blue number, supporting ink values and a paper footer band.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-body\"><p class=\"ds-card-q\">What could a better way of working be worth?</p><p class=\"ds-result\">2,340</p><p class=\"ds-result-label\">hours your team gets back every year</p><dl class=\"ds-stats\"><div><dd>$81,900*</dd><dt>Potential value of that time</dt></div><div><dd>58.5</dd><dt>Workweeks recovered</dt></div></dl></div><div class=\"ds-card-foot\"><p>You don't always need more people.<span>Sometimes you just need a better way of working.</span></p></div></div>",
+      "css": ".ds-card { font-family: var(--font-inter, Inter), ui-sans-serif, system-ui, sans-serif; width: 420px; overflow: hidden; border-radius: 24px; border: 1px solid var(--line, rgba(21,23,27,0.1)); background: var(--card, #fffdf9); box-shadow: 0 2px 6px rgba(21,23,27,0.05), 0 30px 60px -24px rgba(21,23,27,0.28); } .ds-card-body { padding: 28px; } .ds-card-q { margin: 0 0 20px; font-size: 1.3rem; font-weight: 600; line-height: 1.15; letter-spacing: -0.03em; color: var(--ink, #15171b); } .ds-result { margin: 0; font-size: 3.6rem; font-weight: 600; line-height: 0.95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: var(--spot, #2d4ae0); } .ds-result-label { margin: 8px 0 0; font-size: 0.95rem; font-weight: 500; color: var(--ink, #15171b); } .ds-stats { display: flex; gap: 32px; margin: 16px 0 0; } .ds-stats div { display: flex; flex-direction: column-reverse; } .ds-stats dd { margin: 0; font-size: 1.3rem; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ink, #15171b); } .ds-stats dt { font-size: 0.8rem; color: var(--ink-3, #5d636c); } .ds-card-foot { padding: 20px 28px; border-top: 1px solid var(--line, rgba(21,23,27,0.1)); background: var(--paper, #f5f2ec); } .ds-card-foot p { margin: 0; font-size: 0.98rem; font-weight: 600; letter-spacing: -0.02em; color: var(--ink, #15171b); } .ds-card-foot span { display: block; font-weight: 500; color: var(--ink-2, #4a4f57); }"
+    },
+    {
+      "name": "Comparison Sides",
+      "kind": "custom",
+      "refersTo": "compare-onespot",
+      "description": "Today vs With One Spot: neutral card with risk flags beside a blue-bordered, blue-washed card with done flags.",
+      "html": "<div class=\"ds-compare\"><div class=\"ds-side\"><p class=\"ds-side-h\"><span class=\"ds-dot\"></span>Today</p><p class=\"ds-row\">The unused part sits until someone notices <span class=\"ds-flag ds-flag-risk\">Return window closing</span></p><div class=\"ds-tile\"><b>Chased manually</b><small>Return credits</small></div></div><div class=\"ds-side ds-side-us\"><p class=\"ds-side-h\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\"/><circle cx=\"12\" cy=\"12\" r=\"3.6\" fill=\"currentColor\"/></svg>With One Spot</p><p class=\"ds-row\">It spots the received part that's no longer needed <span class=\"ds-flag ds-flag-done\">$642 recovered</span></p><div class=\"ds-tile\"><b>Tracked to credit</b><small>Return credits</small></div></div></div>",
+      "css": ".ds-compare { font-family: var(--font-inter, Inter), ui-sans-serif, system-ui, sans-serif; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 640px; } .ds-side { padding: 24px; border-radius: 22px; border: 1px solid var(--line, rgba(21,23,27,0.1)); background: var(--card, #fffdf9); } .ds-side-us { border-color: rgba(45,74,224,0.22); background: linear-gradient(180deg, #eef1fc, var(--card, #fffdf9) 40%); } .ds-side-h { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 0.95rem; font-weight: 600; color: var(--ink-2, #4a4f57); } .ds-side-us .ds-side-h { color: var(--spot, #2d4ae0); } .ds-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--risk, #a63b2a); } .ds-row { margin: 0 0 12px; font-size: 0.94rem; font-weight: 500; line-height: 1.5; color: var(--ink, #15171b); } .ds-flag { display: inline-flex; align-items: center; height: 1.25rem; padding-inline: 0.5rem; border-radius: 999px; font-size: 0.72rem; font-weight: 550; } .ds-flag-risk { background: var(--risk-soft, #f6e1db); color: var(--risk, #a63b2a); } .ds-flag-done { background: var(--done-soft, #dfeee5); color: var(--done, #256b4c); } .ds-tile { display: flex; flex-direction: column; padding: 12px 14px; border-radius: 16px; background: var(--paper-2, #eeeae2); } .ds-side-us .ds-tile { background: rgba(45,74,224,0.07); } .ds-tile b { font-size: 1rem; font-weight: 600; letter-spacing: -0.015em; color: var(--ink, #15171b); } .ds-side-us .ds-tile b { color: var(--spot, #2d4ae0); } .ds-tile small { font-size: 0.76rem; color: var(--ink-3, #5d636c); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Consultant's Desk",
+    "overview": "One Spot reads like a well-kept desk in a small consultancy: warm paper underfoot, white cards laid on it with a soft shadow, dark ink for everything that speaks, and a single blue spot that lands only where something matters. It is not a control room and it is not a startup launch page. The owner looked at a louder world (manila, stamps, condensed caps) and turned it down as hard to read and unprofessional; this system is the incumbent look, sharpened, and its job is to be easy for a busy, non-technical business owner to read and trust.\n\nDensity is relaxed. Sections breathe with very tall vertical padding, headlines are large, heavy and tight, and the reading text sits a step lighter in a dark warm-grey ink. Surfaces alternate between paper and a slightly deeper paper, and the interactive pieces (the worth calculator, the example comparison, the contact form) sit on white cards that lift gently off the page. Controls are round: pill buttons, pill tabs, segmented toggles with a sliding thumb, round checkpoints.\n\nColour carries meaning and almost nothing else. Green, amber and brick red say done, waiting and at risk, always as a deep text colour on its own soft wash. Blue is One Spot itself: the mark, the side of every comparison that shows working with One Spot, the one result number in the hero, focus, and selected states. Movement is quick and settled (about 200 to 220ms for toggles and states), and every animated reveal has a finished, visible state without JavaScript or with reduced motion.",
+    "keyCharacteristics": [
+      "Warm paper ground with white cards, soft negative-spread shadows and 22-24px corners.",
+      "Inter for every word; headings 620-650 weight with -0.03em to -0.04em tracking.",
+      "One blue spot, reserved: the hero result number, the One Spot side of comparisons, the mark, focus and selected states.",
+      "Meaning colours (done, wait, risk) as deep text on a soft wash, never as decoration.",
+      "Round controls: pills, pill tabs, segmented toggles with a sliding ink thumb.",
+      "No eyebrow labels, no coloured or italic headline emphasis."
+    ],
+    "rules": [
+      {
+        "name": "The One Spot Rule",
+        "body": "Blue appears only on the hero's result number, the One Spot side of a comparison, the mark, focus and selected states, and the primary button's hover. If a new element is blue, it must be one of these; otherwise it is ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The Meaning-Only Rule",
+        "body": "Green, amber and red say done, waiting and at risk. They always appear as the deep tone on its own soft wash (or as a small dot), never as a decorative tint, a heading colour or a background block.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink-4 Rule",
+        "body": "Ink 4 is for tracks, hover borders and faint marks. It is never used for text; secondary text uses Ink 3 at minimum.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "Inter sets every word on the page. No second display face, no serif, no condensed caps.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tight Heading Rule",
+        "body": "Headings are 620-650 weight with -0.03em to -0.04em tracking and balanced wrapping. Text below headings never goes tighter than -0.02em.",
+        "section": "typography"
+      },
+      {
+        "name": "The Ink Emphasis Rule",
+        "body": "Emphasis inside a heading stays ink and upright. It is never blue, never another colour, never italic.",
+        "section": "typography"
+      },
+      {
+        "name": "The Soft Lift Rule",
+        "body": "Shadows are ambient: negative spread, 12-28% ink, always under a Card White surface with a hairline border. Three levels only (card, lift, float); the higher the stakes of the content, the higher it floats.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** set every word in Inter, headings at 620-650 weight with -0.03em to -0.04em tracking.",
+      "**Do** keep blue to the hero result number, the One Spot side of a comparison, the mark, focus and selected states.",
+      "**Do** put interactive content on Card White (#fffdf9) with a hairline border, a soft card/lift/float shadow and 22-24px corners.",
+      "**Do** use Ink 3 (#5d636c) as the lightest text colour, and check new text grounds hold 4.5:1.",
+      "**Do** pair each meaning colour with its own soft wash (done on done-soft, wait on wait-soft, risk on risk-soft).",
+      "**Do** make pressable things pills, and move toggles and state changes in about 200-220ms on the expo ease-out (cubic-bezier(0.16, 1, 0.3, 1)).",
+      "**Do** give every reveal a finished state that shows without JavaScript and under reduced motion, and make anything that plays pausable."
+    ],
+    "donts": [
+      "**Don't** put eyebrow labels or numbered kickers above headings.",
+      "**Don't** colour, italicise or blue-highlight words inside a headline; emphasis stays ink and upright.",
+      "**Don't** use Ink 4 (#b2b4b8) for any text.",
+      "**Don't** add a second accent colour, or use done/wait/risk as decoration.",
+      "**Don't** add decorative glows, gradients or washes; the only blue wash is the One Spot comparison side, and the only glow is the One Spot hub's pulse.",
+      "**Don't** use hard offset shadows, or pure #fff for cards and page grounds (white is for text on blue and the slider thumb).",
+      "**Don't** reach for the rejected louder world: manila, stamps, condensed caps or novelty display faces."
+    ]
+  }
+}

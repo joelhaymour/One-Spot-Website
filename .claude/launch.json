@@ -4,9 +4,32 @@
     {
       "name": "one-spot",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--hostname", "127.0.0.1", "--port", "3100"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--hostname",
+        "127.0.0.1",
+        "--port",
+        "3100"
+      ],
       "port": 3100,
       "url": "http://127.0.0.1:3100"
+    },
+    {
+      "name": "one-spot-prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "start",
+        "--",
+        "--hostname",
+        "127.0.0.1",
+        "--port",
+        "3102"
+      ],
+      "port": 3102,
+      "url": "http://127.0.0.1:3102"
     }
   ]
 }

@@ -269,9 +269,10 @@ export const TOOLS = {
   lead: "Most businesses don't need more software. They need the software they already have to talk to each other. Scroll to follow one job through a typical office.",
   counter: "Clicks to finish one job",
   retyped: "Details typed again",
-  before: { clicks: 47, retyped: 9, label: "Today: every app on its own" },
-  after: { clicks: 6, retyped: 0, label: "With One Spot: connected" },
+  before: { clicks: 47, retyped: 9, label: "Today: every app on its own", short: "Today" },
+  after: { clicks: 6, retyped: 0, label: "With One Spot: connected", short: "With One Spot" },
   close: "Same tools you use today. We just connect them, so the work moves by itself.",
+  note: "Illustrative",
   apps: [
     { name: "Email", icon: "mail", color: "#c4533d" },
     { name: "Accounting", icon: "invoice", color: "#2b7a57" },
