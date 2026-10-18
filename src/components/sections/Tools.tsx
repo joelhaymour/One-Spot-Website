@@ -155,10 +155,7 @@ export function Tools() {
     <section id="tools" aria-labelledby="tools-title" className="relative bg-[var(--paper)] pt-[clamp(96px,13vw,184px)]">
       <div className="wrap grid gap-8 lg:grid-cols-[1fr_minmax(0,32rem)] lg:items-end lg:gap-16">
         <div>
-          <p className="t-eyebrow" data-reveal>
-            {TOOLS.eyebrow}
-          </p>
-          <Split id="tools-title" lines={TOOLS.headline} className="t-h2 mt-6" />
+          <Split id="tools-title" lines={TOOLS.headline} className="t-h2" />
         </div>
         <p className="t-lead" data-reveal style={{ "--reveal-delay": "0.2s" } as CSSProperties}>
           {TOOLS.lead}

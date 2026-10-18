@@ -52,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var d=document.documentElement;if(matchMedia('(prefers-reduced-motion: no-preference)').matches){d.dataset.motion='on';if(!location.hash)d.dataset.intro='on';setTimeout(function(){if(!window.__osReady){delete d.dataset.motion;delete d.dataset.intro}},4000)}}catch(e){}",
+              "try{var d=document.documentElement;if(matchMedia('(prefers-reduced-motion: no-preference)').matches){d.dataset.motion='on';var seen=0;try{seen=sessionStorage.getItem('os-intro')}catch(e){}if(!location.hash&&!seen)d.dataset.intro='on';setTimeout(function(){if(!window.__osReady){delete d.dataset.motion;delete d.dataset.intro}},4000)}}catch(e){}",
           }}
         />
         {/* First in the body: the cover's markup travels in the first bytes, so the page cannot paint before it. */}

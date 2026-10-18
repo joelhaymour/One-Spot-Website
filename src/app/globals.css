@@ -17,7 +17,8 @@
   /* ink */
   --ink: #15171b;
   --ink-2: #4a4f57;
-  --ink-3: #7f848c;
+  --ink-3: #5d636c;
+  /* never for text: idle tracks, faint marks */
   --ink-4: #b2b4b8;
 
   /* lines */
@@ -33,9 +34,9 @@
   --spot-light: #93a4ff;
 
   /* meaning */
-  --done: #2b7a57;
+  --done: #256b4c;
   --done-soft: #dfeee5;
-  --wait: #a86d14;
+  --wait: #8a5a10;
   --wait-soft: #f5e8d0;
   --risk: #b4412f;
   --risk-soft: #f6e1db;
@@ -130,6 +131,11 @@ body {
   outline-offset: 3px;
   border-radius: 8px;
 }
+/* fields draw their own focus ring; no second outline on top of it */
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
 
 button {
   cursor: pointer;
@@ -168,11 +174,11 @@ button {
     text-wrap: balance;
   }
 
+  /* Emphasis is never colour: the blue is kept for the actions, the mark and the one number that matters. */
   .t-hero em,
   .t-h2 em,
   .t-h3 em {
     font-style: normal;
-    color: var(--spot);
   }
 
   .t-title {
@@ -204,26 +210,6 @@ button {
     line-height: 1.5;
     letter-spacing: -0.004em;
     color: var(--ink-3);
-  }
-
-  .t-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 0.75rem;
-    line-height: 1;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-  }
-  .t-eyebrow::before {
-    content: "";
-    width: 7px;
-    height: 7px;
-    border-radius: 999px;
-    background: var(--spot);
-    box-shadow: 0 0 0 3px rgba(var(--spot-rgb), 0.14);
   }
 
   .t-num {
@@ -272,7 +258,7 @@ button {
       box-shadow 260ms var(--ease-out);
   }
   .btn:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
   }
   .btn-sm {
     height: 2.625rem;
@@ -403,8 +389,8 @@ html[data-motion="on"] [data-reveal]:not([data-shown]) {
 }
 [data-reveal] {
   transition:
-    opacity 1000ms var(--ease-out),
-    transform 1000ms var(--ease-out);
+    opacity 650ms var(--ease-out),
+    transform 650ms var(--ease-out);
   transition-delay: var(--reveal-delay, 0s);
 }
 
@@ -412,8 +398,8 @@ html[data-motion="on"] [data-split]:not([data-shown]) .split-word > span {
   transform: translate3d(0, 108%, 0);
 }
 [data-split] .split-word > span {
-  transition: transform 1100ms var(--ease-out);
-  transition-delay: calc(var(--split-delay, 0s) + var(--i, 0) * 55ms);
+  transition: transform 750ms var(--ease-out);
+  transition-delay: calc(var(--split-delay, 0s) + var(--i, 0) * 40ms);
 }
 
 /* ------------------------------------------------------------------ */
@@ -440,15 +426,15 @@ html[data-motion="on"] [data-split]:not([data-shown]) .split-word > span {
   }
 }
 html[data-motion="on"] .story-row {
-  animation: story-row-in 700ms var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * 90ms + 60ms);
+  animation: story-row-in 400ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms + 40ms);
 }
 html[data-motion="on"] .story-fade {
   animation: story-fade-in 600ms var(--ease-out) both;
 }
 
 /* ------------------------------------------------------------------ */
-/* Worth calculator: quiet sliders, and the year chart                 */
+/* Worth calculator: quiet sliders                                     */
 /* ------------------------------------------------------------------ */
 
 .worth-range {
@@ -508,19 +494,6 @@ html[data-motion="on"] .story-fade {
 }
 .worth-range:focus-visible::-moz-range-thumb {
   box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--spot);
-}
-
-.worth-bar {
-  transform-origin: bottom;
-  transition:
-    height 600ms var(--ease-out),
-    opacity 700ms var(--ease-out),
-    transform 900ms var(--ease-out),
-    background-color 400ms var(--ease-out);
-}
-html[data-motion="on"] .worth-chart:not([data-seen]) .worth-bar {
-  opacity: 0 !important;
-  transform: scaleY(0);
 }
 
 /* ------------------------------------------------------------------ */

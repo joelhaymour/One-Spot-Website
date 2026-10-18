@@ -19,7 +19,6 @@ export default function Image() {
           justifyContent: "space-between",
           padding: "72px 84px",
           backgroundColor: "#f5f2ec",
-          backgroundImage: "radial-gradient(circle at 88% 20%, rgba(45,74,224,0.14), rgba(45,74,224,0) 42%)",
           color: "#15171b",
         }}
       >
@@ -33,9 +32,9 @@ export default function Image() {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", flexDirection: "column", fontSize: 104, lineHeight: 1.0, letterSpacing: -4.5 }}>
             <div>{HERO.headline[0]}</div>
-            <div style={{ color: "#2d4ae0" }}>{HERO.headline[1]}</div>
+            <div>{HERO.headline[1]}</div>
           </div>
-          <div style={{ marginTop: 30, fontSize: 28, color: "#4a4f57", letterSpacing: -0.4 }}>{HERO.eyebrow}</div>
+          <div style={{ marginTop: 30, fontSize: 28, color: "#4a4f57", letterSpacing: -0.4 }}>Consulting for small and mid-sized businesses</div>
         </div>
       </div>
     ),

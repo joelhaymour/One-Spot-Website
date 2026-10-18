@@ -36,10 +36,7 @@ export function Process() {
     <section id="process" aria-labelledby="process-title" className="section bg-[var(--paper-2)]">
       <div className="wrap grid gap-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-24">
         <div className="self-start lg:sticky lg:top-[calc(var(--nav-h)+56px)]">
-          <p className="t-eyebrow" data-reveal>
-            {PROCESS.eyebrow}
-          </p>
-          <Split id="process-title" lines={PROCESS.headline} className="t-h2 mt-6" />
+          <Split id="process-title" lines={PROCESS.headline} className="t-h2" />
           <p className="t-lead mt-8 max-w-[32rem]" data-reveal style={{ "--reveal-delay": "0.15s" } as CSSProperties}>
             {PROCESS.lead}
           </p>
