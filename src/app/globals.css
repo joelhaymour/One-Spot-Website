@@ -524,6 +524,19 @@ html[data-motion="on"] .worth-chart:not([data-seen]) .worth-bar {
 }
 
 /* ------------------------------------------------------------------ */
+/* What we connect: the lit line runs into the dashboard               */
+/* ------------------------------------------------------------------ */
+
+@keyframes connect-flow {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+html[data-motion="on"] .connect-flow {
+  animation: connect-flow 1.1s linear infinite;
+}
+
+/* ------------------------------------------------------------------ */
 /* Hero examples: how long until the card moves on                     */
 /* ------------------------------------------------------------------ */
 

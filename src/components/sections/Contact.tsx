@@ -23,17 +23,6 @@ export function Contact() {
             <p className="t-lead mt-8 max-w-[32rem]" data-reveal style={{ "--reveal-delay": "0.15s" } as CSSProperties}>
               {CONTACT.lead}
             </p>
-
-            <ol className="mt-12 grid gap-5">
-              {CONTACT.next.map((step, i) => (
-                <li key={step.title} className="flex gap-4" data-reveal style={{ "--reveal-delay": `${0.2 + i * 0.08}s` } as CSSProperties}>
-                  <span className="t-num grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[var(--line-strong)] bg-[var(--card)] text-[0.78rem] text-[var(--ink-2)]">{i + 1}</span>
-                  <p className="pt-1 text-[1rem] leading-[1.5]">
-                    <span className="font-medium text-[var(--ink)]">{step.title}.</span> <span className="text-[var(--ink-2)]">{step.body}</span>
-                  </p>
-                </li>
-              ))}
-            </ol>
           </div>
 
           <div className="rounded-[26px] border border-[var(--line)] bg-[var(--card)] p-5 shadow-[var(--shadow-lift)] sm:p-8" data-reveal style={{ "--reveal-delay": "0.2s" } as CSSProperties}>
