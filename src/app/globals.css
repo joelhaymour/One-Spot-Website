@@ -128,7 +128,6 @@ body {
 :focus-visible {
   outline: 2px solid var(--spot);
   outline-offset: 3px;
-  border-radius: 8px;
 }
 
 button {
@@ -253,6 +252,7 @@ button {
 
   .btn {
     position: relative;
+    -webkit-tap-highlight-color: transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -284,27 +284,31 @@ button {
     color: var(--paper);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 10px 24px -12px rgba(21, 23, 27, 0.5);
   }
-  .btn-primary:hover {
-    background: var(--spot);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 14px 30px -12px rgba(var(--spot-rgb), 0.6);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+      background: var(--spot);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 14px 30px -12px rgba(var(--spot-rgb), 0.6);
+    }
   }
   .btn-ghost {
     color: var(--ink);
     border: 1px solid var(--line-strong);
     background: rgba(255, 253, 249, 0.5);
   }
-  .btn-ghost:hover {
-    border-color: var(--ink);
-    background: var(--card);
-  }
   .btn .btn-arrow {
     transition: transform 320ms var(--ease-out);
   }
-  .btn:hover .btn-arrow {
-    transform: translateX(3px);
-  }
-  .btn:hover .btn-arrow-down {
-    transform: translateY(2px);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-ghost:hover {
+      border-color: var(--ink);
+      background: var(--card);
+    }
+    .btn:hover .btn-arrow {
+      transform: translateX(3px);
+    }
+    .btn:hover .btn-arrow-down {
+      transform: translateY(2px);
+    }
   }
 
   /* ---------------------------------------------------------------- */
@@ -421,16 +425,6 @@ html[data-motion="on"] [data-split]:not([data-shown]) .split-word > span {
 /* changes (the list is re-keyed, so this replays)                       */
 /* ------------------------------------------------------------------ */
 
-@keyframes story-row-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 14px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
 @keyframes story-fade-in {
   from {
     opacity: 0;
@@ -438,10 +432,6 @@ html[data-motion="on"] [data-split]:not([data-shown]) .split-word > span {
   to {
     opacity: 1;
   }
-}
-html[data-motion="on"] .story-row {
-  animation: story-row-in 700ms var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * 90ms + 60ms);
 }
 html[data-motion="on"] .story-fade {
   animation: story-fade-in 600ms var(--ease-out) both;
@@ -524,7 +514,8 @@ html[data-motion="on"] .worth-chart:not([data-seen]) .worth-bar {
 }
 
 /* ------------------------------------------------------------------ */
-/* What we connect: the lit line runs into the dashboard               */
+/* What we connect: the lit line runs into the dashboard, a pulse lands */
+/* on it and the part's row lights; panels share one cell               */
 /* ------------------------------------------------------------------ */
 
 @keyframes connect-flow {
@@ -532,58 +523,158 @@ html[data-motion="on"] .worth-chart:not([data-seen]) .worth-bar {
     stroke-dashoffset: -26;
   }
 }
-html[data-motion="on"] .connect-flow {
-  animation: connect-flow 1.1s linear infinite;
-}
-
-/* ------------------------------------------------------------------ */
-/* Hero examples: how long until the card moves on                     */
-/* ------------------------------------------------------------------ */
-
-@keyframes ex-timer {
+@keyframes connect-lit-in {
   from {
-    width: 0;
+    opacity: 0;
+  }
+}
+/* a 10-unit dash (of 100) that runs from where the line leaves its part (--p0) to the dashboard (--p1) */
+@keyframes connect-pulse {
+  from {
+    stroke-dashoffset: calc(10 - var(--p0, 0));
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
   }
   to {
-    width: 100%;
+    stroke-dashoffset: calc(var(--p1, 100) * -1);
+    opacity: 0;
   }
 }
-.ex-timer {
-  animation: ex-timer linear both;
+@keyframes dash-swap-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+}
+/* the dashes run for a few seconds, then the lit line holds still */
+html[data-motion="on"] .connect-lit {
+  animation:
+    connect-lit-in 200ms ease both,
+    connect-flow 1.1s linear 3;
+}
+html[data-motion="on"] [data-map]:not([data-visible]) .connect-lit {
+  animation-play-state: paused;
+}
+.connect-pulse {
+  fill: none;
+  stroke: var(--spot);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 10 200;
+  opacity: 0;
+}
+/* a ring of map paper around the pulse, so it reads even on the lit line */
+.connect-pulse-halo {
+  stroke: var(--paper-2);
+  stroke-width: 8;
+}
+html[data-motion="on"] .connect-pulse {
+  animation: connect-pulse 600ms cubic-bezier(0.45, 0, 0.25, 1) both;
+  animation-delay: var(--pulse-delay, 0ms);
 }
 
-/* ------------------------------------------------------------------ */
-/* Your tools: a sticky stage scrubbed by scroll. Without motion it is   */
-/* one still frame of the connected ring.                               */
-/* ------------------------------------------------------------------ */
+.connect-node {
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 300ms var(--ease-out),
+    border-color 300ms var(--ease-out),
+    box-shadow 300ms var(--ease-out),
+    scale 140ms var(--ease-out);
+}
+.connect-node:active {
+  scale: 0.97;
+}
 
-.tools-track {
-  padding-block: clamp(40px, 6vw, 72px) clamp(96px, 13vw, 184px);
+/* the dashboard's rows: each lights as its part's pulse lands */
+.hub-row {
+  color: var(--ink-3);
+  transition:
+    background-color 300ms var(--ease-out),
+    color 300ms var(--ease-out),
+    opacity 350ms var(--ease-out),
+    translate 350ms var(--ease-out);
 }
-.tools-stage {
-  height: min(82vh, 680px);
+.hub-row .hub-icon {
+  color: var(--ink-4);
+  transition: color 300ms var(--ease-out);
 }
-html[data-motion="on"] .tools-track {
-  height: 320vh;
-  padding-block: 0;
+.hub-row[data-on] {
+  background: var(--spot-soft);
+  color: var(--ink);
+  font-weight: 500;
 }
-html[data-motion="on"] .tools-stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  padding: calc(var(--nav-h) + 12px) 0 24px;
+.hub-row[data-on] .hub-icon {
+  color: var(--spot);
 }
-@keyframes tools-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(var(--spot-rgb), 0.35);
+html[data-motion="on"] .hub-row[data-on],
+html[data-motion="on"] .hub-row[data-on] .hub-icon {
+  transition-delay: 560ms;
+}
+/* before the first fill (and before the app boots), the rows wait dim */
+html[data-motion="on"] [data-map]:not([data-fill]) .hub-row,
+html[data-motion="on"] [data-fill="idle"] .hub-row {
+  opacity: 0.25;
+  translate: 0 4px;
+}
+html[data-motion="on"] [data-fill="running"] .hub-row {
+  transition-delay: calc(var(--i, 0) * 200ms + 860ms);
+}
+
+/* panels: always as tall as the tallest; the leaving one goes quicker than the arriving one */
+.connect-panel {
+  opacity: 0;
+  visibility: hidden;
+}
+.connect-panel[data-on] {
+  opacity: 1;
+  visibility: visible;
+}
+html[data-motion="on"] .connect-panel {
+  transition:
+    opacity 140ms ease,
+    translate 140ms ease,
+    visibility 0s linear 140ms;
+}
+html[data-motion="on"] .connect-panel:not([data-on]) {
+  translate: 0 6px;
+}
+html[data-motion="on"] .connect-panel[data-on] {
+  transition:
+    opacity 260ms var(--ease-out) 60ms,
+    translate 260ms var(--ease-out) 60ms,
+    visibility 0s;
+}
+html[data-motion="on"] .connect-row {
+  transition:
+    opacity 240ms var(--ease-out),
+    translate 240ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 40ms + 100ms);
+}
+html[data-motion="on"] .connect-panel:not([data-on]) .connect-row {
+  opacity: 0;
+  translate: 0 8px;
+  transition-delay: 0s;
+}
+
+/* a line of text that changes (a tool plugging in, a reminder sent) */
+html[data-motion="on"] .dash-swap {
+  animation: dash-swap-in 220ms var(--ease-out) both;
+}
+.dash-send {
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 200ms var(--ease-out),
+    scale 140ms var(--ease-out);
+}
+.dash-send:active {
+  scale: 0.97;
+}
+@media (hover: hover) and (pointer: fine) {
+  .dash-send:hover {
+    background: var(--spot);
   }
-  100% {
-    box-shadow: 0 0 0 22px rgba(var(--spot-rgb), 0);
-  }
-}
-.tools-pulse {
-  animation: tools-pulse 2.2s ease-out infinite;
 }
 
 /* ------------------------------------------------------------------ */

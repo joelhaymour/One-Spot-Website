@@ -100,7 +100,7 @@ function Slider({
 }
 
 /**
- * What a better way of working could be worth. Two views (the team's time, or the owner's own), three
+ * What a better way of working could be worth (the Worth band around it asks the question). Two views (the team's time, or the owner's own), three
  * sliders each, and one big number: hours back in a year. The dollar figure is the potential value of
  * that time, never promised savings, and the year chart shows a few hours a week piling up into it.
  */
@@ -153,18 +153,11 @@ export function WorthCalculator({ className }: { className?: string }) {
         className,
       )}
     >
-      <h2 className="text-[1.3rem] font-semibold leading-[1.15] tracking-[-0.03em] text-[var(--ink)] sm:text-[1.5rem]">
-        {WORTH.headline}
-      </h2>
-      <p className="mt-1.5 text-[0.88rem] leading-snug text-[var(--ink-3)]">
-        {WORTH.lead}
-      </p>
-
-      {/* whose time */}
+      {/* whose time (the band around the card asks the question) */}
       <div
         role="radiogroup"
         aria-label="Whose time"
-        className="relative mt-4 grid grid-cols-2 rounded-full bg-[var(--paper-2)] p-1 text-[0.85rem] font-medium"
+        className="relative grid grid-cols-2 rounded-full bg-[var(--paper-2)] p-1 text-[0.85rem] font-medium"
       >
         <span
           aria-hidden

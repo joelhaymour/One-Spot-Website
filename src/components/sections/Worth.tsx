@@ -7,8 +7,8 @@ import { WorthCalculator } from "@/components/worth/WorthCalculator";
 export function Worth() {
   return (
     <section id="worth" aria-labelledby="worth-title" className="section bg-[var(--paper-2)]">
-      <div className="wrap grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
-        <div className="min-w-0 lg:sticky lg:top-[calc(var(--nav-h)+56px)] lg:pt-6">
+      <div className="wrap grid items-start gap-12 xl:grid-cols-[minmax(0,1fr)_540px] xl:gap-16">
+        <div className="min-w-0 xl:sticky xl:top-[calc(var(--nav-h)+56px)] xl:pt-6">
           <p className="t-eyebrow" data-reveal>
             {WORTH.section.eyebrow}
           </p>
@@ -17,7 +17,7 @@ export function Worth() {
             {WORTH.section.lead}
           </p>
         </div>
-        <div className="relative mx-auto w-full min-w-0 max-w-[540px] lg:mr-0" data-reveal style={{ "--reveal-delay": "0.1s" } as CSSProperties}>
+        <div className="relative w-full min-w-0 max-w-[540px]" data-reveal style={{ "--reveal-delay": "0.1s" } as CSSProperties}>
           <WorthCalculator />
         </div>
       </div>

@@ -54,9 +54,11 @@ export interface WorthSlider {
 
 export const WORTH = {
   /** The section around the calculator. */
-  section: { eyebrow: "What it's worth", headline: ["Do the math", "on your own team."], lead: "Move the sliders. It takes ten seconds, and the numbers are yours." },
-  headline: "What could a better way of working be worth?",
-  lead: "Small improvements add up. See what getting time back and getting more done could mean for your business.",
+  section: {
+    eyebrow: "What it's worth",
+    headline: ["What could a better way", "of working be worth?"],
+    lead: "Small improvements add up. See what getting time back and getting more done could mean for your business.",
+  },
   modes: [
     { key: "team", label: "My Team's Time" },
     { key: "you", label: "My Time" },
@@ -143,95 +145,138 @@ export const PROCESS = {
 
 export type ConnectIcon = "users" | "calendar" | "invoice" | "file" | "box" | "plus";
 
+export interface ConnectExample {
+  /** The kind of business, set first so visitors can scan for theirs. */
+  who: string;
+  what: string;
+}
+
 export interface ConnectPart {
   key: string;
   label: string;
-  /** A short qualifier under the label, e.g. "if you have them". */
-  note?: string;
+  /** The second line on the map node, in the words owners use. */
+  note: string;
   icon: ConnectIcon;
-  /** Where this part usually lives today. Generic, never brand names. */
+  /** This part's row on the dashboard in the middle of the map. Numbers match the morning screen. */
+  hub: string;
+  /** Where this part usually lives today. Places, generic, never brand names. */
   tools: string[];
   /** What changes once it's connected. */
   outcomes: string[];
-  /** One line each, from different kinds of business. */
-  examples: string[];
+  /** Two, each from a different kind of business. */
+  examples: ConnectExample[];
 }
 
 export const CONNECT = {
   eyebrow: "What we connect",
   headline: ["Every part of your business.", "One dashboard."],
-  lead: "Almost every business runs on the same few parts. Which ones are a mess is different every time. Pick yours.",
-  hub: { label: "Your dashboard", sub: "Everything in one place" },
-  labels: { tools: "Usually lives in", outcomes: "Once it's connected", examples: "For example" },
+  lead: "Almost every business runs on the same few parts. We connect each one, wherever it lives today.",
+  hub: { label: "Your dashboard" },
+  labels: { tools: "Usually lives in", outcomes: "Once it's connected", examples: "For example", parts: "Parts of your business" },
   parts: [
     {
       key: "customers",
       label: "Customers",
+      note: "Leads, clients, patients",
       icon: "users",
-      tools: ["Phone and voicemail", "Your inbox", "Your website", "Your CRM"],
-      outcomes: ["Every call, email and form lands in one place", "New enquiries answered or passed to the right person", "Nothing slips through the cracks"],
-      examples: ["A dealership answering a Saturday-night enquiry in minutes.", "A clinic confirming appointments without phone tag."],
+      hub: "5 new inquiries",
+      tools: ["Phone and voicemail", "Your inbox", "Web and social messages", "Your customer list"],
+      outcomes: ["Every call, email and message lands in one place", "New inquiries answered or passed to the right person"],
+      examples: [
+        { who: "Dealership", what: "A Saturday-night inquiry answered in minutes." },
+        { who: "Salon", what: "Calls, texts and social messages in one inbox." },
+      ],
     },
     {
       key: "work",
       label: "The work",
+      note: "Jobs, bookings, orders",
       icon: "calendar",
-      tools: ["Your scheduling app", "Shared calendar", "Job notes and texts", "Spreadsheets"],
-      outcomes: ["Jobs booked once, and everyone sees them", "Your team always knows what's next", "Customers kept up to date without anyone typing it"],
-      examples: ["An HVAC company sending the tech's notes straight to the office.", "A contractor reshuffling the day when materials are late."],
+      hub: "12 booked today",
+      tools: ["Your booking or scheduling app", "A shared calendar", "Group texts", "The office whiteboard"],
+      outcomes: ["Booked once, and the whole team sees it", "Customers kept up to date without anyone typing it"],
+      examples: [
+        { who: "HVAC company", what: "The tech's notes go straight to the office." },
+        { who: "Property manager", what: "A plumber booked the moment a leak is reported." },
+      ],
     },
     {
       key: "money",
       label: "Money",
+      note: "Quotes, invoices, payments",
       icon: "invoice",
-      tools: ["Quotes and estimates", "Your accounting app", "Payments", "Email"],
-      outcomes: ["Quote to invoice without retyping", "Reminders on unpaid invoices go out on time", "You see what's owed at a glance"],
-      examples: ["A service company invoicing the day the job is done.", "A body shop following vendor credits until they arrive."],
+      hub: "$18,400 owed to you",
+      tools: ["Quote templates", "Your accounting app", "Your payment app", "Your bank"],
+      outcomes: ["Quote to invoice without retyping", "Reminders on late payments go out on time"],
+      examples: [
+        { who: "Gym", what: "Failed membership payments followed up the same day." },
+        { who: "Law office", what: "Billable hours turned into invoices every Friday." },
+      ],
     },
     {
       key: "paperwork",
       label: "Paperwork",
+      note: "Forms, contracts, files",
       icon: "file",
-      tools: ["Forms and PDFs", "Contracts", "IDs and licenses", "Claims"],
-      outcomes: ["Documents checked before they go out", "Missing pieces flagged early", "Everything filed where it belongs"],
-      examples: ["A lender holding a deal until the invoice and license match.", "A dental office attaching the right X-rays before a claim goes out."],
+      hub: "1 contract to sign",
+      tools: ["Email attachments", "Shared folders", "Filing cabinets", "Photos on phones"],
+      outcomes: ["Forms and contracts checked before they go out", "Missing signatures and pages flagged early"],
+      examples: [
+        { who: "Lender", what: "A mismatched invoice or license caught before funding." },
+        { who: "Dental office", what: "The right X-rays attached before a claim goes out." },
+      ],
     },
     {
       key: "stock",
       label: "Stock & suppliers",
-      note: "If you have them",
+      note: "Products, parts, supplies",
       icon: "box",
-      tools: ["Supplier emails", "Purchase orders", "An inventory sheet", "Returns"],
-      outcomes: ["Stock counts you can trust", "Reorders and returns tracked", "Credits followed until they land"],
-      examples: ["A body shop returning unused parts before the window closes.", "A distributor reordering before the shelf runs out."],
+      hub: "1 reorder to approve",
+      tools: ["Supplier emails", "Supplier websites", "An inventory spreadsheet", "Counts on a clipboard"],
+      outcomes: ["Counts updated as things sell and arrive", "Reorders drafted before you run out"],
+      examples: [
+        { who: "Restaurant", what: "Produce reordered before the walk-in runs low." },
+        { who: "Boutique", what: "Both locations and the online store on one inventory count." },
+      ],
     },
   ] satisfies ConnectPart[],
-  /** The open slot: anything the five don't cover. */
+  /** The open slot: anything the five don't cover. Its tools plug in one after another. */
   other: {
     key: "other",
     label: "Anything else",
+    note: "Point of sale and more",
     icon: "plus" as ConnectIcon,
-    cycle: ["Your booking app", "An industry system", "A shared spreadsheet", "Paper forms", "Your point of sale"],
+    hub: "Your other tools",
+    /** Short enough for the map node and the hub row. */
+    cycle: ["Point of sale", "Online store", "Industry software", "Shared spreadsheets", "Paper forms"],
     title: "If your team uses it, we can usually connect it.",
-    body: "And if something can't connect, we build around it, so it still shows up on your dashboard.",
+    body: "Even the software your industry runs on. If something can't connect, we build around it.",
+    connected: "Connected",
     action: "Tell us what you use",
   },
-  note: "Illustrative examples.",
-  /** What the owner sees: the payoff of connecting the parts. */
+  note: "Pick a part to see what changes. Examples are illustrative.",
+  /** The morning screen, in the hero. Its numbers match the hub rows on the map. */
   dashboard: {
-    title: "What you see each morning",
-    body: "Everything connected comes together on one screen: what's happening today, what's owed, and only the few things that need you.",
-    caption: "Illustrative",
-    greeting: "Good morning. Here's today.",
+    caption: "What you'd see each morning. Illustrative.",
+    status: "7 tools connected",
+    greeting: "Good morning. Here's your Monday.",
     tiles: [
-      { label: "Jobs today", value: "12", detail: "2 need a tech assigned" },
-      { label: "Money owed", value: "$18,400", detail: "3 invoices past 14 days" },
-      { label: "Waiting on you", value: "3", detail: "Approvals and replies" },
+      { icon: "users" as ConnectIcon, label: "New inquiries", value: "5", detail: "None waiting" },
+      { icon: "calendar" as ConnectIcon, label: "Booked today", value: "12", detail: "Schedules sent" },
+      { icon: "invoice" as ConnectIcon, label: "Owed to you", value: "$18,400", detail: "2 paid overnight" },
     ],
-    attention: { label: "Needs attention", text: "Invoice #1042 is 16 days late. A friendly reminder is ready to send." },
+    needs: {
+      label: "Needs you",
+      text: "Invoice #1042 is 16 days late. A reminder is ready to send.",
+      action: "Review and send",
+      example: "(example)",
+      sentLabel: "Reminder sent.",
+      sentText: "You'll get a note when #1042 is paid.",
+      more: "2 more for you today: a contract to sign and a reorder to approve.",
+    },
   },
   website: {
-    text: "Need your website to work harder too? We redesign websites that book, sell and are easy to update.",
+    text: "We also redesign websites, so yours takes bookings, makes sales and is easy to update.",
     action: "Ask about a website",
   },
 };
