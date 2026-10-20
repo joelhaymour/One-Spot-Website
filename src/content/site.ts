@@ -167,6 +167,13 @@ export interface ConnectPart {
   examples: ConnectExample[];
 }
 
+export interface DashboardScreen {
+  summary: string;
+  /** Where this screen's rows come from: the tools it's connected to. */
+  from: string;
+  rows: { what: string; when: string; status: string; tone: "done" | "wait" | "risk" | "spot" | "plain"; linked?: string; doneStatus?: string }[];
+}
+
 export const CONNECT = {
   eyebrow: "What we connect",
   headline: ["Every part of your business.", "One dashboard."],
@@ -255,25 +262,84 @@ export const CONNECT = {
     action: "Tell us what you use",
   },
   note: "Pick a part to see what changes. Examples are illustrative.",
-  /** The morning screen, in the hero. Its numbers match the hub rows on the map. */
+  /**
+   * The morning screen, in the hero. Today shows what got done for the owner and the few things that need
+   * them; the other tabs are simple screens for each part. Its numbers match the hub rows on the map.
+   */
   dashboard: {
     caption: "What you'd see each morning. Illustrative.",
     status: "7 tools connected",
-    greeting: "Good morning. Here's your Monday.",
-    tiles: [
-      { icon: "users" as ConnectIcon, label: "New inquiries", value: "5", detail: "None waiting" },
-      { icon: "calendar" as ConnectIcon, label: "Booked today", value: "12", detail: "Schedules sent" },
-      { icon: "invoice" as ConnectIcon, label: "Owed to you", value: "$18,400", detail: "2 paid overnight" },
+    tabsLabel: "Dashboard screens (example)",
+    tabs: [
+      { key: "today", label: "Today" },
+      { key: "customers", label: "Customers" },
+      { key: "work", label: "Work" },
+      { key: "money", label: "Money" },
+      { key: "paperwork", label: "Paperwork" },
     ],
+    greeting: "Good morning. Here's your Monday.",
+    stats: [
+      { label: "New inquiries", value: "5" },
+      { label: "Booked today", value: "12" },
+      { label: "Owed to you", value: "$18,400" },
+    ],
+    done: {
+      label: "Done for you since yesterday",
+      items: ["5 new inquiries handled", "12 bookings confirmed", "2 payments in overnight", "Signed forms filed"],
+    },
     needs: {
       label: "Needs you",
-      text: "Invoice #1042 is 16 days late. A reminder is ready to send.",
-      action: "Review and send",
+      allDone: "All set for today",
       example: "(example)",
-      sentLabel: "Reminder sent.",
-      sentText: "You'll get a note when #1042 is paid.",
-      more: "2 more for you today: a contract to sign and a reorder to approve.",
+      items: [
+        { key: "invoice", text: "Invoice #1042 is 16 days late. A reminder is ready.", action: "Review and send", short: "Send", doneText: "Reminder sent. You'll get a note when it's paid." },
+        { key: "contract", text: "Contract #88 is ready for your signature.", action: "Sign", short: "Sign", doneText: "Signed and filed." },
+        { key: "reorder", text: "3 items are running low. A reorder is drafted.", action: "Approve", short: "Approve", doneText: "Reorder sent to your supplier." },
+      ],
     },
+    /** tone picks the status pill: done, wait, risk, spot (with us) or plain. linked rows change when its Needs you item is done. */
+    screens: {
+      customers: {
+        summary: "5 new since yesterday",
+        from: "From your phone, inbox and website",
+        rows: [
+          { what: "Website inquiry", when: "9:40pm", status: "Replied", tone: "done" },
+          { what: "Missed call", when: "7:55am", status: "Called back", tone: "done" },
+          { what: "Quote request", when: "Yesterday", status: "Passed to the team", tone: "spot" },
+          { what: "New review", when: "Yesterday", status: "Thank-you sent", tone: "done" },
+        ],
+      },
+      work: {
+        summary: "12 booked today, all assigned",
+        from: "From your booking app and shared calendar",
+        rows: [
+          { what: "Booking #214", when: "8:00am", status: "Confirmed", tone: "done" },
+          { what: "Booking #215", when: "9:30am", status: "Confirmed", tone: "done" },
+          { what: "Booking #216", when: "11:00am", status: "Running late, customer told", tone: "wait" },
+          { what: "Open slot", when: "2:00pm", status: "Offered to waitlist", tone: "spot" },
+        ],
+      },
+      money: {
+        summary: "$18,400 owed to you",
+        from: "From your accounting app and bank",
+        rows: [
+          { what: "Invoice #1042", when: "$2,400", status: "16 days late", tone: "risk", linked: "invoice", doneStatus: "Reminder sent" },
+          { what: "Invoice #1047", when: "$1,150", status: "Paid overnight", tone: "done" },
+          { what: "Invoice #1049", when: "$3,600", status: "Due Friday", tone: "plain" },
+          { what: "Invoice #1051", when: "$860", status: "Paid overnight", tone: "done" },
+        ],
+      },
+      paperwork: {
+        summary: "1 contract to sign",
+        from: "From email attachments and shared folders",
+        rows: [
+          { what: "Contract #88", when: "Today", status: "Ready to sign", tone: "spot", linked: "contract", doneStatus: "Signed and filed" },
+          { what: "Service agreement", when: "Yesterday", status: "Signed and filed", tone: "done" },
+          { what: "New customer form", when: "Yesterday", status: "Sent back to sign", tone: "wait" },
+          { what: "Insurance certificate", when: "In 30 days", status: "Renewal reminder set", tone: "plain" },
+        ],
+      },
+    } as Record<string, DashboardScreen>,
   },
   website: {
     text: "We also redesign websites, so yours takes bookings, makes sales and is easy to update.",

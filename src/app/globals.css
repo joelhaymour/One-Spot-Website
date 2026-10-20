@@ -662,6 +662,9 @@ html[data-motion="on"] .connect-panel:not([data-on]) .connect-row {
 html[data-motion="on"] .dash-swap {
   animation: dash-swap-in 220ms var(--ease-out) both;
 }
+.dash-tab {
+  -webkit-tap-highlight-color: transparent;
+}
 .dash-send {
   -webkit-tap-highlight-color: transparent;
   transition:
